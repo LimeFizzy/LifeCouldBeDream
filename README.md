@@ -2,7 +2,7 @@
 Komandos pavadinimas - Life could be dream
 
 ### Komandos vadovas
-Leonardas Sinkečius
+Leonardas Sinkevičius
 ### Komandos nariai
 - Nikita Motiejaitis
 - Aleksej Krasavcev
