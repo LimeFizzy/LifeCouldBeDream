@@ -1,25 +1,32 @@
 {
   "format": 1,
   "restore": {
-    "/Users/leonardassinkevicius/Documents/LifeCouldBeDream/API/API.csproj": {}
+    "C:\\Users\\ramun\\Desktop\\engineering\\LifeCouldBeDream\\API\\API.csproj": {}
   },
   "projects": {
-    "/Users/leonardassinkevicius/Documents/LifeCouldBeDream/API/API.csproj": {
+    "C:\\Users\\ramun\\Desktop\\engineering\\LifeCouldBeDream\\API\\API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/leonardassinkevicius/Documents/LifeCouldBeDream/API/API.csproj",
+        "projectUniqueName": "C:\\Users\\ramun\\Desktop\\engineering\\LifeCouldBeDream\\API\\API.csproj",
         "projectName": "API",
-        "projectPath": "/Users/leonardassinkevicius/Documents/LifeCouldBeDream/API/API.csproj",
-        "packagesPath": "/Users/leonardassinkevicius/.nuget/packages/",
-        "outputPath": "/Users/leonardassinkevicius/Documents/LifeCouldBeDream/API/obj/",
+        "projectPath": "C:\\Users\\ramun\\Desktop\\engineering\\LifeCouldBeDream\\API\\API.csproj",
+        "packagesPath": "C:\\Users\\ramun\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\ramun\\Desktop\\engineering\\LifeCouldBeDream\\API\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "/Users/leonardassinkevicius/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\ramun\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -71,7 +78,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.201/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.400/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
