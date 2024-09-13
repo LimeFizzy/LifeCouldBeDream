@@ -29,10 +29,7 @@ This project is a web application aimed at improving cognitive skills - specific
    - **Sequence Memorization:** Users are shown a sequence of items and must recall the exact order.
 
 2. **User Progress Tracking**
-   - Track the performance of users across multiple sessions and provide insights on their cognitive improvements.
-
-3. **Responsive Design**
-   - Fully responsive UI built with **React** and **TypeScript** to ensure compatibility with various devices.
+   - Track the performance of users across multiple sessions and provide statistics on their cognitive improvements.
 
 -------------------------------------
 
@@ -57,21 +54,21 @@ For setting up the project you will need the following:
 
 - **.NET SDK** (Version 6 or later) – for the backend.
 - **Node.js** (Version 18 or later) – for the frontend.
-- **npm** (or **yarn**) – for managing frontend packages.
+- **npm** – for managing frontend packages.
 - **A code editor** such as Visual Studio Code or Visual Studio.
 
 ### Backend (Web API) Setup
 
 1. **Clone the Repository**
-2. **Navigate to the Backend Directory** - run `cd file_name`
+2. **Navigate to the Backend Directory** - run `cd API`
 3. **Install Dependencies** - run `dotnet restore`
 4. **Build the Project** - run `dotnet build`
 5. **Run the Project** - run `dotnet run`
 
 ### Frontend (React + TypeScript) Setup
-1. **Navigate to the Frontend Directory** - run `cd file_name`
-2. **Install Dependencies** - run `npm install` or `yarn install`
-3. **Start the Development Server** - run `npm start` or `yarn start`
+1. **Navigate to the Frontend Directory** - run `cd frontend`
+2. **Install Dependencies** - run `npm install`
+3. **Start the Development Server** - run `npm start`
 4. **Access the Application** - open a web browser and follow this link - (will be specified later in project creating process).  
 
 -------------------------------------
@@ -83,17 +80,6 @@ For setting up the project you will need the following:
 
 ## Configuration
  - will be specified later in project creating process
-
--------------------------------------
-
- ## Contributing
-
-Contributions are welcome! If you would like to contribute, please follow these steps:
-1. Fork the repository.
-2. Create a new branch (`git checkout -b feature/YourFeature`).
-3. Commit your changes (`git commit -m 'Add some feature'`).
-4. Push to the branch (`git push origin feature/YourFeature`).
-5. Open a Pull Request.
 
 -------------------------------------
 
