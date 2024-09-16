@@ -460,32 +460,24 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\krasa\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "/Users/leonardassinkevicius/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Aleksej\\VU\\MIF\\3_sem\\SE\\Project\\API\\API.csproj",
+      "projectUniqueName": "/Users/leonardassinkevicius/Documents/LifeCouldBeDream/API/API.csproj",
       "projectName": "API",
-      "projectPath": "C:\\Aleksej\\VU\\MIF\\3_sem\\SE\\Project\\API\\API.csproj",
-      "packagesPath": "C:\\Users\\krasa\\.nuget\\packages\\",
-      "outputPath": "C:\\Aleksej\\VU\\MIF\\3_sem\\SE\\Project\\API\\obj\\",
+      "projectPath": "/Users/leonardassinkevicius/Documents/LifeCouldBeDream/API/API.csproj",
+      "packagesPath": "/Users/leonardassinkevicius/.nuget/packages/",
+      "outputPath": "/Users/leonardassinkevicius/Documents/LifeCouldBeDream/API/obj/",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-      ],
       "configFilePaths": [
-        "C:\\Users\\krasa\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "/Users/leonardassinkevicius/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -537,7 +529,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.400/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.201/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
