@@ -8,29 +8,19 @@ const Navbar: React.FC = () => {
       <ul className="nav-left">
         <li className="nav-item">
           <Link to="/" className="nav-link">
-            Home
-          </Link>
-        </li>
-        <li className="nav-item">
-          <Link to="/about" className="nav-link">
-            About
-          </Link>
-        </li>
-        <li className="nav-item">
-          <Link to="/games" className="nav-link">
-            Games
+            LifeCouldBeDream
           </Link>
         </li>
       </ul>
       <ul className="nav-right">
         <li className="nav-item">
           <Link to="/signup" className="nav-link">
-            Sign Up
+            SIGN UP
           </Link>
         </li>
         <li className="nav-item">
           <Link to="/login" className="nav-link">
-            Log In
+            LOG IN
           </Link>
         </li>
       </ul>
