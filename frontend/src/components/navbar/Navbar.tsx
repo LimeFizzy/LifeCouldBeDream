@@ -20,7 +20,7 @@ const Navbar: React.FC = () => {
         </li>
         <li className="nav-item">
           <Link to="/login" className="nav-link">
-            LOGIN
+            LOG IN
           </Link>
         </li>
       </ul>
