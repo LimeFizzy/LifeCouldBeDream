@@ -1,4 +1,4 @@
-import Tiles from '../components/tiles/Tiles'; // Import the Tiles component
+import Tiles from '../components/tiles/Tiles'; 
 
 export const Home: React.FC = () => {
   return (
