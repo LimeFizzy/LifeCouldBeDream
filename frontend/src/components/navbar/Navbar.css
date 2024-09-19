@@ -3,7 +3,7 @@
     top: 0;
     right: 0;
     width: 100%;
-    background-color: #333;
+    background-color: #532BA9;
     padding: 10px;
     display: flex;
     justify-content: left;
@@ -21,21 +21,30 @@
     margin-right: 20px;
   }
   
+  .nav-left .nav-link {
+    font-weight: 600;
+    color: white;
+    text-decoration: none;
+    font-size: 20px;
+  }
+
   .nav-right {
     list-style: none;
     display: flex;
     margin-left: auto;
+    padding: 1;
   }
   
   .nav-right .nav-item {
     margin-right: 20px;
   }
   
-    
-  .nav-link {
+  .nav-right .nav-link {
     color: white;
     text-decoration: none;
     font-size: 18px;
+    font-weight: 300;
+    font-family: system-ui, sans-serif;
   }
   
   .nav-link:hover {
