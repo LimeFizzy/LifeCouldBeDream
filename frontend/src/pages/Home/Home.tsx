@@ -1,27 +1,48 @@
+import { useState, useEffect } from 'react';
 import {Tile} from '../../components/tile/Tile'; 
 import './Home.css';
 
-export const Home: React.FC = () => {
+interface GameDTO {
+  gameID: number;
+  title: string;
+  description: string;
+  icon: string;
+  altText: string;
+  route: string;
+}
+
+export const Home = () => {
+  const [games, setGames] = useState<GameDTO[]>([]);
+
+  useEffect(() => {
+    const fetchGames = async () => {
+      try {
+        const response = await fetch('http://localhost:5217/games');
+        if (!response.ok) {
+          throw new Error(`Error: ${response.statusText}`);
+        }
+        const data: GameDTO[] = await response.json();
+        setGames(data);
+      } catch (error) {
+        console.error('Error fetching games:', error);
+      }
+    };
+
+    fetchGames();
+  }, []);
+
   return (
     <div className="tiles-container">
-      <Tile 
-        icon={'src/assets/longNumberIcon.svg'} 
-        altText={'Long number memory icon'} 
-        title={'Long number memory'} 
-        description={'Remember and recall increasingly longer sequences of digits'}
-      />
-      <Tile 
-        icon={'src/assets/chimpIcon.svg'} 
-        altText={'Chimp test icon'} 
-        title={'Chimp test'} 
-        description={'Remember and recall an order of numbers'}
-      />
-      <Tile 
-        icon={'src/assets/sequenceIcon.svg'} 
-        altText={'Sequence memory icon'} 
-        title={'Sequence Icon'} 
-        description={'Remember and recall increasingly larger sequence of action showed'}
-      />
+      {games.map((game) => (
+        <Tile 
+          key={game.gameID}
+          icon={game.icon}
+          altText={game.altText}
+          title={game.title}
+          description={game.description}
+          route={game.route}
+        />
+      ))}
     </div>
   );
 };
