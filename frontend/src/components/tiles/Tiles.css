@@ -1,0 +1,57 @@
+.tiles-container {
+    display: flex;
+    justify-content: space-around; /* Adjust spacing between tiles */
+    align-items: center; /* Vertically center tiles */
+    padding: 0 50px; /* Horizontal padding only */
+    box-sizing: border-box; /* Ensures padding doesn't affect the width */
+    min-height: 100vh; /* Ensures the container covers full height */
+    width: 100vw; /* Ensures the container spans full width */
+    margin: 0; /* Remove default margins */
+    overflow: hidden; /* Prevent any scrollbars from appearing */
+    
+    /* Remove the glass effect from here */
+    background-color: #282c34; /* Optionally, give the container a solid background color */
+}
+
+.tile {
+    background-color: rgba(255, 255, 255, 0.1); /* Light transparent gray */
+    border-radius: 20px; /* Rounded corners */
+    width: 300px; /* Fixed width for all tiles */
+    padding: 20px;
+    text-align: center;
+    color: white;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2); /* Shadow for elevation */
+    transition: transform 0.3s ease-in-out;
+
+    /* Glass effect applied to individual tiles */
+    background: linear-gradient(13deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+    backdrop-filter: blur(10px); /* The blur effect that creates the glass look */
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.tile-content h2 {
+    font-size: 40px;
+    margin-bottom: 20px;
+}
+
+.tile-content h3 {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.tile-content p {
+    font-size: 16px;
+    opacity: 0.8;
+}
+
+/* Hover effect */
+.tile:hover {
+    transform: scale(1.05); /* Enlarge on hover */
+}
+
+/* Ensure consistent spacing between tiles */
+.tile:not(:last-child) {
+    margin-right: 20px; /* Space between tiles */
+}
