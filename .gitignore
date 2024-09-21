@@ -3,6 +3,9 @@
 ##
 ## Get latest from `dotnet new gitignore`
 
+# vscode settings
+.vscode
+
 # dotenv files
 .env
 
