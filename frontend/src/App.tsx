@@ -7,10 +7,12 @@ import Navbar from './components/navbar/Navbar';
 import { LNWindow } from './pages/games/LongNumber/LNWindow';
 import { ChimpTest } from './pages/games/ChimpTest';
 import { Sequence } from './pages/games/Sequence';
+import BackgroundWrapper from './BackgroundWrapper';
 
 export const App = () => {
   return (
     <BrowserRouter>
+    <BackgroundWrapper>
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
@@ -20,6 +22,7 @@ export const App = () => {
         <Route path='/chimpTest' element={<ChimpTest />} />
         <Route path='/sequence' element={<Sequence />} />
       </Routes>
+      </BackgroundWrapper>
     </BrowserRouter>
   );
 }
