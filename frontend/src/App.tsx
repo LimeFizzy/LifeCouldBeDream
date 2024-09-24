@@ -4,7 +4,7 @@ import { Home } from './pages/Home/Home';
 import { SignUp } from './pages/SignUp';
 import { LogIn } from './pages/LogIn';
 import Navbar from './components/navbar/Navbar';
-import { LongNumber } from './pages/games/LongNumber';
+import { LNWindow } from './pages/games/LongNumber/LNWindow';
 import { ChimpTest } from './pages/games/ChimpTest';
 import { Sequence } from './pages/games/Sequence';
 
@@ -16,7 +16,7 @@ export const App = () => {
         <Route path="/" element={<Home />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/login" element={<LogIn />} />
-        <Route path='/longNumber' element={<LongNumber />} />
+        <Route path='/longNumber' element={<LNWindow />} />
         <Route path='/chimpTest' element={<ChimpTest />} />
         <Route path='/sequence' element={<Sequence />} />
       </Routes>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import './GameWindow.css';
+import './LNWindow.css';
 
-export const GameWindow: React.FC = () => {
+export const LNWindow: React.FC = () => {
   const [numberToMemorize, setNumberToMemorize] = useState<string>(''); // Number to show
   const [userInput, setUserInput] = useState<string>(''); // User's input
   const [isShowingNumber, setIsShowingNumber] = useState<boolean>(true); // Is the number being displayed
@@ -93,4 +93,4 @@ export const GameWindow: React.FC = () => {
   );
 };
 
-export default GameWindow;
+export default LNWindow;
