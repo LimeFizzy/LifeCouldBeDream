@@ -14,6 +14,11 @@ const Navbar: React.FC = () => {
       </ul>
       <ul className="nav-right">
         <li className="nav-item">
+          <Link to="/leaderboard" className="nav-link">
+            LEADERBOARD
+          </Link>
+        </li>
+        <li className="nav-item">
           <Link to="/signup" className="nav-link">
             SIGN UP
           </Link>
