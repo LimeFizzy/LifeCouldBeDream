@@ -1,7 +1,9 @@
+import { GameWindow } from "./LongNumber/GameWindow"
+
 export const LongNumber = () => {
    return (
-    <div>
-        Long Number page
+    <div className='LongNumber'>
+        <GameWindow />
     </div>
    )
 }

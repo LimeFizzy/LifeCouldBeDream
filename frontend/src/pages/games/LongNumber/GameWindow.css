@@ -1,0 +1,47 @@
+.game-container {
+    text-align: center;
+    margin-top: 50px;
+  }
+  
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+  }
+  
+  .number-display {
+    font-size: 3rem;
+    background-color: #f0f0f0;
+    padding: 20px;
+    margin: 20px auto;
+    width: 300px;
+    border-radius: 10px;
+    border: 2px solid #ccc;
+  }
+  
+  .input-section {
+    margin-top: 20px;
+  }
+  
+  input {
+    font-size: 1.5rem;
+    padding: 10px;
+    width: 200px;
+    text-align: center;
+    margin-right: 10px;
+  }
+  
+  button {
+    font-size: 1.2rem;
+    padding: 10px 20px;
+    cursor: pointer;
+  }
+  
+  .game-over {
+    margin-top: 20px;
+  }
+  
+  .game-info {
+    margin-top: 20px;
+    font-size: 1.2rem;
+  }
+  
