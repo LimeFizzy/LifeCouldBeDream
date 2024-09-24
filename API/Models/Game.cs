@@ -1,6 +1,6 @@
 namespace API.Models;
 
-public class GameDTO
+public record GameDTO
 {
     public required int GameID { get; set; }
     public required string Title { get; set; }

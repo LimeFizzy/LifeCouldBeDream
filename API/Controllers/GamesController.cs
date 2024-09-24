@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 namespace API.Controllers
 {
     [ApiController]
-    [Route("games")]
+    [Route("[controller]")]
     public class GamesController(AppDbContext context) : ControllerBase
     {
         private readonly AppDbContext _context = context;
