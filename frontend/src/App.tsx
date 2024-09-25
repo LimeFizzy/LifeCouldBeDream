@@ -7,21 +7,22 @@ import Navbar from './components/navbar/Navbar';
 import { LongNumber } from './pages/games/LongNumber';
 import { ChimpTest } from './pages/games/ChimpTest';
 import { Sequence } from './pages/games/Sequence';
-import { Leaderboard } from './pages/Leaderboard/Leaderboard';
+import BackgroundWrapper from './BackgroundWrapper';
 
 export const App = () => {
   return (
     <BrowserRouter>
+    <BackgroundWrapper>
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/login" element={<LogIn />} />
-        <Route path='/leaderboard' element={<Leaderboard />} />
         <Route path='/longNumber' element={<LongNumber />} />
         <Route path='/chimpTest' element={<ChimpTest />} />
         <Route path='/sequence' element={<Sequence />} />
       </Routes>
+      </BackgroundWrapper>
     </BrowserRouter>
   );
 }
