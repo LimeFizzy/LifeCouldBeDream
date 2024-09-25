@@ -1,85 +1,107 @@
 .game-container {
-    text-align: top;
-    margin-top: 50px;
-    height: 80vh;
-    width: 60vw;
-  }
-  
-  h1 {
-    font-size: 2rem;
-    margin-top: 10%;
-  }
-  
-  .game-info {
-    margin: 4%;
-    font-size: 1.2rem;
-    font-weight: 200;
-    word-spacing: 4px;
-  }
-  
-  .number-display {
-    font-size: 2rem;
-    margin: auto;
-    text-align: center;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  text-align: top;
+  margin-top: 50px;
+  height: 80vh;
+  width: 60vw;
+}
 
-    background-color: rgba(255, 255, 255, 0.1); 
-    border-radius: 20px; 
-    width: 25vw; 
-    height: 12vh;
-    padding: 20px;
-    color: white;
-    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2); 
-    transition: transform 0.3s ease-in-out;
+h1 {
+  font-size: 2rem;
+  margin-top: 10%;
+}
 
-    /* Glass effect */
-    background: linear-gradient(142deg, rgba(255, 255, 255, 0.16) 3.1%, rgba(255, 255, 255, 0.12) 97.88%);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.56);
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-  }
-  
-  .input-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 20px;
-  }
-  
-  .input-section input {
-    font-size: 1.5rem;
-    padding: 10px;
-    width: 26vw;
-    text-align: center;
-    margin: auto;
-    
-    background-color: #452F4C; 
-    border-radius: 10px; 
-    border: 1px solid rgba(255, 255, 255, 0.56);
-    color: white;
-    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2); 
-    transition: transform 0.3s ease-in-out;
-    
-  }
-  
-  .input-section button {
-    font-size: 1.2rem;
-    padding: 10px 20px;
-    cursor: pointer;
-    margin-top: 2%; 
+.game-info {
+  margin: 4%;
+  font-size: 1.2rem;
+  font-weight: 200;
+  word-spacing: 4px;
+}
 
-    border-radius: 10px;
-    border: 1px solid rgba(255, 255, 255, 0.56);
-    background: #643392;
-    box-shadow: 0px 4px 24px -1px rgba(0, 0, 0, 0.20);
-    backdrop-filter: blur(20px);
-  }
+.number-display {
+  font-size: 2rem;
+  margin-top: 10px;
+  margin: auto;
+  text-align: center;
+  display: flex;
+  flex-direction: column; /* Stack elements vertically */
+  justify-content: center;
+  align-items: center;
+
+  background-color: rgba(255, 255, 255, 0.1); 
+  border-radius: 20px; 
+  width: 25vw; 
+  height: 12vh;
+  padding: 20px;
+  color: white;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2); 
+  transition: transform 0.3s ease-in-out;
+
+  /* Glass effect */
+  background: linear-gradient(142deg, rgba(255, 255, 255, 0.16) 3.1%, rgba(255, 255, 255, 0.12) 97.88%);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.56);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.input-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.input-section input {
+  font-size: 1.5rem;
+  padding: 10px;
+  width: 26vw;
+  text-align: center;
+  margin: auto;
   
-  .game-over {
-    margin-top: 20px;
-  }
-  
-  
+  background-color: #452F4C; 
+  border-radius: 10px; 
+  border: 1px solid rgba(255, 255, 255, 0.56);
+  color: white;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2); 
+  transition: transform 0.3s ease-in-out;
+}
+
+.input-section button {
+  font-size: 1.2rem;
+  padding: 10px 20px;
+  cursor: pointer;
+  margin-top: 2%; 
+
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.56);
+  background: #643392;
+  box-shadow: 0px 4px 24px -1px rgba(0, 0, 0, 0.20);
+  backdrop-filter: blur(20px);
+}
+
+.progress-bar-container {
+  display: flex;
+  justify-content: center; /* Center items horizontally */
+  width: 40%; 
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+  height: 10px;
+  margin: 10px auto; /* Center the container horizontally */
+}
+
+.progress-bar {
+  background-color: #ff6347;
+  height: 100%;
+  border-radius: 10px;
+  transition: width 0.1s linear; /* For smooth transition */
+}
+
+.number-display p {
+  font-size: 1.5rem;
+  color: white;
+  margin-bottom: 10px; /* Space between the number and the progress bar */
+}
+
+.game-over {
+  margin-top: 20px;
+}
