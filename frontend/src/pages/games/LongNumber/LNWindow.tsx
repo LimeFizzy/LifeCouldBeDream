@@ -58,7 +58,11 @@ export const LNWindow: React.FC = () => {
 
   return (
     <div className="game-container">
-      <h1>Number Memory Game</h1>
+      <h1>Long Number Memory</h1>
+
+      <div className="game-info">
+        <p>Level: {level} | Score: {score}</p>
+      </div>
 
       {isGameOver ? (
         <div className="game-over">
@@ -68,7 +72,7 @@ export const LNWindow: React.FC = () => {
       ) : (
         <div>
           <div className="number-display">
-            {isShowingNumber ? <p>{numberToMemorize}</p> : <p>Remember the number...</p>}
+            {isShowingNumber ? <p>{numberToMemorize}</p> : <p>Time is up</p>}
           </div>
 
           {!isShowingNumber && (
@@ -82,11 +86,6 @@ export const LNWindow: React.FC = () => {
               <button onClick={handleSubmit}>Submit</button>
             </div>
           )}
-
-          <div className="game-info">
-            <p>Level: {level}</p>
-            <p>Score: {score}</p>
-          </div>
         </div>
       )}
     </div>
