@@ -17,42 +17,39 @@ export const LNWindow: React.FC = () => {
         const response = await fetch(`http://localhost:5217/api/longnumber/generate-sequence/${level}`);
         const data = await response.json();
 
-        const { sequence, timeLimit } = data;
+        const { sequence} = data;
         setNumberToMemorize(sequence.join(''));
         setUserInput('');
         setIsShowingNumber(true);
-        setTimeRemaining(100);
+        setTimeRemaining(100);      // IMPORTANT, with this progress bar does not start from the middle, then jump to the outside, with each next round
 
+        let countdownValue = 100;
         const countdownInterval = setInterval(() => {
-            setTimeRemaining((prevTime) => {
-                if (prevTime <= 1) {
-                    clearInterval(countdownInterval);
-                    return 0;
-                }
-                return prevTime - 1;
-            });
-        }, (timeLimit * 1000) / 100); // Adjust based on backend timeLimit
+            countdownValue -= 1;
+            setTimeRemaining(countdownValue);
 
-        setTimeout(() => {
-            setIsShowingNumber(false);
-            clearInterval(countdownInterval); // Ensure it clears after the sequence is hidden
-        }, timeLimit * 1000);
+            if (countdownValue <= 0) {
+                clearInterval(countdownInterval);
+                setIsShowingNumber(false);
+            }
+        }, 50);
+
     } catch (error) {
         console.error('Error fetching sequence:', error);
     }
 };
 
 
+
   // Function to check the user's input
   const handleSubmit = async () => {
     try {
-      // Submit user's input to the backend
       const response = await fetch('http://localhost:5217/api/longnumber/submit-score', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           username: 'Player1',
-          guessedSequence: userInput.split('').map(Number), // Convert user input string to array of numbers
+          guessedSequence: userInput.split('').map(Number), 
           correctSequence: numberToMemorize.split('').map(Number),
           level
         })
@@ -61,7 +58,7 @@ export const LNWindow: React.FC = () => {
       const data = await response.json();
       if (data.score > 0) {
         setScore(score + 1);
-        setLevel(level + 1); // Increase the level (longer number)
+        setLevel(level + 1); 
         startNewRound(); // Start next round
       } else {
         setIsGameOver(true); // Game over if the input is wrong

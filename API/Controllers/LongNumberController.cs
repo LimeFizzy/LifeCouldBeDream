@@ -24,11 +24,11 @@ namespace API.Controllers
         public IActionResult GenerateSequence(int level)
         {
             var random = new Random();
-            int numberOfDigits = level; // Each level increases the number of digits by 1
+            int numberOfDigits = level; 
             var sequence = Enumerable.Range(0, numberOfDigits).Select(_ => random.Next(0, 9)).ToArray();
 
-            // Calculate time limit (start with 3 seconds, +1 second per level)
-            int timeLimit = 3 + level - 1;
+            
+            int timeLimit = 3 + level - 1;      // Calculate time limit 
 
             return Ok(new { Sequence = sequence, TimeLimit = timeLimit });
         }
@@ -37,10 +37,10 @@ namespace API.Controllers
         [HttpPost("submit-score")]
         public async Task<IActionResult> SubmitScore([FromBody] ScoreSubmission submission)
         {
-            // Assume the correct sequence was generated on the client side or saved in session
+            
             var correctSequence = submission.CorrectSequence; // Replace with actual storage/retrieval logic
 
-            // Calculate score based on correct input
+           
             int score = CalculateScore(submission.GuessedSequence, correctSequence, submission.Level);
 
             // Save the user score
@@ -58,7 +58,6 @@ namespace API.Controllers
 
         private int CalculateScore(int[] guessed, int[] correct, int level)
         {
-            // Each level passed gives the player 1 point
             bool isCorrect = guessed.SequenceEqual(correct);
             return isCorrect ? level : 0;
         }
