@@ -32,7 +32,7 @@ export const LNWindow: React.FC = () => {
                 clearInterval(countdownInterval);
                 setIsShowingNumber(false);
             }
-        }, 50);
+        }, 50); // IMPORTANAT, 50ms is the delay for render. 
 
     } catch (error) {
         console.error('Error fetching sequence:', error);
