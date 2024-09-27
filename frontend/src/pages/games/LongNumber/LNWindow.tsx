@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'; // Import React library w 2 hooks
+import React, { useState, useEffect } from 'react';
 import './LNWindow.css';
 
 export const LNWindow: React.FC = () => {
@@ -10,56 +10,65 @@ export const LNWindow: React.FC = () => {
   const [score, setScore] = useState<number>(0); // Player's score
   const [timeRemaining, setTimeRemaining] = useState<number>(100); // Time remaining for the progress bar
 
-  const numberDisplayDuration = 3000; // 3 s
-
-  // Function to generate a random number of given length
-  const generateRandomNumber = (length: number) => {
-    let number = '';
-    for (let i = 0; i < length; i++) {
-      number += Math.floor(Math.random() * 10); // Generates a random digit between 0 and 9
-    }
-    return number;
-  };
 
   // Function to start a new round
-  const startNewRound = () => {
-    const newNumber = generateRandomNumber(level);
-    setNumberToMemorize(newNumber);
-    setUserInput('');
-    setIsShowingNumber(true);
-    setTimeRemaining(100); // Like 100% of progress bar is remaining
+  const startNewRound = async () => {
+    try {
+        const response = await fetch(`http://localhost:5217/api/longnumber/generate-sequence/${level}`);
+        const data = await response.json();
 
-    // Countdown for the progress bar
-    const countdownInterval = setInterval(() => {
-      setTimeRemaining((prevTime) => {
-        if (prevTime > 0) {
-          return prevTime - 1;
-        } else {
-          clearInterval(countdownInterval);
-          return 0;
-        }
-      });
-    }, numberDisplayDuration / 100); // 100 updates over the duration (smooth progress bar)
+        const { sequence, timeLimit } = data;
+        setNumberToMemorize(sequence.join(''));
+        setUserInput('');
+        setIsShowingNumber(true);
+        setTimeRemaining(100);
 
-    // After the numberDisplayDuration, hide the number and show the input field
-    setTimeout(() => {
-      setIsShowingNumber(false);
-    }, numberDisplayDuration);
-  };
+        const countdownInterval = setInterval(() => {
+            setTimeRemaining((prevTime) => {
+                if (prevTime <= 1) {
+                    clearInterval(countdownInterval);
+                    return 0;
+                }
+                return prevTime - 1;
+            });
+        }, (timeLimit * 1000) / 100); // Adjust based on backend timeLimit
 
-  // Handle user's input change
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setUserInput(e.target.value);
-  };
+        setTimeout(() => {
+            setIsShowingNumber(false);
+            clearInterval(countdownInterval); // Ensure it clears after the sequence is hidden
+        }, timeLimit * 1000);
+    } catch (error) {
+        console.error('Error fetching sequence:', error);
+    }
+};
+
 
   // Function to check the user's input
-  const handleSubmit = () => {
-    if (userInput === numberToMemorize) {
-      setScore(score + 1);
-      setLevel(level + 1); // Increase the level (longer number)
-      startNewRound(); // Start next round
-    } else {
-      setIsGameOver(true); // Game over if the input is wrong
+  const handleSubmit = async () => {
+    try {
+      // Submit user's input to the backend
+      const response = await fetch('http://localhost:5217/api/longnumber/submit-score', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: 'Player1',
+          guessedSequence: userInput.split('').map(Number), // Convert user input string to array of numbers
+          correctSequence: numberToMemorize.split('').map(Number),
+          level
+        })
+      });
+
+      const data = await response.json();
+      if (data.score > 0) {
+        setScore(score + 1);
+        setLevel(level + 1); // Increase the level (longer number)
+        startNewRound(); // Start next round
+      } else {
+        setIsGameOver(true); // Game over if the input is wrong
+      }
+
+    } catch (error) {
+      console.error('Error submitting score:', error);
     }
   };
 
@@ -84,28 +93,26 @@ export const LNWindow: React.FC = () => {
         <p>Level: {level} | Score: {score}</p>
       </div>
 
-      {/* As game goes on, there are 2 option */}
-      {/* If game is over this gives Restart button */}
-      {isGameOver ? ( 
+      {/* If game is over, display Restart button */}
+      {isGameOver ? (
         <div className="game-over">
           <p>Game Over! Your Score: {score}</p>
           <button onClick={restartGame}>Restart</button>
         </div>
-      ) : ( 
-        // Else it displays a number or prompts that time is up
+      ) : (
         <div>
           <div className="number-display">
             {isShowingNumber ? (
               <>
-                <p>Remember the number:</p> {/* New line for the prompt */}
-                <p className="number" style={{ marginTop: '5px' }}>{numberToMemorize}</p> {/* The number itself with margin for spacing */}
+                <p>Remember the number:</p>
+                <p className="number" style={{ marginTop: '5px' }}>{numberToMemorize}</p>
               </>
             ) : (
               <p>Time is up</p>
             )}
           </div>
 
-          {/* Just for the progress bar */}
+          {/* Progress bar */}
           {isShowingNumber && (
             <div className="progress-container">
               <div className="progress-bar-container">
@@ -117,16 +124,17 @@ export const LNWindow: React.FC = () => {
             </div>
           )}
 
-          {/* When number is hidden this gives input field and Submit button */}
+          {/* When number is hidden, display input field and Submit button */}
           {!isShowingNumber && (
             <div className="input-section">
               <input
                 type="text"
                 value={userInput}
-                onChange={handleInputChange}
+                onChange={e => setUserInput(e.target.value)}
                 placeholder="Enter the number"
               />
-              <button onClick={handleSubmit}>Submit</button>
+              <button type="button" onClick={handleSubmit}>Submit</button>
+
             </div>
           )}
         </div>
