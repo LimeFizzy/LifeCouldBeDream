@@ -1,0 +1,98 @@
+.leaderboard-tile {
+    margin-top: 8rem;
+    margin-bottom: 3rem;
+    background-color: rgba(255, 255, 255, 0.1); 
+    border-radius: 20px; 
+    min-width: 70rem; 
+    min-height: 30rem;
+    padding: 20px;
+    text-align: center;
+    color: white;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2); 
+
+    /* Glass effect */
+    background: linear-gradient(13deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.leaderboard-settings {
+    display: flex;
+    flex-direction: row;
+    justify-content: center; 
+    align-items: center; 
+    gap: 1rem;
+}
+
+.choose-game-text {
+    font-weight: bold;
+}
+
+.leaderboard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .columns-info {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    padding: 10px;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.5);
+}
+
+.columns-info span,
+.leaderboard-row span {
+    flex: 1; 
+    padding: 0 10px;
+    text-align: center;
+}
+
+.columns-info span:nth-child(1),
+.leaderboard-row span:nth-child(1) {
+    max-width: 10%; /* Nr */
+}
+
+.columns-info span:nth-child(2),
+.leaderboard-row span:nth-child(2) {
+    max-width: 40%; /* Username */
+}
+
+.columns-info span:nth-child(3),
+.leaderboard-row span:nth-child(3) {
+    max-width: 30%; /* Result */
+}
+
+.columns-info span:nth-child(4),
+.leaderboard-row span:nth-child(4) {
+    max-width: 20%; /* Date */
+}
+
+.columns-info span + span {
+    border-left: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.leaderboard-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    color: white;
+    font-size: 16px;
+    text-align: center;
+    padding: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2); 
+}
+
+.leaderboard-row span + span {
+    border-left: 1px solid rgba(255, 255, 255, 0.2); 
+}

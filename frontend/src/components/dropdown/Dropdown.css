@@ -1,0 +1,15 @@
+.custom-select {
+    appearance: none; 
+    background: linear-gradient(243deg, #4E3C6A, #6F618A); /* Gradient background */
+    color: white;
+    font-size: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 30px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2); 
+    padding: 0.5rem 1.5rem;
+    cursor: pointer;
+    outline: none;
+    transition: 0.3s ease;
+}
+
+  
