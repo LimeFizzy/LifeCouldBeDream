@@ -8,6 +8,7 @@ import { LongNumber } from './pages/games/LongNumber';
 import { ChimpTest } from './pages/games/ChimpTest';
 import { Sequence } from './pages/games/Sequence';
 import BackgroundWrapper from './BackgroundWrapper';
+import { Leaderboard } from './pages/Leaderboard/Leaderboard';
 
 export const App = () => {
   return (
@@ -18,6 +19,7 @@ export const App = () => {
         <Route path="/" element={<Home />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/login" element={<LogIn />} />
+        <Route path="/leaderboard" element={<Leaderboard />} />
         <Route path='/longNumber' element={<LongNumber />} />
         <Route path='/chimpTest' element={<ChimpTest />} />
         <Route path='/sequence' element={<Sequence />} />
