@@ -1,8 +1,6 @@
-using System;
-
 namespace API.Models
 {
-    public class UserScore
+    public record UserScore
     {
         public int Id { get; set; }
         public required string Username { get; set; }

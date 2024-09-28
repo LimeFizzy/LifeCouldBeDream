@@ -8,6 +8,7 @@
 h1 {
   font-size: 2rem;
   margin-top: 10%;
+  color: white;
 }
 
 .game-info {
@@ -15,6 +16,7 @@ h1 {
   font-size: 1.2rem;
   font-weight: 200;
   word-spacing: 4px;
+  color: white;
 }
 
 .number-display {
@@ -103,5 +105,6 @@ h1 {
 }
 
 .game-over {
+  color: white;
   margin-top: 20px;
 }
