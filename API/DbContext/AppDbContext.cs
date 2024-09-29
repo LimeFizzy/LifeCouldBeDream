@@ -6,9 +6,12 @@ public class AppDbContext : DbContext
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) {}
 
     public DbSet<GameDTO> Games { get; set; }
+    public DbSet<UserScore> UserScores { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<UserScore>().HasKey(u => u.Id);     // User ID creation
+
         modelBuilder.Entity<GameDTO>()
         .HasKey(g => g.GameID);
 
