@@ -26,8 +26,16 @@ const chimpRes: Result[] = [
   { nr: 3, username: "Player9", result: "850", date: "2023-09-18" },
 ];
 
+enum GameTypes {
+  LONG_NUMBER = "Long number memory",
+  SEQUENCE = "Sequence memory",
+  CHIMP = "Chimp test",
+}
+
 export const Leaderboard = () => {
-  const [selectedGame, setSelectedGame] = useState("Long number memory");
+  const [selectedGame, setSelectedGame] = useState(
+    GameTypes.LONG_NUMBER as string
+  );
 
   const handleGameSelection = useCallback((value: string) => {
     setSelectedGame(value);
@@ -35,11 +43,11 @@ export const Leaderboard = () => {
 
   const results: Result[] = (() => {
     switch (selectedGame) {
-      case "Long number memory":
+      case GameTypes.LONG_NUMBER:
         return longNumRes;
-      case "Chimp test":
+      case GameTypes.CHIMP:
         return chimpRes;
-      case "Sequence memory":
+      case GameTypes.SEQUENCE:
         return sequenceRes;
       default:
         return [];
