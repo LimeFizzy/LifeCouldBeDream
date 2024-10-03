@@ -1,16 +1,24 @@
 using Microsoft.EntityFrameworkCore;
 using API.Models;
 
+namespace API.Data;
 public class AppDbContext : DbContext
 {
-    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) {}
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
     public DbSet<GameDTO> Games { get; set; }
     public DbSet<UserScore> UserScores { get; set; }
+    public DbSet<User> Users { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<UserScore>().HasKey(u => u.Id);     // User ID creation
+
+        modelBuilder.Entity<User>().HasKey(u => u.UserId);
+        // .HasMany(u => u.Scores)
+        // .WithOne(s => s.User)
+        // .HasForeignKey(u => u.UserId)
+        // .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<GameDTO>()
         .HasKey(g => g.GameID);
@@ -24,20 +32,20 @@ public class AppDbContext : DbContext
             .HasMaxLength(100);
 
         modelBuilder.Entity<GameDTO>()
-            .Property(g => g.Description)
-            .HasMaxLength(500);
+             .Property(g => g.Description)
+             .HasMaxLength(500);
 
         modelBuilder.Entity<GameDTO>()
             .HasData(
                 new GameDTO
-            {
-                GameID = 1,
-                Title = "Long number memory",
-                Description = "Memorize as many digits of a long number as possible.",
-                Icon = "src/assets/longNumberIcon.svg",
-                AltText = "Long number memory icon",
-                Route = "/longNumber",
-            },
+                {
+                    GameID = 1,
+                    Title = "Long number memory",
+                    Description = "Memorize as many digits of a long number as possible.",
+                    Icon = "src/assets/longNumberIcon.svg",
+                    AltText = "Long number memory icon",
+                    Route = "/longNumber",
+                },
             new GameDTO
             {
                 GameID = 2,
