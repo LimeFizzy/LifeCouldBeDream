@@ -18,6 +18,12 @@ public class AuthController(AppDbContext context, AuthService authService) : Con
     public async Task<ActionResult<User>> Register(UserDto userDto)
     {
 
+        var existingUser = await _context.Users.AnyAsync(u => u.Username == userDto.Username);
+        if (existingUser)
+        {
+            return BadRequest("Username is already taken.");
+        }
+
         if (string.IsNullOrEmpty(userDto.Password))
         {
             return BadRequest("Password cannot be empty.");
