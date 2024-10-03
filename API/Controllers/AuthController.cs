@@ -17,10 +17,6 @@ public class AuthController(AppDbContext context, AuthService authService) : Con
     [HttpPost("register")]
     public async Task<ActionResult<User>> Register(UserDto userDto)
     {
-        if (await _context.Users.AnyAsync(u => u.Email == userDto.Email))
-        {
-            return BadRequest("Email is already registered");
-        }
 
         if (string.IsNullOrEmpty(userDto.Password))
         {
@@ -31,8 +27,7 @@ public class AuthController(AppDbContext context, AuthService authService) : Con
 
         var user = new User
         {
-            Name = userDto.Name,
-            Email = userDto.Email,
+            Username = userDto.Username,
             PasswordHash = hashedPassword
         };
 
@@ -45,10 +40,10 @@ public class AuthController(AppDbContext context, AuthService authService) : Con
     [HttpPost("login")]
     public async Task<ActionResult<string>> Login(LoginDto loginDto)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == loginDto.Email);
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == loginDto.Username);
         if (user == null)
         {
-            return Unauthorized("Invalid email or password");
+            return Unauthorized("User doesn't exist");
         }
 
         var isValidPassword = _authService.VerifyPassword(loginDto.Password, user.PasswordHash);
@@ -57,7 +52,7 @@ public class AuthController(AppDbContext context, AuthService authService) : Con
             return Unauthorized("Invalid email or password");
         }
 
-        return Ok(user.Name);
+        return Ok(user.Username);
     }
 
     [HttpGet("{id}")]
