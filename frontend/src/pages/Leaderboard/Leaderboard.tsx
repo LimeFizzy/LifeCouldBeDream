@@ -9,17 +9,6 @@ interface Result {
   date: string;
 }
 
-const sequenceRes: Result[] = [
-  { nr: 1, username: "Player4", result: "1000", date: "2023-09-20" },
-  { nr: 2, username: "Player5", result: "900", date: "2023-09-19" },
-  { nr: 3, username: "Player6", result: "850", date: "2023-09-18" },
-];
-const chimpRes: Result[] = [
-  { nr: 1, username: "Player7", result: "1000", date: "2023-09-20" },
-  { nr: 2, username: "Player8", result: "900", date: "2023-09-19" },
-  { nr: 3, username: "Player9", result: "850", date: "2023-09-18" },
-];
-
 enum GameTypes {
   LONG_NUMBER = "Long number memory",
   SEQUENCE = "Sequence memory",
@@ -27,24 +16,25 @@ enum GameTypes {
 }
 
 export const Leaderboard = () => {
-  const [selectedGame, setSelectedGame] = useState(
-    GameTypes.LONG_NUMBER as string
-  );
-  const [longNumRes, setLongNumRes] = useState<Result[]>([]);
+  const [selectedGame, setSelectedGame] = useState(GameTypes.LONG_NUMBER as string);
+  const [results, setResults] = useState<Result[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   // Fetch the leaderboard data for Long Number from the API
   const fetchLongNumberLeaderboard = async () => {
     try {
-      const response = await fetch("https://localhost:5001/api/UserScore/leaderboard");
-
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
+      const response = await fetch("http://localhost:5173/api/UserScore/leaderboard");
+  
+      // Check if the content-type is JSON before parsing
+      const contentType = response.headers.get("content-type");
+      if (!response.ok || !contentType || !contentType.includes("application/json")) {
+        const textResponse = await response.text();  // Try to read as text to diagnose HTML response
+        throw new Error(`Unexpected response: ${textResponse}`);
       }
-
+  
       const data = await response.json();
-      
+  
       // Format the data received from the API
       const formattedData = data.map((item: any, index: number) => ({
         nr: index + 1, // start numbering from 1
@@ -52,9 +42,9 @@ export const Leaderboard = () => {
         result: item.score.toString(), // score to string
         date: new Date(item.gameDate).toLocaleDateString(), // Format the date
       }));
-
+  
       // Update state with the formatted data
-      setLongNumRes(formattedData);
+      setResults(formattedData);
       setLoading(false);
     } catch (error) {
       console.error("Error fetching long number leaderboard:", error);
@@ -63,7 +53,7 @@ export const Leaderboard = () => {
     }
   };
 
-  // Fetch the long number leaderboard data on component mount
+  // Fetch the leaderboard data when the selected game changes
   useEffect(() => {
     if (selectedGame === GameTypes.LONG_NUMBER) {
       fetchLongNumberLeaderboard();
@@ -74,19 +64,6 @@ export const Leaderboard = () => {
     setSelectedGame(value);
   }, []);
 
-  const results: Result[] = (() => {
-    switch (selectedGame) {
-      case GameTypes.LONG_NUMBER:
-        return longNumRes;
-      case GameTypes.SEQUENCE:
-        return sequenceRes;
-      case GameTypes.CHIMP:
-        return chimpRes;
-      default:
-        return [];
-    }
-  })();
-
   return (
     <div className="leaderboard-tile">
       <div className="leaderboard-settings">
@@ -94,7 +71,7 @@ export const Leaderboard = () => {
         <Dropdown onSelectChange={handleGameSelection} />
       </div>
 
-      {loading && selectedGame === GameTypes.LONG_NUMBER ? (
+      {loading ? (
         <p>Loading...</p>
       ) : error ? (
         <p>{error}</p>

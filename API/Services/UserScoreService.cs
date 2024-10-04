@@ -1,4 +1,4 @@
-using API.Data;
+//using API.Data;
 using API.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,10 +14,9 @@ namespace API.Services
         }
 
         // Get the leaderboard (All scores)
-        public IEnumerable<UserScore> GetLeaderboard()
+        public async Task<IEnumerable<UserScore>> GetLeaderboard()
         {
-            // Get user scores from the database
-            return _dbContext.UserScores.AsNoTracking();  
+            return await _dbContext.UserScores.AsNoTracking().ToListAsync();
         }
     }
 }
