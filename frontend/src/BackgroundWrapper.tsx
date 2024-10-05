@@ -29,6 +29,9 @@ export const BackgroundWrapper: React.FC<BackgroundWrapperProps> = ({
     } else if (location.pathname === "/login") {
       document.body.style.background =
         "linear-gradient(71deg, #202020 -8.45%, #3D206D 18.41%, #4B18A1 52.21%, #3D206D 83.88%, #202020 104.2%)";
+    } else if (location.pathname === "/AccountSettings") {
+      document.body.style.background =
+        "linear-gradient(0deg, #202020 -25.23%, #4B2884 2.94%, #410F92 50.65%, #3E1F70 91.18%, #202020 126.94%)";
     } else {
       document.body.style.backgroundImage =
         'url("/src/assets/BackGround_Bright.jpeg")';
