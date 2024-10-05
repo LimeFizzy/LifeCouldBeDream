@@ -1,12 +1,20 @@
-import {Tile} from '../../components/tile/Tile'; 
-
+import { UserTile } from '../../components/usertile/UserTile';
+import './LogIn.css'
 
 export const LogIn = () => {
-    return (
-        <div className="tiles-container">
-        
-        <Tile icon={''} altText={''} title={''} description={''} route={''}/>
+  return (
+    <UserTile>
+      <h1>Log In</h1>
+      <div className="login-input-container">
+        <label>Username</label>
+        <input type="text"/>
 
-        </div>
-    )
-}
+        <label>Password</label>
+        <input type="password" />    
+        
+        <button type="button">Log In</button>
+      </div>
+    </UserTile>
+  );
+};
+  

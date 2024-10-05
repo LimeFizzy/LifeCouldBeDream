@@ -6,7 +6,7 @@ export const SignIn = () => {
   return (
     <UserTile>
       <h1>Sign In</h1>
-      <div className="input-container">
+      <div className="signin-input-container">
         <label>Username</label>
         <input type="text"/>
 
