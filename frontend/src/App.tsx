@@ -1,8 +1,8 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
 import { Home } from "./pages/Home/Home";
-import { SignUp } from "./pages/SignUp";
-import { LogIn } from "./pages/LogIn";
+import { SignIn } from "./pages/Sign In/SignIn";
+import { LogIn } from "./pages/Log In/LogIn";
 import Navbar from "./components/navbar/Navbar";
 import { LNWindow } from "./pages/games/LongNumber/LNWindow";
 import { ChimpTest } from "./pages/games/ChimpTest";
@@ -17,7 +17,7 @@ export const App = () => {
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/signup" element={<SignUp />} />
+          <Route path="/signup" element={<SignIn />} />
           <Route path="/login" element={<LogIn />} />
           <Route path="/longNumber" element={<LNWindow />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
