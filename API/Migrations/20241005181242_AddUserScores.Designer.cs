@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241005123102_AddProfileImagePathToUser")]
-    partial class AddProfileImagePathToUser
+    [Migration("20241005181242_AddUserScores")]
+    partial class AddUserScores
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
