@@ -16,15 +16,15 @@ namespace API.Controllers
 
         // Fetch leaderboard
         [HttpGet("leaderboard")]
-        public async Task<IActionResult> GetLeaderboard(int top = 10) 
+        public IActionResult GetLeaderboard(int top = 10)
         {
             try {
-                var leaderboard = (await _userScoreService.GetLeaderboard())
+                var leaderboard = _userScoreService.GetLeaderboard()
                                 .OrderByDescending(score => score.Score)
                                 .Take(top)
                                 .ToList();
 
-                return Ok(leaderboard);
+            return Ok(leaderboard);
             } catch (Exception ex) {
                 return StatusCode(500, "An error occurred while fetching the leaderboard:" + ex);
             }

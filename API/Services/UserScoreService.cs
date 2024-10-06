@@ -1,10 +1,9 @@
-//using API.Data;
 using API.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Services
 {
-    public class UserScoreService
+    public class UserScoreService : IUserScoreService
     {
         private readonly AppDbContext _dbContext;
 
@@ -12,11 +11,10 @@ namespace API.Services
         {
             _dbContext = dbContext;
         }
-
-        // Get the leaderboard (All scores)
-        public async Task<IEnumerable<UserScore>> GetLeaderboard()
+        public IEnumerable<UserScore> GetLeaderboard()
         {
-            return await _dbContext.UserScores.AsNoTracking().ToListAsync();
+            // Get user scores from the database
+            return _dbContext.UserScores.AsNoTracking();
         }
     }
 }
