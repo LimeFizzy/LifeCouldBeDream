@@ -24,7 +24,7 @@ export const Leaderboard = () => {
   // Fetch the leaderboard data for Long Number from the API
   const fetchLongNumberLeaderboard = async () => {
     try {
-      const response = await fetch("http://localhost:5173/api/UserScore/leaderboard");
+      const response = await fetch("http://localhost:5217/api/UserScore/leaderboard");
   
       // Check if the content-type is JSON before parsing
       const contentType = response.headers.get("content-type");
