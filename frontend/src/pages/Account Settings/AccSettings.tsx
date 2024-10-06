@@ -6,26 +6,36 @@ export const AccSettings = () => {
 
   const [usernameStatus, setUsernameStatus] = useState('Test Username');
   const [passwordStatus, setPasswordStatus] = useState('Test Password');
-  const [image, setImage] = useState<string | null>(null); 
+  const [image, setImage] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploadStatus, setUploadStatus] = useState<string>('');
+  const [userId, setUserId] = useState<number | null>(null);
 
-   // Fetch the profile image when the component loads
-   useEffect(() => {
-    const fetchProfileImage = async () => {
-      try {
-        const response = await fetch(`/api/user/1/profile-image`); // Replace 1 with the actual user ID
-        if (response.ok) {
-          const imageBlob = await response.blob();
-          const imageUrl = URL.createObjectURL(imageBlob);
-          setImage(imageUrl);
-        }
-      } catch (error) {
-        console.error('Error fetching profile image:', error);
-      }
-    };
-    fetchProfileImage();
+
+  // Fetch the userId from localStorage when the component loads
+  useEffect(() => {
+    const storedUserId = localStorage.getItem('userId');
+    if (storedUserId) {
+      setUserId(Number(storedUserId));
+      fetchProfileImage(Number(storedUserId));
+    }
   }, []);
+
+
+  // Fetch the profile image for the logged-in user
+  const fetchProfileImage = async (userId: number) => {
+    try {
+      const response = await fetch(`http://localhost:5217/api/user/${userId}/profile-image`);
+      if (response.ok) {
+        const imageBlob = await response.blob();
+        const imageUrl = URL.createObjectURL(imageBlob);
+        setImage(imageUrl);
+      }
+    } catch (error) {
+      console.error('Error fetching profile image:', error);
+    }
+  };
+
 
   // Handle file selection
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -33,30 +43,30 @@ export const AccSettings = () => {
     if (file) {
       setSelectedFile(file);
       const imageUrl = URL.createObjectURL(file);
-      setImage(imageUrl);  // Display a preview of the image
+      setImage(imageUrl);
     }
   };
 
+  
   // Handle file upload
   const handleUpload = async () => {
-    if (!selectedFile) {
-      setUploadStatus("No file selected.");
+    if (!selectedFile || !userId) {
+      setUploadStatus("No file selected or user not logged in.");
       return;
     }
-
+  
     const formData = new FormData();
     formData.append("profileImage", selectedFile);
-
+  
     try {
-      const response = await fetch(`/api/user/upload-profile-image/1`, { // Replace 1 with the actual user ID
+      const response = await fetch(`http://localhost:5217/api/user/upload-profile-image/${userId}`, {
         method: "POST",
         body: formData,
       });
-
+  
       if (response.ok) {
-        const data = await response.json();
         setUploadStatus("Image uploaded successfully!");
-        setImage(data.ProfileImagePath);  // You can fetch this if it's served directly from your backend
+        fetchProfileImage(userId); 
       } else {
         setUploadStatus("Failed to upload image.");
       }

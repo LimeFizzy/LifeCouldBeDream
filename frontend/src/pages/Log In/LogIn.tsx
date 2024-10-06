@@ -6,6 +6,8 @@ export const LogIn = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
+
+
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
 
@@ -21,7 +23,10 @@ export const LogIn = () => {
         }),
       });
 
-      if (response.ok) {
+       if (response.ok) {
+        const data = await response.json();  // **Extract userId and username**
+        localStorage.setItem('userId', data.userId);  // **Store userId in localStorage**
+        localStorage.setItem('username', data.username);  // **Store username in localStorage**
         setMessage('Login successful!');
       } else {
         const errorText = await response.text();
