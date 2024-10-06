@@ -6,7 +6,7 @@ export const SignIn: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [repeatPassword, setRepeatPassword] = useState('');
-  const [usernameStatus, setUsernameStatus] = useState('');
+  const [usernameStatus] = useState('');
   const [passwordStatus, setPasswordStatus] = useState('');
   const [message, setMessage] = useState('');
 
@@ -42,7 +42,7 @@ export const SignIn: React.FC = () => {
     }
   };
 
-  
+
   return (
     <UserTile>
       <h1>Sign In</h1>
@@ -69,7 +69,7 @@ export const SignIn: React.FC = () => {
             value={repeatPassword}
             onChange={(e) => setRepeatPassword(e.target.value)}
           />
-          <div className="status-message">{passwordStatus}</div>
+          <div className="password-status-message">{passwordStatus}</div>
         </div>
         
         <button onClick={handleRegister}>Register</button>

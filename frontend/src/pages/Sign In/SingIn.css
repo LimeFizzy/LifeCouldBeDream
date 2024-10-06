@@ -38,4 +38,13 @@
     display: block;
     margin-bottom: 5px;
   }
+
+  .password-status-message {
+    font-size: 18px;
+    color: white;
+    margin-top: -20px;
+    width: 94%;
+    text-align: left;
+  }
+  
   
