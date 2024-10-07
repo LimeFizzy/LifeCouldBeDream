@@ -43,6 +43,8 @@ export const LNWindow: React.FC = () => {
   };
 
   const handleSubmit = async () => {
+    const username = localStorage.getItem('username') || 'Unknown User'; // Fetch username from localStorage
+  
     try {
       const response = await fetch(
         `http://localhost:5217/api/longnumber/submit-score/longNumberMemory`,
@@ -50,14 +52,14 @@ export const LNWindow: React.FC = () => {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            username: "Player1",
+            username,  // Use the fetched username
             guessedSequence: userInput.split("").map(Number),
             correctSequence: numberToMemorize.split("").map(Number),
             level,
           }),
         }
       );
-
+  
       const data = await response.json();
       if (data.score > 0) {
         setScore(score + 1);

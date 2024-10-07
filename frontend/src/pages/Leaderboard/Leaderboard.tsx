@@ -45,8 +45,16 @@ export const Leaderboard = () => {
     GameTypes.LONG_NUMBER as string
   );
   const [results, setResults] = useState<Result[]>([]);
+  const [currentUsername, setCurrentUsername] = useState<string | null>(null);
 
+  
   useEffect(() => {
+    // Fetch username from localStorage
+    const storedUsername = localStorage.getItem('username');
+    if (storedUsername) {
+      setCurrentUsername(storedUsername);
+    }
+
     const updateLeaderboard = async () => {
       try {
         const data = await fetchLeaderboard(selectedGame);
