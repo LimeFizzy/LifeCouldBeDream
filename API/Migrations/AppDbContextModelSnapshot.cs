@@ -98,6 +98,9 @@ namespace API.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<string>("ProfileImagePath")
+                        .HasColumnType("longtext");
+
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasColumnType("longtext");

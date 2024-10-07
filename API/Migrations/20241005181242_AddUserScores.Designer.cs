@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241003113159_Users")]
-    partial class Users
+    [Migration("20241005181242_AddUserScores")]
+    partial class AddUserScores
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,7 +25,7 @@ namespace API.Migrations
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
-            modelBuilder.Entity("API.Models.GameDTO", b =>
+            modelBuilder.Entity("API.DTOs.GameDTO", b =>
                 {
                     b.Property<int>("GameID")
                         .ValueGeneratedOnAdd()
@@ -99,6 +99,9 @@ namespace API.Migrations
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("ProfileImagePath")
                         .HasColumnType("longtext");
 
                     b.Property<string>("Username")

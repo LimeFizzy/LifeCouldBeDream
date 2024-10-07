@@ -1,6 +1,6 @@
 namespace API.Models
 {
-    public record UserScore
+    public record UserScore 
     {
         public int Id { get; set; }
         public required string Username { get; set; }

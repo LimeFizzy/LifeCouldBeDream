@@ -58,7 +58,7 @@ public class AuthController(AppDbContext context, AuthService authService) : Con
             return Unauthorized("Invalid email or password");
         }
 
-        return Ok(user.Username);
+        return Ok(new { userId = user.UserId, username = user.Username });
     }
 
     [HttpGet("{id}")]
@@ -72,4 +72,5 @@ public class AuthController(AppDbContext context, AuthService authService) : Con
 
         return user;
     }
+
 }

@@ -1,0 +1,54 @@
+.user-tile-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 76px;
+    padding: 20px;
+  }
+
+  .image-upload-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 180px;
+  }
+  
+  .no-image {
+    width: 150px;
+    height: 150px;
+    border: 2px dashed rgba(255, 255, 255, 0.6);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+  
+  .profile-image {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-bottom: 20px;
+  }
+
+  .image-status-message {
+    margin-top: 15px;
+    color: white;
+    font-size: 18px;
+    text-align: center;
+  }
+
+  .username-display {
+    font-size: 24px;
+    font-weight: bold;
+    color: #ffffff;
+    margin-bottom: 20px;
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+    width: 100%;
+  }

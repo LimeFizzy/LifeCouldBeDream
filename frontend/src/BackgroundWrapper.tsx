@@ -23,6 +23,15 @@ export const BackgroundWrapper: React.FC<BackgroundWrapperProps> = ({
     } else if (location.pathname === "/leaderboard") {
       document.body.style.background =
         "linear-gradient(245deg, #202020 12.72%, #3D206D 58.76%, #46109F 98.47%, #7843A8 147.44%, #9856AC 175.55%)";
+    } else if (location.pathname === "/signup") {
+      document.body.style.background =
+        "linear-gradient(291deg, #202020 -11.12%, #3D206D 17.52%, #4B15A5 53.56%, #3D206D 85.61%, #202020 109%)";
+    } else if (location.pathname === "/login") {
+      document.body.style.background =
+        "linear-gradient(71deg, #202020 -8.45%, #3D206D 18.41%, #4B18A1 52.21%, #3D206D 83.88%, #202020 104.2%)";
+    } else if (location.pathname === "/AccountSettings") {
+      document.body.style.background =
+        "linear-gradient(0deg, #202020 -25.23%, #4B2884 2.94%, #410F92 50.65%, #3E1F70 91.18%, #202020 126.94%)";
     } else {
       document.body.style.backgroundImage =
         'url("/src/assets/BackGround_Bright.jpeg")';
