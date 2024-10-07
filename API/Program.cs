@@ -1,4 +1,5 @@
 using API.Services;
+using API.Data;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,6 +21,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddScoped<LongNumberService>();
 builder.Services.AddScoped<UserScoreService>();
+builder.Services.AddScoped<AuthService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
