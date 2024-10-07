@@ -4,9 +4,9 @@ import './AccSettings.css'
 
 export const AccSettings = () => {
   const [username, setUsername] = useState<string | null>('');
-  const [password, setPassword] = useState('');
-  const [repeatPassword, setRepeatPassword] = useState('');
-  const [passwordStatus, setPasswordStatus] = useState(''); 
+  const [password] = useState('');
+  const [repeatPassword] = useState('');
+  const [passwordStatus] = useState(''); 
   const [image, setImage] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploadStatus, setUploadStatus] = useState<string>('');
