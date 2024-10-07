@@ -5,6 +5,7 @@ namespace API.Models
         public int Id { get; set; }
         public required string Username { get; set; }
         public int Score { get; set; }
+        public string GameType { get; set; } = "";
         public DateTime GameDate { get; set; } = DateTime.Now;
     }
 }

@@ -7,39 +7,45 @@ namespace API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class LongNumberController(LongNumberService service) : ControllerBase
+    public class LongNumberController : ControllerBase
     {
-        private readonly LongNumberService _service = service;
+        private readonly LongNumberService _service;
 
-        // Endpoint to generate a sequence based on level
+        public LongNumberController(LongNumberService service)
+        {
+            _service = service;
+        }
+
         [HttpGet("generate-sequence/{level}")]
         public IActionResult GenerateSequence(int level)
         {
-            var random = new Random();
-            var sequence = random.GenerateRandomSequence(level);
+            var sequence = _service.GenerateSequence(level);
+            while (!sequence.IsValidSequence(level))
+            {
+                sequence = _service.GenerateSequence(level);
+            }
             int timeLimit = 3 + level - 1;
 
             return Ok(new { Sequence = sequence, TimeLimit = timeLimit });
         }
 
 
-        // Endpoint to submit user score and check if they got the sequence right
-        [HttpPost("submit-score")]
-        public async Task<IActionResult> SubmitScore([FromBody] ScoreSubmission submission)
+        [HttpPost("submit-score/{gameType}")]
+        public async Task<IActionResult> SubmitScore([FromBody] ScoreSubmission submission, string gameType)
         {
             if (!submission.GuessedSequence.IsValidSequence(submission.Level))
             {
                 return BadRequest(new { Message = "Invalid sequence." });
             }
 
-            var correctSequence = submission.CorrectSequence; // Replace with actual storage/retrieval logic
+            var correctSequence = submission.CorrectSequence;
             int score = _service.CalculateScore(submission.GuessedSequence, correctSequence, submission.Level);
 
-            // Save the user score
             var userScore = new UserScore
             {
                 Username = submission.Username,
-                Score = score
+                Score = score,
+                GameType = gameType
             };
 
             await _service.SaveScoreAsync(userScore);

@@ -20,6 +20,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     new MySqlServerVersion(new Version(8, 0, 21))));
 
 builder.Services.AddScoped<LongNumberService>();
+builder.Services.AddScoped<UserScoreService>();
 builder.Services.AddScoped<AuthService>();
 
 builder.Services.AddControllers();

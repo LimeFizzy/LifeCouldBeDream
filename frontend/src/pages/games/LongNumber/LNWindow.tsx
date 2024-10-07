@@ -3,45 +3,49 @@ import "./LNWindow.css";
 
 export const LNWindow: React.FC = () => {
   const [numberToMemorize, setNumberToMemorize] = useState<string>("");
-  const [userInput, setUserInput] = useState<string>("");
-  const [isShowingNumber, setIsShowingNumber] = useState<boolean>(true);
   const [level, setLevel] = useState<number>(1);
-  const [isGameOver, setIsGameOver] = useState<boolean>(false);
   const [score, setScore] = useState<number>(0);
   const [timeRemaining, setTimeRemaining] = useState<number>(100);
+  const [userInput, setUserInput] = useState<string>("");
+  const [isShowingNumber, setIsShowingNumber] = useState<boolean>(true);
+  const [isGameOver, setIsGameOver] = useState<boolean>(false);
+  const [isRoundInProgress, setIsRoundInProgress] = useState<boolean>(false);
 
   const startNewRound = async () => {
-    try {
-      const response = await fetch(
-        `http://localhost:5217/api/longnumber/generate-sequence/${level}`
-      );
-      const data = await response.json();
+    if (!isRoundInProgress) {
+      setIsRoundInProgress(true);
+      try {
+        const response = await fetch(
+          `http://localhost:5217/api/longnumber/generate-sequence/${level}`
+        );
+        const data = await response.json();
 
-      const { sequence } = data;
-      setNumberToMemorize(sequence.join(""));
-      setUserInput("");
-      setIsShowingNumber(true);
-      setTimeRemaining(100); // IMPORTANT, with this progress bar does not start from the middle, then jump to the outside, with each next round
+        const { sequence } = data;
+        setNumberToMemorize(sequence.join(""));
+        setUserInput("");
+        setIsShowingNumber(true);
+        setTimeRemaining(100); // IMPORTANT, with this progress bar does not start from the middle, then jump to the outside, with each next round
 
-      let countdownValue = 100;
-      const countdownInterval = setInterval(() => {
-        countdownValue -= 1;
-        setTimeRemaining(countdownValue);
+        let countdownValue = 100;
+        const countdownInterval = setInterval(() => {
+          countdownValue -= 1;
+          setTimeRemaining(countdownValue);
 
-        if (countdownValue <= 0) {
-          clearInterval(countdownInterval);
-          setIsShowingNumber(false);
-        }
-      }, 50); // IMPORTANAT, 50ms is the delay for render.
-    } catch (error) {
-      console.error("Error fetching sequence:", error);
+          if (countdownValue <= 0) {
+            clearInterval(countdownInterval);
+            setIsShowingNumber(false);
+          }
+        }, 50); // IMPORTANAT, 50ms is the delay for render.
+      } catch (error) {
+        console.error("Error fetching sequence:", error);
+      }
     }
   };
 
   const handleSubmit = async () => {
     try {
       const response = await fetch(
-        "http://localhost:5217/api/longnumber/submit-score",
+        `http://localhost:5217/api/longnumber/submit-score/longNumberMemory`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -58,6 +62,7 @@ export const LNWindow: React.FC = () => {
       if (data.score > 0) {
         setScore(score + 1);
         setLevel(level + 1);
+        setIsRoundInProgress(false);
         startNewRound();
       } else {
         setIsGameOver(true);
@@ -72,6 +77,7 @@ export const LNWindow: React.FC = () => {
     setLevel(1);
     setScore(0);
     setIsGameOver(false);
+    setIsRoundInProgress(false);
     startNewRound();
   };
 

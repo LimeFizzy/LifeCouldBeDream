@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Dropdown } from "../../components/dropdown/Dropdown";
 import "./Leaderboard.css";
 
@@ -9,50 +9,59 @@ interface Result {
   date: string;
 }
 
-// Those values will be replaced with API calls to fetch data
-const longNumRes: Result[] = [
-  { nr: 1, username: "Player1", result: "1000", date: "2023-09-20" },
-  { nr: 2, username: "Player2", result: "900", date: "2023-09-19" },
-  { nr: 3, username: "Player3", result: "850", date: "2023-09-18" },
-];
-const sequenceRes: Result[] = [
-  { nr: 1, username: "Player4", result: "1000", date: "2023-09-20" },
-  { nr: 2, username: "Player5", result: "900", date: "2023-09-19" },
-  { nr: 3, username: "Player6", result: "850", date: "2023-09-18" },
-];
-const chimpRes: Result[] = [
-  { nr: 1, username: "Player7", result: "1000", date: "2023-09-20" },
-  { nr: 2, username: "Player8", result: "900", date: "2023-09-19" },
-  { nr: 3, username: "Player9", result: "850", date: "2023-09-18" },
-];
-
 enum GameTypes {
-  LONG_NUMBER = "Long number memory",
-  SEQUENCE = "Sequence memory",
-  CHIMP = "Chimp test",
+  LONG_NUMBER = "longNumberMemory",
+  SEQUENCE = "sequenceMemory",
+  CHIMP = "chimpTest",
 }
+
+const fetchLeaderboard = async (gameType: string) => {
+  try {
+    const response = await fetch(
+      `http://localhost:5217/api/UserScore/leaderboard/${gameType}`
+    );
+
+    if (!response.ok) {
+      const textResponse = await response.text();
+      throw new Error(`Unexpected response: ${textResponse}`);
+    }
+
+    const data = await response.json();
+
+    return data.map((item: any, index: number) => ({
+      nr: index + 1,
+      username: item.username,
+      result: item.score.toString(),
+      date: new Date(item.gameDate).toLocaleDateString(),
+    }));
+  } catch (error) {
+    console.error("Error fetching leaderboard:", error);
+    throw new Error("Failed to load leaderboard.");
+  }
+};
 
 export const Leaderboard = () => {
   const [selectedGame, setSelectedGame] = useState(
     GameTypes.LONG_NUMBER as string
   );
+  const [results, setResults] = useState<Result[]>([]);
+
+  useEffect(() => {
+    const updateLeaderboard = async () => {
+      try {
+        const data = await fetchLeaderboard(selectedGame);
+        setResults(data);
+      } catch (err) {
+        console.error("Error fetching leaderboard:", err);
+      }
+    };
+
+    updateLeaderboard();
+  }, [selectedGame]);
 
   const handleGameSelection = useCallback((value: string) => {
     setSelectedGame(value);
   }, []);
-
-  const results: Result[] = (() => {
-    switch (selectedGame) {
-      case GameTypes.LONG_NUMBER:
-        return longNumRes;
-      case GameTypes.CHIMP:
-        return chimpRes;
-      case GameTypes.SEQUENCE:
-        return sequenceRes;
-      default:
-        return [];
-    }
-  })();
 
   return (
     <div className="leaderboard-tile">
@@ -60,6 +69,7 @@ export const Leaderboard = () => {
         <p className="choose-game-text">Choose the game:</p>
         <Dropdown onSelectChange={handleGameSelection} />
       </div>
+
       <div className="leaderboard">
         <div className="columns-info">
           <span>Nr</span>
