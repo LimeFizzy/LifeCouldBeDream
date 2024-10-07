@@ -45,8 +45,16 @@ export const Leaderboard = () => {
     GameTypes.LONG_NUMBER as string
   );
   const [results, setResults] = useState<Result[]>([]);
+  const [storedUsername, setStoredUsername] = useState<string | null>(null);
 
   useEffect(() => {
+    const fetchUsername = () => {
+      const username = localStorage.getItem('username');
+      setStoredUsername(username);
+    };
+
+    fetchUsername();
+
     const updateLeaderboard = async () => {
       try {
         const data = await fetchLeaderboard(selectedGame);
@@ -80,7 +88,7 @@ export const Leaderboard = () => {
         {results.map((entry, index) => (
           <div key={index} className="leaderboard-row">
             <span>{entry.nr}</span>
-            <span>{entry.username}</span>
+            <span>{storedUsername ? storedUsername : entry.username}</span>
             <span>{entry.result}</span>
             <span>{entry.date}</span>
           </div>
