@@ -42,8 +42,25 @@ export const LNWindow: React.FC = () => {
     }
   };
 
+
   const handleSubmit = async () => {
-    const username = localStorage.getItem('username') || 'Unknown User'; // Fetch username from localStorage
+    const guessedSequence = userInput.split("").map(Number);
+    const correctSequence = numberToMemorize.split("").map(Number);
+  
+    if (guessedSequence.join("") === correctSequence.join("")) {
+      setScore(score + 1);
+      setLevel(level + 1);
+      setIsRoundInProgress(false);
+      startNewRound();
+    } else {
+      await handleGameOver(); 
+    }
+  };
+  
+
+  const handleGameOver = async () => {
+    setIsGameOver(true); 
+    const username = localStorage.getItem('username') || 'Unknown User';
   
     try {
       const response = await fetch(
@@ -52,7 +69,7 @@ export const LNWindow: React.FC = () => {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            username,  // Use the fetched username
+            username,
             guessedSequence: userInput.split("").map(Number),
             correctSequence: numberToMemorize.split("").map(Number),
             level,
@@ -61,14 +78,7 @@ export const LNWindow: React.FC = () => {
       );
   
       const data = await response.json();
-      if (data.score > 0) {
-        setScore(score + 1);
-        setLevel(level + 1);
-        setIsRoundInProgress(false);
-        startNewRound();
-      } else {
-        setIsGameOver(true);
-      }
+      console.log("Score submitted", data);
     } catch (error) {
       console.error("Error submitting score:", error);
     }

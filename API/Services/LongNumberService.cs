@@ -21,8 +21,7 @@ namespace API.Services
 
         public int CalculateScore(int[] guessed, int[] correct, int level = 1)
         {
-            bool isCorrect = guessed.SequenceEqual(correct);
-            return isCorrect ? level : 0;
+            return level - 1;
         }
 
         public async Task SaveScoreAsync(UserScore userScore)
