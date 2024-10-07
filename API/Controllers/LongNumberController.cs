@@ -33,11 +33,7 @@ namespace API.Controllers
         [HttpPost("submit-score/{gameType}")]
         public async Task<IActionResult> SubmitScore([FromBody] ScoreSubmission submission, string gameType)
         {
-            if (!submission.GuessedSequence.IsValidSequence(submission.Level))
-            {
-                return BadRequest(new { Message = "Invalid sequence." });
-            }
-
+            
             var correctSequence = submission.CorrectSequence;
             int score = _service.CalculateScore(submission.GuessedSequence, correctSequence, submission.Level);
 
