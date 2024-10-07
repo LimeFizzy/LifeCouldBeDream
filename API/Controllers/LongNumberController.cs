@@ -7,16 +7,23 @@ namespace API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class LongNumberController(LongNumberService service) : ControllerBase
+    public class LongNumberController : ControllerBase
     {
-        private readonly LongNumberService _service = service;
+        private readonly LongNumberService _service;
+
+        public LongNumberController(LongNumberService service) 
+        {
+            _service = service;
+        }
 
         // Endpoint to generate a sequence based on level
         [HttpGet("generate-sequence/{level}")]
         public IActionResult GenerateSequence(int level)
         {
-            var random = new Random();
-            var sequence = random.GenerateRandomSequence(level);
+            var sequence = _service.GenerateSequence(level);
+            while (!sequence.IsValidSequence(level)) {
+                sequence = _service.GenerateSequence(level); 
+            }
             int timeLimit = 3 + level - 1;
 
             return Ok(new { Sequence = sequence, TimeLimit = timeLimit });
