@@ -11,18 +11,18 @@ namespace API.Controllers
     {
         private readonly LongNumberService _service;
 
-        public LongNumberController(LongNumberService service) 
+        public LongNumberController(LongNumberService service)
         {
             _service = service;
         }
 
-        // Endpoint to generate a sequence based on level
         [HttpGet("generate-sequence/{level}")]
         public IActionResult GenerateSequence(int level)
         {
             var sequence = _service.GenerateSequence(level);
-            while (!sequence.IsValidSequence(level)) {
-                sequence = _service.GenerateSequence(level); 
+            while (!sequence.IsValidSequence(level))
+            {
+                sequence = _service.GenerateSequence(level);
             }
             int timeLimit = 3 + level - 1;
 
@@ -30,23 +30,22 @@ namespace API.Controllers
         }
 
 
-        // Endpoint to submit user score and check if they got the sequence right
-        [HttpPost("submit-score")]
-        public async Task<IActionResult> SubmitScore([FromBody] ScoreSubmission submission)
+        [HttpPost("submit-score/{gameType}")]
+        public async Task<IActionResult> SubmitScore([FromBody] ScoreSubmission submission, string gameType)
         {
             if (!submission.GuessedSequence.IsValidSequence(submission.Level))
             {
                 return BadRequest(new { Message = "Invalid sequence." });
             }
 
-            var correctSequence = submission.CorrectSequence; // Replace with actual storage/retrieval logic
+            var correctSequence = submission.CorrectSequence;
             int score = _service.CalculateScore(submission.GuessedSequence, correctSequence, submission.Level);
 
-            // Save the user score
             var userScore = new UserScore
             {
                 Username = submission.Username,
-                Score = score
+                Score = score,
+                GameType = gameType
             };
 
             await _service.SaveScoreAsync(userScore);

@@ -1,19 +1,15 @@
 using API.Models;
 using Microsoft.EntityFrameworkCore;
+using API.Data;
 
 namespace API.Services
 {
-    public class UserScoreService : IUserScoreService
+    public class UserScoreService(AppDbContext dbContext) : IUserScoreService
     {
-        private readonly AppDbContext _dbContext;
+        private readonly AppDbContext _dbContext = dbContext;
 
-        public UserScoreService(AppDbContext dbContext)
-        {
-            _dbContext = dbContext;
-        }
         public IEnumerable<UserScore> GetLeaderboard()
         {
-            // Get user scores from the database
             return _dbContext.UserScores.AsNoTracking();
         }
     }

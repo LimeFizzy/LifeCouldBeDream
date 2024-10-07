@@ -45,7 +45,7 @@ export const LNWindow: React.FC = () => {
   const handleSubmit = async () => {
     try {
       const response = await fetch(
-        "http://localhost:5217/api/longnumber/submit-score",
+        `http://localhost:5217/api/longnumber/submit-score/longNumberMemory`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -62,7 +62,7 @@ export const LNWindow: React.FC = () => {
       if (data.score > 0) {
         setScore(score + 1);
         setLevel(level + 1);
-        setIsRoundInProgress(false)
+        setIsRoundInProgress(false);
         startNewRound();
       } else {
         setIsGameOver(true);

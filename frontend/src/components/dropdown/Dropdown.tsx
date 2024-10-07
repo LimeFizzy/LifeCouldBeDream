@@ -5,12 +5,18 @@ interface DropdownProps {
   onSelectChange: (value: string) => void;
 }
 
+enum GameTypes {
+  LONG_NUMBER = "longNumberMemory",
+  SEQUENCE = "sequenceMemory",
+  CHIMP = "chimpTest",
+}
+
 export const Dropdown = ({ onSelectChange }: DropdownProps) => {
   const [selectedValue, setSelectedValue] = useState("");
   const options = [
-    { value: "Long number memory", label: "Long number memory" },
-    { value: "Chimp test", label: "Chimp test" },
-    { value: "Sequence memory", label: "Sequence memory" },
+    { value: GameTypes.LONG_NUMBER, label: "Long number memory" },
+    { value: GameTypes.CHIMP, label: "Chimp test" },
+    { value: GameTypes.SEQUENCE, label: "Sequence memory" },
   ];
 
   const handleChange = useCallback(
