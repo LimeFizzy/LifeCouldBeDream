@@ -40,3 +40,15 @@
     font-size: 18px;
     text-align: center;
   }
+
+  .username-display {
+    font-size: 24px;
+    font-weight: bold;
+    color: #ffffff;
+    margin-bottom: 20px;
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+    width: 100%;
+  }

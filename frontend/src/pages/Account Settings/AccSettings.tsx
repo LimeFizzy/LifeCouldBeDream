@@ -3,24 +3,25 @@ import { UserTile } from '../../components/usertile/UserTile';
 import './AccSettings.css'
 
 export const AccSettings = () => {
-
-  const [usernameStatus] = useState('Test Username');
-  const [passwordStatus] = useState('Test Password');
+  const [username, setUsername] = useState<string | null>('');
+  const [password, setPassword] = useState('');
+  const [repeatPassword, setRepeatPassword] = useState('');
+  const [passwordStatus, setPasswordStatus] = useState(''); 
   const [image, setImage] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploadStatus, setUploadStatus] = useState<string>('');
   const [userId, setUserId] = useState<number | null>(null);
 
-
-  // Fetch the userId from localStorage when the component loads
+  // Fetch the userId and username from localStorage when the component loads
   useEffect(() => {
     const storedUserId = localStorage.getItem('userId');
+    const storedUsername = localStorage.getItem('username');
     if (storedUserId) {
       setUserId(Number(storedUserId));
+      setUsername(storedUsername);
       fetchProfileImage(Number(storedUserId));
     }
   }, []);
-
 
   // Fetch the profile image for the logged-in user
   const fetchProfileImage = async (userId: number) => {
@@ -36,7 +37,6 @@ export const AccSettings = () => {
     }
   };
 
-
   // Handle file selection
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -47,23 +47,22 @@ export const AccSettings = () => {
     }
   };
 
-  
   // Handle file upload
   const handleUpload = async () => {
     if (!selectedFile || !userId) {
       setUploadStatus("No file selected or user not logged in.");
       return;
     }
-  
+
     const formData = new FormData();
     formData.append("profileImage", selectedFile);
-  
+
     try {
       const response = await fetch(`http://localhost:5217/api/user/upload-profile-image/${userId}`, {
         method: "POST",
         body: formData,
       });
-  
+
       if (response.ok) {
         setUploadStatus("Image uploaded successfully!");
         fetchProfileImage(userId); 
@@ -75,28 +74,29 @@ export const AccSettings = () => {
     }
   };
 
-    return (
-      <div className='user-tile-container'>
-        <UserTile>
-          <h1>Account Settings</h1>
-          <div className="signin-input-container">
-            <label>Username</label>
-            <input type="text"/>
-            <div className="status-message">{usernameStatus}</div>
 
-            <div className="password-container">
-              <label>Password</label>
-              <input type="password" />
-              <label>Repeat Password</label>
-              <input type="password"/>
-              <div className="status-message">{passwordStatus}</div>
-            </div>
-            
-            <button type="button">Change Password</button>
+  return (
+    <div className='user-tile-container'>
+      <UserTile>
+        <h1>Account Settings</h1>
+        <div className="signin-input-container">
+          <label>Username</label>
+          <div className='username-display'>
+          <p>{username}</p> {}
           </div>
-        </UserTile>
+          <div className="password-container">
+            <label>Password</label>
+            <input type="password" value={password} />
+            <label>Repeat Password</label>
+            <input type="password" value={repeatPassword} />
+            <div className="status-message">{passwordStatus}</div> {}
+          </div>
+          
+          <button type="button">Change Password</button>
+        </div>
+      </UserTile>
 
-        <UserTile>
+      <UserTile>
         <h1>Profile Picture</h1>
         <div className="image-upload-container">
           {image ? (
@@ -109,6 +109,6 @@ export const AccSettings = () => {
           <div className="image-status-message">{uploadStatus}</div>
         </div>
       </UserTile>
-      </div>
-    );
-  };
+    </div>
+  );
+};

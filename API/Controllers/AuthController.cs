@@ -72,4 +72,5 @@ public class AuthController(AppDbContext context, AuthService authService) : Con
 
         return user;
     }
+
 }
