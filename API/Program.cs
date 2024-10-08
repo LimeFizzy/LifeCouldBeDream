@@ -28,6 +28,7 @@ builder.Services.Configure<FormOptions>(options =>
 builder.Services.AddScoped<LongNumberService>();
 builder.Services.AddScoped<UserScoreService>();
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<IPictureUploadService, PictureUploadService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
