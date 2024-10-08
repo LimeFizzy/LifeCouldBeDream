@@ -1,7 +1,7 @@
 using API.Services;
-using API.Data;
 using API.DTOs;
 using API.Models;
+using API.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,7 +17,6 @@ public class AuthController(AppDbContext context, AuthService authService) : Con
     [HttpPost("register")]
     public async Task<ActionResult<User>> Register(UserDto userDto)
     {
-
         var existingUser = await _context.Users.AnyAsync(u => u.Username == userDto.Username);
         if (existingUser)
         {
@@ -29,16 +28,7 @@ public class AuthController(AppDbContext context, AuthService authService) : Con
             return BadRequest("Password cannot be empty.");
         }
 
-        var hashedPassword = _authService.HashPassword(userDto.Password);
-
-        var user = new User
-        {
-            Username = userDto.Username,
-            PasswordHash = hashedPassword
-        };
-
-        _context.Users.Add(user);
-        await _context.SaveChangesAsync();
+        var user = await _authService.RegisterUserAsync(userDto.Username, userDto.Password);
 
         return CreatedAtAction(nameof(GetUserById), new { id = user.UserId }, user);
     }
@@ -52,10 +42,11 @@ public class AuthController(AppDbContext context, AuthService authService) : Con
             return Unauthorized("User doesn't exist");
         }
 
-        var isValidPassword = _authService.VerifyPassword(loginDto.Password, user.PasswordHash);
+        // Now using the updated VerifyPassword method
+        bool isValidPassword = _authService.VerifyPassword(loginDto.Password, user);
         if (!isValidPassword)
         {
-            return Unauthorized("Invalid email or password");
+            return Unauthorized("Invalid username or password");
         }
 
         return Ok(new { userId = user.UserId, username = user.Username });
@@ -72,5 +63,4 @@ public class AuthController(AppDbContext context, AuthService authService) : Con
 
         return user;
     }
-
 }
