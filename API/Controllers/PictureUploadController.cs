@@ -1,74 +1,40 @@
 using Microsoft.AspNetCore.Mvc;
-using API.Data;
+using API.Services;
 
 namespace API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class UserController(AppDbContext context) : ControllerBase
+    public class PictureUploadController(IPictureUploadService userService) : ControllerBase
     {
-        private readonly AppDbContext _context = context;
+        private readonly IPictureUploadService _userService = userService;
 
         [HttpPost("upload-profile-image/{userId}")]
         public async Task<IActionResult> UploadProfileImage(int userId, IFormFile profileImage)
         {
-            // Check if the file is provided
-            if (profileImage == null || profileImage.Length == 0)
+            try
             {
-                return BadRequest("No file uploaded.");
+                var filePath = await _userService.UploadProfileImageAsync(userId, profileImage);
+                return Ok(new { Message = "Profile image uploaded successfully.", ProfileImagePath = filePath });
             }
-
-            // Find the user in the database
-            var user = await _context.Users.FindAsync(userId);
-            if (user == null)
+            catch (Exception ex)
             {
-                return NotFound("User not found.");
+                return BadRequest(ex.Message);
             }
-
-            // Create the directory to store uploads if it does not exist
-            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "uploads");
-            if (!Directory.Exists(uploadsFolder))
-            {
-                Directory.CreateDirectory(uploadsFolder);
-            }
-
-            // Generate a unique file name
-            var fileName = $"{userId}_{Path.GetFileName(profileImage.FileName)}";
-            var filePath = Path.Combine(uploadsFolder, fileName);
-
-            // Save the file using stream
-            using (var stream = new FileStream(filePath, FileMode.Create))
-            {
-                await profileImage.CopyToAsync(stream);
-            }
-
-            // Update user's profile image path in the database
-            user.ProfileImagePath = filePath;
-            await _context.SaveChangesAsync();
-
-            return Ok(new { Message = "Profile image uploaded successfully.", ProfileImagePath = filePath });
         }
 
         [HttpGet("{userId}/profile-image")]
         public async Task<IActionResult> GetProfileImage(int userId)
         {
-            // Find the user in the database
-            var user = await _context.Users.FindAsync(userId);
-            if (user == null || string.IsNullOrEmpty(user.ProfileImagePath))
+            try
             {
-                return NotFound("User or profile image not found.");
+                var fileBytes = await _userService.GetProfileImageAsync(userId);
+                return File(fileBytes, "image/jpeg");
             }
-
-            // Serve the image file
-            var imagePath = user.ProfileImagePath;
-            if (!System.IO.File.Exists(imagePath))
+            catch (Exception ex)
             {
-                return NotFound("Image file not found.");
+                return NotFound(ex.Message);
             }
-
-            // Return the image file
-            var fileBytes = await System.IO.File.ReadAllBytesAsync(imagePath);
-            return File(fileBytes, "image/jpeg"); // Change MIME type based on your image format
         }
     }
 }
