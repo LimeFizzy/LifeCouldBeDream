@@ -1,10 +1,21 @@
 .login-input-container {
-    display: flex;
-    min-width:  22rem; 
-    min-height: 30rem; 
+    min-width:  380px; 
+    min-height: 320px; 
     padding: 3rem;
+    gap: 3vh;
+    margin-bottom: 32px;
+
     flex-direction: column;
     align-items: center;
-    gap: 3vh;
     flex-shrink: 0; 
+    display: flex;
+  }
+
+  @media (min-height: 1000px)   {
+    .login-input-container {
+      min-width:  22rem; 
+      min-height: 30rem; 
+      padding: 3rem;
+      gap: 3vh;
+    }
   }

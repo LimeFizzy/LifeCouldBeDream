@@ -1,9 +1,6 @@
 .user-tile {
-    margin-top: 5rem;
-    margin-bottom: 5rem;
-
-    width: 29rem;
-    height: 40rem;
+    width: 28rem;
+    height: 32rem;
     
     padding: 2vh;
     display: flex;
@@ -18,8 +15,9 @@
     box-shadow: 0px 4px 24px -1px rgba(0, 0, 0, 0.20);
   }
 
+
   .user-tile h1 {
-    font-size: 36px;
+    font-size: 32px;
     margin-top: 0.5rem;
 
     font-weight: bold;
@@ -28,8 +26,8 @@
   }
 
   .user-tile label {
-    min-width:  22rem;
-    margin-bottom: 5px;
+    min-width:  300px;
+    margin-bottom: 2px;
     display: block;
     text-align: left;
 
@@ -43,24 +41,21 @@
 
   
   .user-tile input {
-    min-width: 15vw;
-    min-height: 1vh;
-    margin-bottom: 1rem;
-    padding: 1rem;
-
-    font-size: 22px;
+    min-width: 300px;
+    padding: 8px;
+    font-size: 18px;
     border-radius: 10px;
     border: 1px solid rgba(255, 255, 255, 0.56);
     background: linear-gradient(179deg, rgba(255, 255, 255, 0.18) 0.72%, rgba(255, 255, 255, 0.18) 99.25%);
   }
   
   .user-tile button {
-    min-width:  20rem; 
-    min-height: 1rem; 
-    padding: 0.8rem;
+    min-width:  18rem; 
+    min-height: none; 
+    padding: 0.4rem;
+    margin-top: 0.5rem;
     cursor: pointer;
     flex-shrink: 0;
-    margin-top: 0.5rem;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -73,17 +68,58 @@
     color: #FFF;
     text-align: center;
     font-family: Inter;
-    font-size: 24px;
+    font-size: 20px;
     font-style: normal;
     font-weight: 600;
     line-height: normal;
   }
 
-
   .status-message {
-    font-size: 18px;
+    font-size: 16px;
     color: white;
     text-align: center;
   }
+
+  @media (min-height: 1000px)   {
+    .user-tile {
+      width: 29rem;
+      height: 40rem;
+    }
+  
+    .user-tile h1 {
+      font-size: 36px;
+    }
+
+    .user-tile label {
+      min-width:  22rem;
+      margin-bottom: 5px;
+      font-size: 24px;
+      display: block;
+      text-align: left;
+
+    }
+  
+    .user-tile input {
+      min-width: 15vw;
+      min-height: 1vh;
+      margin-bottom: 1rem;
+      padding: 1rem;
+    }
+
+    .user-tile button {
+      min-width:  20rem; 
+      min-height: 1rem; 
+      padding: 0.8rem;
+      margin-top: 0.5rem;
+      font-size: 24px;
+    }
+    
+    .status-message{
+      font-size: 18px;
+    }
+  }
+
+
+ 
   
  

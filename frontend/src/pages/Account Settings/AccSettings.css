@@ -6,6 +6,18 @@
     align-items: center;
   }
 
+  .username-display {
+    margin-bottom: 1vh;
+    width: 320px;
+    padding: 1px;
+    font-size: 22px;
+    font-weight: bold;
+    color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    text-align: center;
+  }
+
   .image-upload-container {
     margin-bottom: 12vh;
     display: flex;
@@ -14,9 +26,9 @@
   }
   
   .no-image {
-    min-width: 10rem;
-    min-height: 10rem;
-    font-size: 14px;
+    min-width: 150px;
+    min-height: 150px;
+    font-size: 12px;
     margin-bottom: 2vh;
     border: 2px dashed rgba(255, 255, 255, 0.6);
     border-radius: 50%;
@@ -27,9 +39,9 @@
   }
   
   .profile-image {
-    width: 18rem;
-    height: 18rem;
-    margin-bottom: 2vh;
+    width: 200px;
+    height: 200px;
+    margin-bottom: 3vh;
     object-fit: cover;
     border-radius: 50%;
   }
@@ -41,14 +53,61 @@
     text-align: center;
   }
 
-  .username-display {
-    margin-bottom: 1vh;
-    width: 22rem;
-    padding: 0.2vh;
-    font-size: 24px;
-    font-weight: bold;
-    color: #ffffff;
-    background-color: rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    text-align: center;
+  
+
+  @media (min-height: 1000px)   {
+    .user-tile-container {
+      gap: 3vw;
+      padding: 1rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  
+    .image-upload-container {
+      margin-bottom: 12vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .no-image {
+      min-width: 10rem;
+      min-height: 10rem;
+      font-size: 14px;
+      margin-bottom: 2vh;
+      border: 2px dashed rgba(255, 255, 255, 0.6);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+    }
+    
+    .profile-image {
+      width: 18rem;
+      height: 18rem;
+      margin-bottom: 2vh;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+  
+    .image-status-message {
+      margin-top: 2vh;
+      color: white;
+      font-size: 18px;
+      text-align: center;
+    }
+  
+    .username-display {
+      margin-bottom: 1vh;
+      width: 22rem;
+      padding: 0.2vh;
+      font-size: 24px;
+      font-weight: bold;
+      color: #ffffff;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      text-align: center;
+    }
   }
