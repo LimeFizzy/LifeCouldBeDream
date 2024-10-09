@@ -19,7 +19,7 @@ namespace API.Services
             return Enumerable.Range(0, level).Select(_ => random.Next(0, 10)).ToArray();
         }
 
-        public int CalculateScore(int[] guessed, int[] correct, int level = 1)
+        public int CalculateScore(int level = 1)
         {
             return level - 1;
         }
