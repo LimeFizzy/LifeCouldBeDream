@@ -2,24 +2,27 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  height: 100vh;
-  background: linear-gradient(180deg, #4c1d95 0%, #111827 100%);
+  height: 80vh;
+  width: 60vw;
 }
 
 h1 {
-  font-size: 3rem;
+  font-size: 2rem;
+  margin-top: 5%;
+  margin-bottom: 1%;
   color: white;
-  margin-bottom: 1rem;
 }
 
 .game-info {
-  color: white;
+  margin-top: 1%;
+  margin-bottom: 5%;
   font-size: 1.2rem;
-  margin-bottom: 2rem;
+  font-weight: 200;
+  letter-spacing: 2px;
+  color: white;
 }
 
-.grid {
+.grid { 
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(3, 1fr);
@@ -31,15 +34,17 @@ h1 {
   height: 100px;
   background-color: #8b5cf6;
   border: none;
-  border-radius: 10px;
+  border-radius: 15px;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
+/* when square changes color */
 .square.active {
-  background-color: #a855f7; /* Highlight color when active */
+  background-color: #dfbeff;
 }
 
+/* when mouse is on square */
 .square:hover {
-  background-color: #6d28d9; /* Hover effect for squares */
+  background-color: #5c157d;
 }
