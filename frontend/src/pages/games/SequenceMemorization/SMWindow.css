@@ -48,3 +48,24 @@ h1 {
 .square:hover {
   background-color: #5c157d;
 }
+
+.level-score-container {
+  font-size: 20px;
+  color: white;
+  margin-bottom: 20px;
+}
+
+.game-over {
+  text-align: center;
+  margin-top: 20px;
+  color: white;
+}
+
+button {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: orange;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
