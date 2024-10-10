@@ -1,69 +1,64 @@
 .user-tile {
-    width: 500px;
-    height: 672px;
-    border-radius: 30px;
-    border: 1px solid rgba(255, 255, 255, 0.56);
-    background: linear-gradient(179deg, rgba(255, 255, 255, 0.12) 0.72%, rgba(255, 255, 255, 0.13) 99.25%);
-    box-shadow: 0px 4px 24px -1px rgba(0, 0, 0, 0.20);
-    backdrop-filter: blur(20px);
-    padding: 40px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .user-tile h1 {
-    font-size: 36px;
-    font-weight: bold;
-    color: white;
-    text-align: center;
-    margin-top: 8px;
-    margin-bottom: 50px;
-  }
+  width: 29rem; /* Fixed width */
+  height: 35rem; /* Adjusted height */
   
-  .user-tile input {
-    width: 94%;
-    height: 38x;
-    padding: 15px;
-    margin-bottom: 25px;
-    border-radius: 10px;
-    border: 1px solid rgba(255, 255, 255, 0.56);
-    background: linear-gradient(179deg, rgba(255, 255, 255, 0.18) 0.72%, rgba(255, 255, 255, 0.18) 99.25%);
-    font-size: 22px;
-  }
-  
-  .user-tile button {
-    width: 345px;
-    height: 56px;
-    padding: 10px;
-    border: 1px solid rgba(255, 255, 255, 0.56);
-    background: linear-gradient(179deg, rgba(255, 255, 255, 0.23) 0.72%, rgba(255, 255, 255, 0.21) 99.25%);
-    box-shadow: 0px 4px 24px -1px rgba(0, 0, 0, 0.20);
-    border-radius: 20px;
-    color: #FFF;
-    text-align: center;
-    font-family: Inter;
-    font-size: 24px;
-    font-style: normal;
-    font-weight: 600;
-    line-height: normal;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    flex-shrink: 0;
-    margin-top: 15px;
-  }
+  padding: 2vh; /* Maintain padding */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between; /* Space components evenly */
 
+  border-radius: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.56);
+  background: linear-gradient(179deg, rgba(255, 255, 255, 0.12) 0.72%, rgba(255, 255, 255, 0.13) 99.25%);
+  backdrop-filter: blur(20px);
+  box-shadow: 0px 4px 24px -1px rgba(0, 0, 0, 0.20);
+}
 
-  .status-message {
-    font-size: 18px;
-    color: white;
-    margin-top: -10px;
-    width: 94%;
-    text-align: center;
-  }
-  
- 
+.user-tile h1 {
+  font-size: 28px; /* Reduced font size for better fit */
+  font-weight: bold;
+  color: white;
+  text-align: center;
+  margin: 10px 0 20px 0; /* Adjusted margins for consistency */
+}
+
+.user-tile input {
+  width: 94%; /* Maintain width */
+  height: 40px; /* Corrected height from 38x */
+  padding: 10px; /* Slightly reduced padding */
+  margin-bottom: 15px; /* Adjusted margin */
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.56);
+  background: linear-gradient(179deg, rgba(255, 255, 255, 0.18) 0.72%, rgba(255, 255, 255, 0.18) 99.25%);
+  font-size: 18px; /* Reduced font size for better fit */
+}
+
+.user-tile button {
+  width: 94%; /* Adjusted button width to fit */
+  height: 50px; /* Adjusted height */
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.56);
+  background: linear-gradient(179deg, rgba(255, 255, 255, 0.23) 0.72%, rgba(255, 255, 255, 0.21) 99.25%);
+  box-shadow: 0px 4px 24px -1px rgba(0, 0, 0, 0.20);
+  border-radius: 20px;
+  color: #FFF;
+  text-align: center;
+  font-family: Inter;
+  font-size: 20px; /* Reduced font size for better fit */
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px; /* Adjusted margin */
+}
+
+.status-message {
+  font-size: 16px; /* Reduced font size */
+  color: white;
+  margin-top: -5px; /* Adjusted top margin */
+  width: 94%;
+  text-align: center;
+}
