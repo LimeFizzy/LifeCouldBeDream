@@ -13,50 +13,52 @@ export const SMWindow: React.FC = () => {
   const [userInput, setUserInput] = useState<number[]>([]);
   const [squares, setSquares] = useState<Square[]>([]);
   const [isClickable, setIsClickable] = useState(false);
+  const [isGameOver, setIsGameOver] = useState<boolean>(false);
+  const [isRoundInProgress, setIsRoundInProgress] = useState<boolean>(false);
 
-  const gridSize = 3; // 3x3 grid for the game
+  const gridSize = 3; // 3x3 grid
+  const fixedSequence = [1, 2, 3, 4, 5, 6];
 
-  // Initialize the squares state when the component mounts
+  const startNewRound = () => {
+    if (!isRoundInProgress) {
+      setIsRoundInProgress(true);
+      const currentLevelSequence = fixedSequence.slice(0, level);
+      setSequence(currentLevelSequence);
+      setUserInput([]);
+      flashSequence(currentLevelSequence);
+    }
+  };
+
   useEffect(() => {
     const initialSquares = Array.from({ length: gridSize * gridSize }, (_, i) => ({
       id: i + 1,
       isActive: false,
     }));
     setSquares(initialSquares);
+    restartGame();
   }, []);
 
-  // Generate a new sequence for each level
-  useEffect(() => {
-    const newSequence = Array.from({ length: level }, () => Math.floor(Math.random() * (gridSize * gridSize)) + 1);
-    setSequence(newSequence);
-    setUserInput([]);
-    flashSequence(newSequence);
-  }, [level]);
-
-  // Flash the sequence for the user to memorize
   const flashSequence = (sequence: number[]) => {
     setIsClickable(false);
-    let delay = 0;
 
     sequence.forEach((id, index) => {
+      const delay = index * 1000; // 1000 ms for each square
+
       setTimeout(() => {
         highlightSquare(id);
       }, delay);
 
-      delay += 1000; // 1 second per flash
-
       setTimeout(() => {
-        highlightSquare(id, false);
-      }, delay - 300); // Highlight for 700ms
+        highlightSquare(id, false); // Turn off after 0.8s
+      }, delay + 800);
     });
 
-    // Allow the user to click once the sequence is done
+    // Set isClickable after the last square is highlighted
     setTimeout(() => {
       setIsClickable(true);
-    }, delay);
+    }, (sequence.length * 1000) + 800); // Adding the time for the last square to be turned off
   };
 
-  // Highlight a square by its ID
   const highlightSquare = (id: number, active: boolean = true) => {
     setSquares((prevSquares) =>
       prevSquares.map((square) =>
@@ -65,25 +67,35 @@ export const SMWindow: React.FC = () => {
     );
   };
 
-  // Handle user clicks on squares
   const handleSquareClick = (id: number) => {
     if (!isClickable) return;
 
     const newUserInput = [...userInput, id];
     setUserInput(newUserInput);
 
-    // Check if the user input is correct so far
     if (newUserInput.join('') === sequence.slice(0, newUserInput.length).join('')) {
       if (newUserInput.length === sequence.length) {
-        // If the user completes the sequence, they pass the level
-        setScore((prev) => prev + 1);
+        setScore((prev) => prev + level);
         setLevel((prev) => prev + 1);
+        startNewRound();
       }
     } else {
-      // If the user gets the sequence wrong, reset the game
-      setScore(0);
-      setLevel(1);
+      handleGameOver();
     }
+  };
+
+  const handleGameOver = () => {
+    setIsGameOver(true);
+    setIsRoundInProgress(false);
+  };
+
+  const restartGame = () => {
+    setSequence([]);
+    setLevel(1);
+    setScore(0);
+    setIsGameOver(false);
+    setIsRoundInProgress(false);
+    startNewRound();
   };
 
   return (
@@ -92,15 +104,25 @@ export const SMWindow: React.FC = () => {
       <div className="game-info">
         <p>Level: {level} | Score: {score}</p>
       </div>
-      <div className="grid">
-        {squares.map((square) => (
-          <button
-            key={square.id}
-            className={`square ${square.isActive ? 'active' : ''}`}
-            onClick={() => handleSquareClick(square.id)}
-          />
-        ))}
-      </div>
+
+      {isGameOver ? (
+        <div className="game-over">
+          <p>Game Over! Your Score: {score}</p>
+          <button onClick={restartGame}>Restart</button>
+        </div>
+      ) : (
+        <div className="grid">
+          {squares.map((square) => (
+            <button
+              key={square.id}
+              className={`square ${square.isActive ? 'active' : ''}`}
+              onClick={() => handleSquareClick(square.id)}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };
+
+export default SMWindow;

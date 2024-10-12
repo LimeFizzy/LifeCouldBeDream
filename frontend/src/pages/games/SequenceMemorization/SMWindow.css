@@ -56,8 +56,10 @@ h1 {
 }
 
 .game-over {
-  text-align: center;
-  margin-top: 20px;
+  margin-top: 1%;
+  font-size: 1.5rem;
+  font-weight: 400;
+  letter-spacing: 2px;
   color: white;
 }
 
