@@ -10,6 +10,7 @@ export const LNWindow: React.FC = () => {
   const [isShowingNumber, setIsShowingNumber] = useState<boolean>(true);
   const [isGameOver, setIsGameOver] = useState<boolean>(false);
   const [isRoundInProgress, setIsRoundInProgress] = useState<boolean>(false);
+  const [isDevMode, setIsDevMode] = useState<boolean>(false);
 
   const startNewRound = async () => {
     if (!isRoundInProgress) {
@@ -24,18 +25,21 @@ export const LNWindow: React.FC = () => {
         setNumberToMemorize(sequence.join(""));
         setUserInput("");
         setIsShowingNumber(true);
-        setTimeRemaining(100); // IMPORTANT, with this progress bar does not start from the middle, then jump to the outside, with each next round
 
-        let countdownValue = 100;
-        const countdownInterval = setInterval(() => {
-          countdownValue -= 1;
-          setTimeRemaining(countdownValue);
+        if (!isDevMode) {
+          setTimeRemaining(100); // IMPORTANT, with this progress bar does not start from the middle, then jump to the outside, with each next round
 
-          if (countdownValue <= 0) {
-            clearInterval(countdownInterval);
-            setIsShowingNumber(false);
-          }
-        }, 50); // IMPORTANAT, 50ms is the delay for render.
+          let countdownValue = 100;
+          const countdownInterval = setInterval(() => {
+            countdownValue -= 1;
+            setTimeRemaining(countdownValue);
+
+            if (countdownValue <= 0) {
+              clearInterval(countdownInterval);
+              setIsShowingNumber(false);
+            }
+          }, 50); // IMPORTANAT, 50ms is the delay for render.
+        }
       } catch (error) {
         console.error("Error fetching sequence:", error);
       }
@@ -44,6 +48,7 @@ export const LNWindow: React.FC = () => {
 
 
   const handleSubmit = async () => {
+    
     const guessedSequence = userInput.split("").map(Number);
     const correctSequence = numberToMemorize.split("").map(Number);
   
@@ -71,7 +76,6 @@ export const LNWindow: React.FC = () => {
           body: JSON.stringify({
             username,
             guessedSequence: userInput.split("").map(Number),
-            correctSequence: numberToMemorize.split("").map(Number),
             level,
           }),
         }
@@ -92,6 +96,13 @@ export const LNWindow: React.FC = () => {
     setIsRoundInProgress(false);
     startNewRound();
   };
+
+  const nextRound = () => {
+    setScore(score + 1);
+    setLevel(level + 1);
+    setIsRoundInProgress(false);
+    startNewRound();
+  }
 
   useEffect(() => {
     startNewRound();
@@ -116,7 +127,7 @@ export const LNWindow: React.FC = () => {
       ) : (
         <div>
           <div className="number-display">
-            {isShowingNumber ? (
+            {(isShowingNumber || isDevMode) ? (
               <>
                 <p>Remember the number:</p>
                 <p className="number" style={{ marginTop: "5px" }}>
@@ -129,7 +140,7 @@ export const LNWindow: React.FC = () => {
           </div>
 
           {/* Progress bar */}
-          {isShowingNumber && (
+          {isShowingNumber && !isDevMode && (
             <div className="progress-container">
               <div className="progress-bar-container">
                 <div
@@ -141,7 +152,7 @@ export const LNWindow: React.FC = () => {
           )}
 
           {/* When number is hidden, display input field and Submit button */}
-          {!isShowingNumber && (
+          {(!isShowingNumber || isDevMode) && (
             <div className="input-section">
               <input
                 type="text"
@@ -152,6 +163,16 @@ export const LNWindow: React.FC = () => {
               <button type="button" onClick={handleSubmit}>
                 Submit
               </button>
+              {isDevMode && 
+                <button type="button" onClick={nextRound}>
+                  Next
+                </button>
+              }
+              {isDevMode && 
+                <button type="button" onClick={handleGameOver}>
+                  End game
+                </button>
+              }
             </div>
           )}
         </div>
