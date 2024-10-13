@@ -12,29 +12,31 @@ export const LNWindow: React.FC = () => {
   const [isRoundInProgress, setIsRoundInProgress] = useState<boolean>(false);
   const [isDevMode, setIsDevMode] = useState<boolean>(false);
 
-
   useEffect(() => {
     const checkAdminStatus = async () => {
-      const username = localStorage.getItem('username');
+      const username = localStorage.getItem("username");
       if (!username) return;
-  
+
       try {
-        const response = await fetch(`http://localhost:5217/api/auth/is-admin/${username}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-  
+        const response = await fetch(
+          `http://localhost:5217/api/auth/is-admin/${username}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
         if (response.ok) {
           const data = await response.json();
           setIsDevMode(data.isAdmin); // Set dev mode based on admin status
         }
       } catch (error) {
-        console.error('Error checking admin status:', error);
+        console.error("Error checking admin status:", error);
       }
     };
-  
+
     checkAdminStatus();
   }, []);
 
@@ -72,30 +74,27 @@ export const LNWindow: React.FC = () => {
     }
   };
 
-
   const handleSubmit = async () => {
-    
     const guessedSequence = userInput.split("").map(Number);
     const correctSequence = numberToMemorize.split("").map(Number);
-  
+
     if (guessedSequence.join("") === correctSequence.join("")) {
       setScore(score + 1);
       setLevel(level + 1);
       setIsRoundInProgress(false);
       startNewRound();
     } else {
-      await handleGameOver(); 
+      await handleGameOver();
     }
   };
-  
 
   const handleGameOver = async () => {
-    setIsGameOver(true); 
-    const username = localStorage.getItem('username') || 'Unknown User';
-  
+    setIsGameOver(true);
+    const username = localStorage.getItem("username") || "Unknown User";
+
     try {
       const response = await fetch(
-        `http://localhost:5217/api/longnumber/submit-score/longNumberMemory`,
+        `http://localhost:5217/api/userscore/submit-score/longNumberMemory`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -106,7 +105,7 @@ export const LNWindow: React.FC = () => {
           }),
         }
       );
-  
+
       const data = await response.json();
       console.log("Score submitted", data);
     } catch (error) {
@@ -128,7 +127,7 @@ export const LNWindow: React.FC = () => {
     setLevel(level + 1);
     setIsRoundInProgress(false);
     startNewRound();
-  }
+  };
 
   useEffect(() => {
     startNewRound();
@@ -153,7 +152,7 @@ export const LNWindow: React.FC = () => {
       ) : (
         <div>
           <div className="number-display">
-            {(isShowingNumber || isDevMode) ? (
+            {isShowingNumber || isDevMode ? (
               <>
                 <p>Remember the number:</p>
                 <p className="number" style={{ marginTop: "5px" }}>
@@ -189,16 +188,16 @@ export const LNWindow: React.FC = () => {
               <button type="button" onClick={handleSubmit}>
                 Submit
               </button>
-              {isDevMode && 
+              {isDevMode && (
                 <button type="button" onClick={nextRound}>
                   Next
                 </button>
-              }
-              {isDevMode && 
+              )}
+              {isDevMode && (
                 <button type="button" onClick={handleGameOver}>
                   End game
                 </button>
-              }
+              )}
             </div>
           )}
         </div>

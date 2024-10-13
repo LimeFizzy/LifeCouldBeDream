@@ -29,25 +29,5 @@ namespace API.Controllers
             return Ok(new { Sequence = sequence, TimeLimit = timeLimit });
         }
 
-
-        [HttpPost("submit-score/{gameType}")]
-        public async Task<IActionResult> SubmitScore([FromBody] ScoreSubmission submission, string gameType)
-        {
-            
-            var correctSequence = submission.CorrectSequence;
-            int score = _service.CalculateScore(submission.Level);
-
-            var userScore = new UserScore
-            {
-                Username = submission.Username,
-                Score = score,
-                GameType = gameType
-            };
-
-            await _service.SaveScoreAsync(userScore);
-
-            return Ok(new { Message = "Score saved successfully", Score = score });
-        }
-
     }
 }

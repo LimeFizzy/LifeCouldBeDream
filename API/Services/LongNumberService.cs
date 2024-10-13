@@ -24,10 +24,5 @@ namespace API.Services
             return level - 1;
         }
 
-        public async Task SaveScoreAsync(UserScore userScore)
-        {
-            _context.UserScores.Add(userScore);
-            await _context.SaveChangesAsync();
-        }
     }
 }
