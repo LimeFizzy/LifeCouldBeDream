@@ -4,7 +4,7 @@
   right: 0;
   width: 100%;
   background-color: #532BA9;
-  padding: 10px;
+  padding: 1;
   display: flex;
   justify-content: left;
   z-index: 1000;
@@ -17,10 +17,6 @@
   padding: 1;
 }
 
-.nav-left .nav-item {
-  margin-left: 25px;
-}
-
 .nav-right {
   list-style: none;
   display: flex;
@@ -28,13 +24,13 @@
 }
 
 .nav-right .nav-item {
-  margin-right: 30px;
+  margin-right: 1rem;
 }
 
 .nav-link {
   color: white;
   text-decoration: none;
-  font-size: 20px;
+  font-size: 1.2vw;
 }
 
 .nav-link:hover {

@@ -1,54 +1,126 @@
 .user-tile-container {
+    gap: 3vw;
+    padding: 1rem;
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 76px;
-    padding: 20px;
+  }
+
+  .username-display {
+    width: 17rem;
+    padding: 1px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    text-align: center;
+  }
+
+  .password-container {
+    width: 17rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-align: center;
   }
 
   .image-upload-container {
+    margin-bottom: 12vh;
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 180px;
+  }
+  .image-upload-container input {
+    width: 17rem;
+    font-size: 1.2rem;
+    text-align: center;
+    text-wrap: wrap;
+    margin-bottom: 1rem;
   }
   
   .no-image {
-    width: 150px;
-    height: 150px;
+    min-width: 9rem;
+    min-height: 9rem;
+    font-size: 0.8rem;
+    margin-bottom: 2vh;
     border: 2px dashed rgba(255, 255, 255, 0.6);
     border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
     color: white;
-    font-size: 14px;
-    margin-bottom: 20px;
   }
   
   .profile-image {
-    width: 200px;
-    height: 200px;
+    width: 9rem;
+    height: 9rem;
+    margin-bottom: 3vh;
     object-fit: cover;
     border-radius: 50%;
-    margin-bottom: 20px;
   }
 
   .image-status-message {
-    margin-top: 15px;
+    margin-top: 2vh;
     color: white;
-    font-size: 18px;
+    font-size: 1rem;
     text-align: center;
   }
 
-  .username-display {
-    font-size: 24px;
-    font-weight: bold;
-    color: #ffffff;
-    margin-bottom: 20px;
-    background-color: rgba(255, 255, 255, 0.1);
-    padding: 10px;
-    border-radius: 8px;
-    text-align: center;
-    width: 100%;
+  
+
+  @media (min-height: 1000px)   {
+    .user-tile-container {
+      gap: 3vw;
+      padding: 1rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  
+    .image-upload-container {
+      margin-bottom: 12vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .no-image {
+      min-width: 9rem;
+      min-height: 9rem;
+      font-size: 14px;
+      margin-bottom: 2vh;
+      border: 2px dashed rgba(255, 255, 255, 0.6);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+    }
+    
+    .profile-image {
+      width: 9rem;
+      height: 9rem;
+      margin-bottom: 2vh;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+  
+    .image-status-message {
+      margin-top: 2vh;
+      color: white;
+      font-size: 18px;
+      text-align: center;
+    }
+  
+    .username-display {
+      margin-bottom: 1vh;
+      width: 18rem;
+      padding: 0.2vh;
+      font-size: 24px;
+      font-weight: bold;
+      color: #ffffff;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      text-align: center;
+    }
   }

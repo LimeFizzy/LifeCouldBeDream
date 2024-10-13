@@ -26,7 +26,7 @@ export const AccSettings = () => {
   // Fetch the profile image for the logged-in user
   const fetchProfileImage = async (userId: number) => {
     try {
-      const response = await fetch(`http://localhost:5217/api/user/${userId}/profile-image`);
+      const response = await fetch(`http://localhost:5217/api/pictureupload/${userId}/profile-image`);
       if (response.ok) {
         const imageBlob = await response.blob();
         const imageUrl = URL.createObjectURL(imageBlob);
@@ -58,7 +58,7 @@ export const AccSettings = () => {
     formData.append("profileImage", selectedFile);
 
     try {
-      const response = await fetch(`http://localhost:5217/api/user/upload-profile-image/${userId}`, {
+      const response = await fetch(`http://localhost:5217/api/pictureupload/upload-profile-image/${userId}`, {
         method: "POST",
         body: formData,
       });

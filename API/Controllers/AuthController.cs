@@ -15,22 +15,22 @@ public class AuthController(AppDbContext context, AuthService authService) : Con
     private readonly AuthService _authService = authService;
 
     [HttpPost("register")]
-    public async Task<ActionResult<User>> Register(UserDto userDto)
+    public async Task<ActionResult<User>> Register([FromBody] UserDto userDto)
     {
         var existingUser = await _context.Users.AnyAsync(u => u.Username == userDto.Username);
         if (existingUser)
         {
-            return BadRequest("Username is already taken.");
+            return BadRequest(error: "Username is already taken.");     // 4. Used Named Spaces
         }
 
         if (string.IsNullOrEmpty(userDto.Password))
         {
-            return BadRequest("Password cannot be empty.");
+            return BadRequest(error: "Password cannot be empty.");      // 4. Used Named Spaces
         }
 
-        var user = await _authService.RegisterUserAsync(userDto.Username, userDto.Password);
+        var user = await _authService.RegisterUserAsync(username: userDto.Username, password: userDto.Password);        // 4. Used Named Spaces
 
-        return CreatedAtAction(nameof(GetUserById), new { id = user.UserId }, user);
+        return CreatedAtAction(actionName: nameof(GetUserById), routeValues: new { id = user.UserId }, value: user);        // 4. Used Named Spaces
     }
 
     [HttpPost("login")]
@@ -51,6 +51,16 @@ public class AuthController(AppDbContext context, AuthService authService) : Con
 
         return Ok(new { userId = user.UserId, username = user.Username });
     }
+
+    [HttpGet("is-admin/{username}")]
+    public async Task<IActionResult> IsAdmin(string username)
+    {
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
+        if (user == null) return NotFound("User not found.");
+
+        return Ok(new { IsAdmin = user.IsAdmin });
+    }
+    
 
     [HttpGet("{id}")]
     public async Task<ActionResult<User>> GetUserById(int id)

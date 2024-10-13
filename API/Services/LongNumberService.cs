@@ -16,10 +16,10 @@ namespace API.Services
         public int[] GenerateSequence(int level)
         {
             var random = new Random();
-            return Enumerable.Range(0, level).Select(_ => random.Next(0, 10)).ToArray();
+            return Enumerable.Range(0, level).Select(_ => random.Next(0, 10)).ToArray();    // 9. LINQ to Objects usage
         }
 
-        public int CalculateScore(int[] guessed, int[] correct, int level = 1)
+        public int CalculateScore(int level = 1)    // 4. Optional argument usage
         {
             return level - 1;
         }

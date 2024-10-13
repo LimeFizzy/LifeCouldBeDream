@@ -35,7 +35,7 @@ namespace API.Controllers
         {
             
             var correctSequence = submission.CorrectSequence;
-            int score = _service.CalculateScore(submission.GuessedSequence, correctSequence, submission.Level);
+            int score = _service.CalculateScore(submission.Level);
 
             var userScore = new UserScore
             {

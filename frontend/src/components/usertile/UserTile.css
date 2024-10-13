@@ -1,64 +1,120 @@
 .user-tile {
-  width: 29rem; /* Fixed width */
-  height: 35rem; /* Adjusted height */
+    width: 22vw;
+    height: 29vw;
+    
+    padding: 2vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+
+    border-radius: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: linear-gradient(179deg, rgba(255, 255, 255, 0.12) 0.72%, rgba(255, 255, 255, 0.13) 99.25%);
+    backdrop-filter: blur(20px);
+    box-shadow: 0px 4px 24px -1px rgba(0, 0, 0, 0.20);
+  }
+
+
+  .user-tile h1 {
+    font-size: 1.8rem;
+    margin-top: 0.5rem;
+
+    font-weight: bold;
+    color: white;
+    text-align: center; 
+  }
+
+  .user-tile label {
+    min-width:  16rem;
+    /* margin-bottom: 0.5rem; */
+    display: block;
+    text-align: left;
+
+    color: #FFF;
+    font-family: Inter;
+    font-size: 1.4rem;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+  }
+
   
-  padding: 2vh; /* Maintain padding */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between; /* Space components evenly */
+  .user-tile input {
+    min-width: 16rem;
+    padding: 2.5%;
+    font-size: 1.4rem;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: linear-gradient(179deg, rgba(255, 255, 255, 0.18) 0.72%, rgba(255, 255, 255, 0.18) 99.25%);
+  }
+  
+  .user-tile button {
+    min-width:  16rem; 
+    min-height: none; 
+    padding: 0.4rem;
+    margin-top: 0.5rem;
+    cursor: pointer;
+    flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+   
 
-  border-radius: 30px;
-  border: 1px solid rgba(255, 255, 255, 0.56);
-  background: linear-gradient(179deg, rgba(255, 255, 255, 0.12) 0.72%, rgba(255, 255, 255, 0.13) 99.25%);
-  backdrop-filter: blur(20px);
-  box-shadow: 0px 4px 24px -1px rgba(0, 0, 0, 0.20);
-}
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: linear-gradient(179deg, rgba(255, 255, 255, 0.23) 0.72%, rgba(255, 255, 255, 0.21) 99.25%);
+    box-shadow: 0px 4px 24px -1px rgba(0, 0, 0, 0.20);
+    border-radius: 20px;
+    color: #FFF;
+    text-align: center;
+    font-family: Inter;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+  }
 
-.user-tile h1 {
-  font-size: 28px; /* Reduced font size for better fit */
-  font-weight: bold;
-  color: white;
-  text-align: center;
-  margin: 10px 0 20px 0; /* Adjusted margins for consistency */
-}
+  .status-message {
+    font-size: 16px;
+    color: white;
+    text-align: center;
+  }
 
-.user-tile input {
-  width: 94%; /* Maintain width */
-  height: 40px; /* Corrected height from 38x */
-  padding: 10px; /* Slightly reduced padding */
-  margin-bottom: 15px; /* Adjusted margin */
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.56);
-  background: linear-gradient(179deg, rgba(255, 255, 255, 0.18) 0.72%, rgba(255, 255, 255, 0.18) 99.25%);
-  font-size: 18px; /* Reduced font size for better fit */
-}
+  @media (min-height: 1000px)   {
+    .user-tile {
+      width: 29rem;
+      height: 40rem;
+    }
+  
+    .user-tile h1 {
+      font-size: 36px;
+    }
 
-.user-tile button {
-  width: 94%; /* Adjusted button width to fit */
-  height: 50px; /* Adjusted height */
-  padding: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.56);
-  background: linear-gradient(179deg, rgba(255, 255, 255, 0.23) 0.72%, rgba(255, 255, 255, 0.21) 99.25%);
-  box-shadow: 0px 4px 24px -1px rgba(0, 0, 0, 0.20);
-  border-radius: 20px;
-  color: #FFF;
-  text-align: center;
-  font-family: Inter;
-  font-size: 20px; /* Reduced font size for better fit */
-  font-weight: 600;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  margin-top: 10px; /* Adjusted margin */
-}
+    .user-tile label {
+      min-width:  22rem;
+      margin-bottom: 5px;
+      font-size: 24px;
+      display: block;
+      text-align: left;
 
-.status-message {
-  font-size: 16px; /* Reduced font size */
-  color: white;
-  margin-top: -5px; /* Adjusted top margin */
-  width: 94%;
-  text-align: center;
-}
+    }
+  
+    .user-tile input {
+      min-width: 15vw;
+      min-height: 1vh;
+      margin-bottom: 1rem;
+      padding: 1rem;
+    }
+
+    .user-tile button {
+      min-width:  20rem; 
+      min-height: 1rem; 
+      padding: 0.8rem;
+      margin-top: 0.5rem;
+      font-size: 24px;
+    }
+    
+    .status-message{
+      font-size: 18px;
+    }
+  }
