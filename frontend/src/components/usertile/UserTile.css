@@ -1,69 +1,125 @@
 .user-tile {
-    width: 500px;
-    height: 672px;
-    border-radius: 30px;
-    border: 1px solid rgba(255, 255, 255, 0.56);
-    background: linear-gradient(179deg, rgba(255, 255, 255, 0.12) 0.72%, rgba(255, 255, 255, 0.13) 99.25%);
-    box-shadow: 0px 4px 24px -1px rgba(0, 0, 0, 0.20);
-    backdrop-filter: blur(20px);
-    padding: 40px;
+    width: 22vw;
+    height: 29vw;
+    
+    padding: 2vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
+
+    border-radius: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: linear-gradient(179deg, rgba(255, 255, 255, 0.12) 0.72%, rgba(255, 255, 255, 0.13) 99.25%);
+    backdrop-filter: blur(20px);
+    box-shadow: 0px 4px 24px -1px rgba(0, 0, 0, 0.20);
   }
 
+
   .user-tile h1 {
-    font-size: 36px;
+    font-size: 1.8rem;
+    margin-top: 0.5rem;
+
     font-weight: bold;
     color: white;
-    text-align: center;
-    margin-top: 8px;
-    margin-bottom: 50px;
+    text-align: center; 
   }
+
+  .user-tile label {
+    min-width:  16rem;
+    /* margin-bottom: 0.5rem; */
+    display: block;
+    text-align: left;
+
+    color: #FFF;
+    font-family: Inter;
+    font-size: 1.4rem;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+  }
+
   
   .user-tile input {
-    width: 94%;
-    height: 38x;
-    padding: 15px;
-    margin-bottom: 25px;
+    min-width: 16rem;
+    padding: 2.5%;
+    font-size: 1.4rem;
     border-radius: 10px;
-    border: 1px solid rgba(255, 255, 255, 0.56);
+    border: 1px solid rgba(255, 255, 255, 0.18);
     background: linear-gradient(179deg, rgba(255, 255, 255, 0.18) 0.72%, rgba(255, 255, 255, 0.18) 99.25%);
-    font-size: 22px;
   }
   
   .user-tile button {
-    width: 345px;
-    height: 56px;
-    padding: 10px;
-    border: 1px solid rgba(255, 255, 255, 0.56);
+    min-width:  16rem; 
+    min-height: none; 
+    padding: 0.4rem;
+    margin-top: 0.5rem;
+    cursor: pointer;
+    flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+   
+
+    border: 1px solid rgba(255, 255, 255, 0.18);
     background: linear-gradient(179deg, rgba(255, 255, 255, 0.23) 0.72%, rgba(255, 255, 255, 0.21) 99.25%);
     box-shadow: 0px 4px 24px -1px rgba(0, 0, 0, 0.20);
     border-radius: 20px;
     color: #FFF;
     text-align: center;
     font-family: Inter;
-    font-size: 24px;
+    font-size: 20px;
     font-style: normal;
     font-weight: 600;
     line-height: normal;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    flex-shrink: 0;
-    margin-top: 15px;
   }
-
 
   .status-message {
-    font-size: 18px;
+    font-size: 16px;
     color: white;
-    margin-top: -10px;
-    width: 94%;
     text-align: center;
   }
+
+  @media (min-height: 1000px)   {
+    .user-tile {
+      width: 29rem;
+      height: 40rem;
+    }
+  
+    .user-tile h1 {
+      font-size: 36px;
+    }
+
+    .user-tile label {
+      min-width:  22rem;
+      margin-bottom: 5px;
+      font-size: 24px;
+      display: block;
+      text-align: left;
+
+    }
+  
+    .user-tile input {
+      min-width: 15vw;
+      min-height: 1vh;
+      margin-bottom: 1rem;
+      padding: 1rem;
+    }
+
+    .user-tile button {
+      min-width:  20rem; 
+      min-height: 1rem; 
+      padding: 0.8rem;
+      margin-top: 0.5rem;
+      font-size: 24px;
+    }
+    
+    .status-message{
+      font-size: 18px;
+    }
+  }
+
+
+ 
   
  
