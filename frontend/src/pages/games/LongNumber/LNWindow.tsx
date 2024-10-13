@@ -53,7 +53,7 @@ export const LNWindow: React.FC = () => {
         setIsShowingNumber(true);
 
         if (!isDevMode) {
-          setTimeRemaining(100); // IMPORTANT, with this progress bar does not start from the middle, then jump to the outside, with each next round
+          setTimeRemaining(100); // With this progress bar does not start from the middle, then jump to the outside, with each next round
 
           let countdownValue = 100;
           const countdownInterval = setInterval(() => {
@@ -64,7 +64,7 @@ export const LNWindow: React.FC = () => {
               clearInterval(countdownInterval);
               setIsShowingNumber(false);
             }
-          }, 50); // IMPORTANAT, 50ms is the delay for render.
+          }, 50); // 50ms is the delay for render.
         }
       } catch (error) {
         console.error("Error fetching sequence:", error);
