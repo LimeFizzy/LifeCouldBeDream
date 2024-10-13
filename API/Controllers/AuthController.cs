@@ -49,7 +49,7 @@ public class AuthController(AppDbContext context, AuthService authService) : Con
             return Unauthorized("Invalid username or password");
         }
 
-        return Ok(new { userId = user.UserId, username = user.Username });
+        return Ok(new { userId = user.UserId, username = user.Username, isAdmin = user.IsAdmin });
     }
 
     [HttpGet("{id}")]

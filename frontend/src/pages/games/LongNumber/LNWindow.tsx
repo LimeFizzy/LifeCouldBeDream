@@ -12,6 +12,33 @@ export const LNWindow: React.FC = () => {
   const [isRoundInProgress, setIsRoundInProgress] = useState<boolean>(false);
   const [isDevMode, setIsDevMode] = useState<boolean>(false);
 
+
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      const username = localStorage.getItem('username');
+      if (!username) return;
+  
+      try {
+        const response = await fetch('http://localhost:5217/api/auth/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ username }),
+        });
+  
+        if (response.ok) {
+          const data = await response.json();
+          setIsDevMode(data.isAdmin); // Set dev mode based on admin status
+        }
+      } catch (error) {
+        console.error('Error checking admin status:', error);
+      }
+    };
+  
+    checkAdminStatus();
+  }, []);
+
   const startNewRound = async () => {
     if (!isRoundInProgress) {
       setIsRoundInProgress(true);
