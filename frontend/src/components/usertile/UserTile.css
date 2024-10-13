@@ -9,7 +9,7 @@
     justify-content: space-between;
 
     border-radius: 30px;
-    border: 1px solid rgba(255, 255, 255, 0.56);
+    border: 1px solid rgba(255, 255, 255, 0.18);
     background: linear-gradient(179deg, rgba(255, 255, 255, 0.12) 0.72%, rgba(255, 255, 255, 0.13) 99.25%);
     backdrop-filter: blur(20px);
     box-shadow: 0px 4px 24px -1px rgba(0, 0, 0, 0.20);
@@ -18,7 +18,7 @@
 
   .user-tile h1 {
     font-size: 1.8rem;
-    margin-top: 1rem;
+    margin-top: 0.5rem;
 
     font-weight: bold;
     color: white;
@@ -27,7 +27,7 @@
 
   .user-tile label {
     min-width:  16rem;
-    margin-bottom: 0.5rem;
+    /* margin-bottom: 0.5rem; */
     display: block;
     text-align: left;
 
@@ -45,7 +45,7 @@
     padding: 2.5%;
     font-size: 1.4rem;
     border-radius: 10px;
-    border: 1px solid rgba(255, 255, 255, 0.56);
+    border: 1px solid rgba(255, 255, 255, 0.18);
     background: linear-gradient(179deg, rgba(255, 255, 255, 0.18) 0.72%, rgba(255, 255, 255, 0.18) 99.25%);
   }
   
@@ -61,7 +61,7 @@
     align-items: center;
    
 
-    border: 1px solid rgba(255, 255, 255, 0.56);
+    border: 1px solid rgba(255, 255, 255, 0.18);
     background: linear-gradient(179deg, rgba(255, 255, 255, 0.23) 0.72%, rgba(255, 255, 255, 0.21) 99.25%);
     box-shadow: 0px 4px 24px -1px rgba(0, 0, 0, 0.20);
     border-radius: 20px;
