@@ -28,7 +28,7 @@ namespace API.Services
             var fileName = $"{userId}_{Path.GetFileName(profileImage.FileName)}";
             var filePath = Path.Combine(uploadsFolder, fileName);
 
-            using (var stream = new FileStream(filePath, FileMode.Create))
+            using (var stream = new FileStream(filePath, FileMode.Create))    // 7. Using a stream to load data
             {
                 await profileImage.CopyToAsync(stream);
             }
