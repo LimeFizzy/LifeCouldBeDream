@@ -1,0 +1,69 @@
+.game-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 80vh;
+  width: 60vw;
+}
+
+h1 {
+  font-size: 2rem;
+  margin-top: 5%;
+  margin-bottom: 1%;
+  color: white;
+}
+
+.game-info {
+  margin-top: 1%;
+  margin-bottom: 5%;
+  font-size: 1.2rem;
+  font-weight: 200;
+  letter-spacing: 2px;
+  color: white;
+}
+
+.grid { 
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.square {
+  width: 100px;
+  height: 100px;
+  background-color: #8b5cf6;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* needed bc due to the default browser styling the is some weird border */
+.square:focus {
+  outline: none;
+}
+
+.square.active {
+  background-color: #dfbeff;
+}
+
+.square:hover {
+  background-color: #5c157d;
+}
+
+.game-over {
+  margin-top: 1%;
+  font-size: 1.5rem;
+  font-weight: 400;
+  letter-spacing: 2px;
+  color: white;
+}
+
+button {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: orange;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
