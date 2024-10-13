@@ -33,26 +33,22 @@ h1 {
   width: 100px;
   height: 100px;
   background-color: #8b5cf6;
-  border: none;
   border-radius: 15px;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
-/* when square changes color */
+/* needed bc due to the default browser styling the is some weird border */
+.square:focus {
+  outline: none;
+}
+
 .square.active {
   background-color: #dfbeff;
 }
 
-/* when mouse is on square */
 .square:hover {
   background-color: #5c157d;
-}
-
-.level-score-container {
-  font-size: 20px;
-  color: white;
-  margin-bottom: 20px;
 }
 
 .game-over {
