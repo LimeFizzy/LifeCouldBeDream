@@ -16,7 +16,7 @@ namespace API.Models
 
         public string? ProfileImagePath { get; set; }
 
-        public int CompareTo(User? other)
+        public int CompareTo(User? other)    // 10. Implement at least one of the standard .NET interfaces
         {
             if (other == null)
                 return 1;
