@@ -16,16 +16,18 @@ export const SMWindow: React.FC = () => {
   const [isGameOver, setIsGameOver] = useState<boolean>(false);
   const [isRoundInProgress, setIsRoundInProgress] = useState<boolean>(false);
 
-  const gridSize = 3; // 3x3 grid
+  const gridSize = 3;
   const fixedSequence = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
   const startNewRound = () => {
     setTimeout(() => {
       if (!isRoundInProgress) {
         setIsRoundInProgress(true);
+        
         const currentLevelSequence = fixedSequence.slice(0, level);
         setSequence(currentLevelSequence);
         setUserInput([]);
+
         flashSequence(currentLevelSequence);
       }
     }, 1500);
@@ -38,27 +40,27 @@ export const SMWindow: React.FC = () => {
     }));
     setSquares(initialSquares);
     startNewRound();
-  }, []);
+  }, [level]);
 
   const flashSequence = (sequence: number[]) => {
     setIsClickable(false);
 
     sequence.forEach((id, index) => {
-      const delay = index * 1000; // 1000 ms for each square
+      const delay = index * 1000;
 
       setTimeout(() => {
         highlightSquare(id);
       }, delay);
 
       setTimeout(() => {
-        highlightSquare(id, false); // Turn off after 0.8s
+        highlightSquare(id, false);
       }, delay + 800);
     });
 
     setTimeout(() => {
       setIsClickable(true);
       setIsRoundInProgress(false);
-    }, (sequence.length * 1000) + 800); // Adding the time for the last square to be turned off
+    }, sequence.length * 1000);
   };
 
   const highlightSquare = (id: number, active: boolean = true) => {
@@ -68,6 +70,7 @@ export const SMWindow: React.FC = () => {
       )
     );
   };
+
 
   const handleSquareClick = (id: number) => {
     if (!isClickable) return;
