@@ -19,12 +19,11 @@ export const LNWindow: React.FC = () => {
       if (!username) return;
   
       try {
-        const response = await fetch('http://localhost:5217/api/auth/login', {
-          method: 'POST',
+        const response = await fetch(`http://localhost:5217/api/auth/is-admin/${username}`, {
+          method: 'GET',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ username }),
         });
   
         if (response.ok) {

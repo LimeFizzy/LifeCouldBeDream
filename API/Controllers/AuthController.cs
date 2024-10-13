@@ -49,8 +49,18 @@ public class AuthController(AppDbContext context, AuthService authService) : Con
             return Unauthorized("Invalid username or password");
         }
 
-        return Ok(new { userId = user.UserId, username = user.Username, isAdmin = user.IsAdmin });
+        return Ok(new { userId = user.UserId, username = user.Username });
     }
+
+    [HttpGet("is-admin/{username}")]
+    public async Task<IActionResult> IsAdmin(string username)
+    {
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
+        if (user == null) return NotFound("User not found.");
+
+        return Ok(new { IsAdmin = user.IsAdmin });
+    }
+    
 
     [HttpGet("{id}")]
     public async Task<ActionResult<User>> GetUserById(int id)
