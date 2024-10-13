@@ -18,29 +18,34 @@ export const SMWindow: React.FC = () => {
 
   const gridSize = 3;
   const fixedSequence = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+  
+    // only runs when level changes 
+    useEffect(() => {
+      if (!isGameOver) {
+        startNewRound();
+      }
+    }, [level]);
+  
+    // only ryns once - initialize the squares when the component mounts
+    useEffect(() => {
+      const initialSquares = Array.from({ length: gridSize * gridSize }, (_, i) => ({
+        id: i + 1,
+        isActive: false,
+      }));
+      setSquares(initialSquares);
+    }, []);
 
   const startNewRound = () => {
-    setTimeout(() => {
-      if (!isRoundInProgress) {
-        setIsRoundInProgress(true);
-        
-        const currentLevelSequence = fixedSequence.slice(0, level);
-        setSequence(currentLevelSequence);
-        setUserInput([]);
-
-        flashSequence(currentLevelSequence);
-      }
-    }, 1500);
+    if (!isRoundInProgress && !isGameOver) {
+      setIsRoundInProgress(true);
+      
+      const currentLevelSequence = fixedSequence.slice(0, level);
+      setSequence(currentLevelSequence);
+      setUserInput([]);
+      
+      flashSequence(currentLevelSequence);
+    }
   };
-
-  useEffect(() => {
-    const initialSquares = Array.from({ length: gridSize * gridSize }, (_, i) => ({
-      id: i + 1,
-      isActive: false,
-    }));
-    setSquares(initialSquares);
-    startNewRound();
-  }, [level]);
 
   const flashSequence = (sequence: number[]) => {
     setIsClickable(false);
@@ -71,7 +76,6 @@ export const SMWindow: React.FC = () => {
     );
   };
 
-
   const handleSquareClick = (id: number) => {
     if (!isClickable) return;
 
@@ -82,8 +86,6 @@ export const SMWindow: React.FC = () => {
       if (newUserInput.length === sequence.length) {
         setScore((prev) => prev + level);
         setLevel((prev) => prev + 1);
-        setIsRoundInProgress(false);
-        startNewRound();
       }
     } else {
       handleGameOver();
@@ -99,6 +101,7 @@ export const SMWindow: React.FC = () => {
     setSequence([]);
     setLevel(1);
     setScore(0);
+    setUserInput([]);
     setIsGameOver(false);
     setIsRoundInProgress(false);
     startNewRound();
