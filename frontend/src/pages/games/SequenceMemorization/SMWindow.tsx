@@ -17,36 +17,48 @@ export const SMWindow: React.FC = () => {
   const [isRoundInProgress, setIsRoundInProgress] = useState<boolean>(false);
 
   const gridSize = 3;
-  const fixedSequence = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-  
-    // only runs when level changes 
-    useEffect(() => {
-      if (!isGameOver) {
-        startNewRound();
-      }
-    }, [level]);
-  
-    // only ryns once - initialize the squares when the component mounts
-    useEffect(() => {
-      const initialSquares = Array.from({ length: gridSize * gridSize }, (_, i) => ({
-        id: i + 1,
-        isActive: false,
-      }));
-      setSquares(initialSquares);
-    }, []);
+
+  // Generate random sequence for the game (length 30)
+  const generateRandomSequence = (length: number): number[] => {
+    const randomSequence: number[] = [];
+    for (let i = 0; i < length; i++) {
+      const randomNum = Math.floor(Math.random() * 9) + 1;
+      randomSequence.push(randomNum);
+    }
+    return randomSequence;
+  };
+
+  // Initialize game and sequence on component mount
+  useEffect(() => {
+    const initialSquares = Array.from({ length: gridSize * gridSize }, (_, i) => ({
+      id: i + 1,
+      isActive: false,
+    }));
+    setSquares(initialSquares);
+
+    const randomSequence = generateRandomSequence(30); // Generate sequence once for the game
+    setSequence(randomSequence);
+  }, []); // This runs only once when the game starts
+
+  // Start a new round based on the current level
+  useEffect(() => {
+    if (!isGameOver) {
+      startNewRound();
+    }
+  }, [level]); // This runs every time the level changes
 
   const startNewRound = () => {
     if (!isRoundInProgress && !isGameOver) {
       setIsRoundInProgress(true);
-      
-      const currentLevelSequence = fixedSequence.slice(0, level);
-      setSequence(currentLevelSequence);
+
+      const currentLevelSequence = sequence.slice(0, level); // Use part of the sequence up to the current level
       setUserInput([]);
-      
-      flashSequence(currentLevelSequence);
+
+      flashSequence(currentLevelSequence); // Flash the sequence for the current level
     }
   };
 
+  // Flash the sequence squares
   const flashSequence = (sequence: number[]) => {
     setIsClickable(false);
 
@@ -68,6 +80,7 @@ export const SMWindow: React.FC = () => {
     }, sequence.length * 1000);
   };
 
+  // Highlight a square based on its ID
   const highlightSquare = (id: number, active: boolean = true) => {
     setSquares((prevSquares) =>
       prevSquares.map((square) =>
@@ -76,6 +89,7 @@ export const SMWindow: React.FC = () => {
     );
   };
 
+  // Handle user input
   const handleSquareClick = (id: number) => {
     if (!isClickable) return;
 
@@ -83,7 +97,7 @@ export const SMWindow: React.FC = () => {
     setUserInput(newUserInput);
 
     if (newUserInput.join('') === sequence.slice(0, newUserInput.length).join('')) {
-      if (newUserInput.length === sequence.length) {
+      if (newUserInput.length === sequence.slice(0, level).length) {
         setScore((prev) => prev + level);
         setLevel((prev) => prev + 1);
       }
@@ -92,19 +106,21 @@ export const SMWindow: React.FC = () => {
     }
   };
 
+  // Handle game over state
   const handleGameOver = () => {
     setIsGameOver(true);
     setIsRoundInProgress(false);
   };
 
+  // Restart the game
   const restartGame = () => {
-    setSequence([]);
+    const randomSequence = generateRandomSequence(30); // Generate new sequence
+    setSequence(randomSequence);
     setLevel(1);
     setScore(0);
     setUserInput([]);
     setIsGameOver(false);
     setIsRoundInProgress(false);
-    startNewRound();
   };
 
   return (
