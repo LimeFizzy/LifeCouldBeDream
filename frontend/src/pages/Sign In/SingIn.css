@@ -1,50 +1,62 @@
-  .user-tile button:hover {
-    background-color: rgba(255, 255, 255, 0.3);
-  }
-  
   .signin-input-container {
-    display: flex;
-    width: 400px;
-    height: 530px;
-    padding: 10px;
+    padding: 1rem;
+    gap: 0.5rem;
     flex-direction: column;
-    align-items: center;
-    gap: 20px;
+    align-items: top;
+    display: flex;
     flex-shrink: 0; 
+    margin-bottom: 30px;
+    margin-bottom: 5rem;
   }
 
   .password-container {
-   
-    display: flex;
-    width: 400px;
-    height: 260px;
-    padding: 5px;
+    display: flex; 
+    gap: 0.5rem;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
     flex-shrink: 0; 
   }
 
-
-  .user-tile label {
-    color: #FFF;
-    font-family: Inter;
-    font-size: 24px;
-    font-style: normal;
-    font-weight: 600;
-    line-height: normal;
-    width: 100%;
-    text-align: left;
-    display: block;
-    margin-bottom: 5px;
-  }
-
   .password-status-message {
-    font-size: 18px;
+    font-size: 14px;
     color: white;
-    margin-top: -20px;
-    width: 94%;
+    min-width:  300px; 
     text-align: left;
   }
+
+  .user-tile button:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+  }
+
+  @media (min-height: 1000px)   {
+    .signin-input-container {
+      min-width:  22rem; 
+      min-height: 30rem; 
+      padding: 2rem;
+      gap: 1vh;
+      flex-direction: column;
+      align-items: center;
+      display: flex;
+      flex-shrink: 0; 
+    }
   
+    .password-container {
+      display: flex;
+      min-width:  22rem; 
+      height: 24vh;
+      gap: 0.5vh;
+      flex-direction: column;
+      align-items: center;
+      flex-shrink: 0; 
+    }
+  
+  
+    .password-status-message {
+      font-size: 18px;
+      color: white;
+      margin-top: -1rem;
+      min-width:  22rem; 
+      text-align: left;
+    }
+  }
   
