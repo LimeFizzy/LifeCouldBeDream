@@ -12,5 +12,22 @@ namespace API.Services
         {
             return _dbContext.UserScores.AsNoTracking();
         }
+
+        public async Task SaveScoreAsync(UserScore userScore)
+        {
+            _dbContext.UserScores.Add(userScore);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public GameTypes? GetGameTypeFromString(string gameType)
+        {
+            return gameType switch
+            {
+                "longNumberMemory" => (GameTypes?)GameTypes.LONG_NUMBER,
+                "sequenceMemory" => (GameTypes?)GameTypes.SEQUENCE,
+                "chimpTest" => (GameTypes?)GameTypes.CHIMP,
+                _ => null,// Invalid game type
+            };
+        }
     }
 }
