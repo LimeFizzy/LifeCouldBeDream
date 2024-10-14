@@ -18,47 +18,49 @@ export const SMWindow: React.FC = () => {
 
   const gridSize = 3;
 
-  // Generate random sequence for the game (length 30)
   const generateRandomSequence = (length: number): number[] => {
-    const randomSequence: number[] = [];
-    for (let i = 0; i < length; i++) {
-      const randomNum = Math.floor(Math.random() * 9) + 1;
-      randomSequence.push(randomNum);
-    }
-    return randomSequence;
+    return Array.from({ length }, () => Math.floor(Math.random() * (gridSize * gridSize)) + 1);
   };
 
-  // Initialize game and sequence on component mount
   useEffect(() => {
+    initializeGame();
+  }, []);
+  
+  useEffect(() => {
+    // important - make sure the seq is ready before starting the round
+    if (!isGameOver && !isRoundInProgress && sequence.length > 0) {
+      startNewRound();
+    }
+  }, [level, sequence]); // trigger when level changes, but only if seq is ready
+  
+
+  const initializeGame = () => {
     const initialSquares = Array.from({ length: gridSize * gridSize }, (_, i) => ({
       id: i + 1,
       isActive: false,
     }));
     setSquares(initialSquares);
 
-    const randomSequence = generateRandomSequence(30); // Generate sequence once for the game
-    setSequence(randomSequence);
-  }, []); // This runs only once when the game starts
+    setSequence(generateRandomSequence(30));
 
-  // Start a new round based on the current level
-  useEffect(() => {
-    if (!isGameOver) {
-      startNewRound();
-    }
-  }, [level]); // This runs every time the level changes
-
-  const startNewRound = () => {
-    if (!isRoundInProgress && !isGameOver) {
-      setIsRoundInProgress(true);
-
-      const currentLevelSequence = sequence.slice(0, level); // Use part of the sequence up to the current level
-      setUserInput([]);
-
-      flashSequence(currentLevelSequence); // Flash the sequence for the current level
-    }
+    startNewRound();
   };
 
-  // Flash the sequence squares
+  const startNewRound = (currentSequence: number[] = sequence) => {
+    if (isRoundInProgress || isGameOver) return;
+  
+    if (currentSequence.length < level) {
+      console.error("Sequence not ready for the current level.");
+      return;
+    }
+  
+    setIsRoundInProgress(true);
+    const currentLevelSequence = currentSequence.slice(0, level);
+    setUserInput([]);
+    flashSequence(currentLevelSequence);
+  };
+  
+
   const flashSequence = (sequence: number[]) => {
     setIsClickable(false);
 
@@ -80,7 +82,6 @@ export const SMWindow: React.FC = () => {
     }, sequence.length * 1000);
   };
 
-  // Highlight a square based on its ID
   const highlightSquare = (id: number, active: boolean = true) => {
     setSquares((prevSquares) =>
       prevSquares.map((square) =>
@@ -89,38 +90,39 @@ export const SMWindow: React.FC = () => {
     );
   };
 
-  // Handle user input
   const handleSquareClick = (id: number) => {
     if (!isClickable) return;
 
     const newUserInput = [...userInput, id];
     setUserInput(newUserInput);
 
-    if (newUserInput.join('') === sequence.slice(0, newUserInput.length).join('')) {
-      if (newUserInput.length === sequence.slice(0, level).length) {
-        setScore((prev) => prev + level);
-        setLevel((prev) => prev + 1);
-      }
-    } else {
+    const correctSoFar = newUserInput.every(
+      (value, index) => value === sequence[index]
+    );
+
+    if (!correctSoFar) {
       handleGameOver();
+    } else if (newUserInput.length === level) {
+      setScore((prev) => prev + level);
+      setLevel((prev) => prev + 1);
     }
   };
 
-  // Handle game over state
   const handleGameOver = () => {
     setIsGameOver(true);
     setIsRoundInProgress(false);
   };
 
-  // Restart the game
   const restartGame = () => {
-    const randomSequence = generateRandomSequence(30); // Generate new sequence
-    setSequence(randomSequence);
     setLevel(1);
     setScore(0);
     setUserInput([]);
     setIsGameOver(false);
     setIsRoundInProgress(false);
+
+    const newSequence = generateRandomSequence(30);
+    setSequence(newSequence);
+    startNewRound();
   };
 
   return (
