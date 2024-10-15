@@ -32,7 +32,7 @@ const fetchLeaderboard = async (gameType: string) => {
       nr: index + 1,
       username: item.username,
       result: item.score.toString(),
-      date: new Date(item.gameDate).toLocaleDateString(),
+      date: item.gameDate,
     }));
   } catch (error) {
     console.error("Error fetching leaderboard:", error);
@@ -47,10 +47,9 @@ export const Leaderboard = () => {
   const [results, setResults] = useState<Result[]>([]);
   const [currentUsername, setCurrentUsername] = useState<string | null>(null);
 
-  
   useEffect(() => {
     // Fetch username from localStorage
-    const storedUsername = localStorage.getItem('username');
+    const storedUsername = localStorage.getItem("username");
     if (storedUsername) {
       setCurrentUsername(storedUsername);
     }

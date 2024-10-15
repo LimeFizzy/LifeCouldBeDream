@@ -28,7 +28,17 @@ public class AuthController(AppDbContext context, AuthService authService) : Con
             return BadRequest(error: "Password cannot be empty.");      // 4. Used Named Spaces
         }
 
-        var user = await _authService.RegisterUserAsync(username: userDto.Username, password: userDto.Password);        // 4. Used Named Spaces
+        var hashedPassword = _authService.HashPassword(userDto.Password);
+
+        var user = new User
+        {
+            Username = userDto.Username,
+            PasswordHash = hashedPassword
+        };
+
+        _context.Users.Add(user);
+        await _context.SaveChangesAsync();
+
 
         return CreatedAtAction(actionName: nameof(GetUserById), routeValues: new { id = user.UserId }, value: user);        // 4. Used Named Spaces
     }
@@ -42,8 +52,7 @@ public class AuthController(AppDbContext context, AuthService authService) : Con
             return Unauthorized("User doesn't exist");
         }
 
-        // Now using the updated VerifyPassword method
-        bool isValidPassword = _authService.VerifyPassword(loginDto.Password, user);
+        bool isValidPassword = _authService.VerifyPassword(loginDto.Password, user.PasswordHash);
         if (!isValidPassword)
         {
             return Unauthorized("Invalid username or password");
@@ -61,7 +70,7 @@ public class AuthController(AppDbContext context, AuthService authService) : Con
         return Ok(new { IsAdmin = user.IsAdmin });
     }
     
-
+    
     [HttpGet("{id}")]
     public async Task<ActionResult<User>> GetUserById(int id)
     {

@@ -1,6 +1,6 @@
 namespace API.Models
 {
-    public record ScoreSubmission
+    public class ScoreSubmission
     {
         public string Username { get; set; } = "guest";
         public string GameType { get; set; } = "";
