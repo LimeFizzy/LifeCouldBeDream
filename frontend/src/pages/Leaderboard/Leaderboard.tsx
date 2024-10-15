@@ -58,7 +58,6 @@ export const Leaderboard = () => {
       try {
         const data = await fetchLeaderboard(selectedGame);
         setResults(data);
-        console.log(data);
       } catch (err) {
         console.error("Error fetching leaderboard:", err);
       }
