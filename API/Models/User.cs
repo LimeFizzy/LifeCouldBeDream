@@ -1,9 +1,8 @@
-using System;
 using System.Text.Json.Serialization;
 
 namespace API.Models
 {
-    public class User : IComparable<User>
+    public class User
     {
         public int UserId { get; set; }
         public required string Username { get; set; }
@@ -16,12 +15,5 @@ namespace API.Models
 
         public string? ProfileImagePath { get; set; }
 
-        public int CompareTo(User? other)    // 10. Implement at least one of the standard .NET interfaces
-        {
-            if (other == null)
-                return 1;
-
-            return string.Compare(PasswordHash, other.PasswordHash, StringComparison.Ordinal);
-        }
     }
 }

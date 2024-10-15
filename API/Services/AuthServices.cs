@@ -1,9 +1,6 @@
 using API.Data;
-using API.Models;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 
 namespace API.Services
 {
