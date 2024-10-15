@@ -26,28 +26,19 @@ namespace API.Controllers
                                     .Where(score => score.GameType == gameType)
                                     .ToList();
 
-                // Create a list of UserScoreComparer objects and sort them
                 var sortedLeaderboard = leaderboard
-                                        .Select(score => new UserScoreComparer(score))
-                                        .OrderBy(scoreComparer => scoreComparer) // This now uses IComparable<UserScoreComparer>
+                                        .OrderBy(us => us)
                                         .ToList();
 
-                var leaderboardWithTime = new List<object>();
-
-                // Use foreach to process leaderboard entries
-                foreach (var scoreComparer in sortedLeaderboard)
+                sortedLeaderboard.ForEach(us =>
                 {
-                    var score = scoreComparer.UserScore; // Access the original UserScore object
-
-                    leaderboardWithTime.Add(new
+                    if (DateTime.TryParse(us.GameDate, out var parsedDate))
                     {
-                        score.Username,
-                        score.Score,
-                        GameDate = score.GameDate.ToString("o") // Format time and date. Hehe ISO 8601 otherwise, not happy
-                    });
-                }
+                        us.GameDate = parsedDate.ToString("yyyy/MM/dd");
+                    }
+                });
 
-                return Ok(leaderboardWithTime);
+                return Ok(sortedLeaderboard);
             }
             catch (Exception ex)
             {
@@ -84,13 +75,12 @@ namespace API.Controllers
                     return BadRequest(new { Message = $"Unhandled game type: {gameType}" });
             }
 
-            // Create the UserScore object and assign the current time to GameDate
             var userScore = new UserScore
             {
                 Username = submission.Username,
                 Score = score,
                 GameType = gameType,
-                GameDate = DateTime.UtcNow // Set the submission time here
+                GameDate = DateTime.Now.ToString()
             };
 
             await _userScoreService.SaveScoreAsync(userScore);
