@@ -61,7 +61,7 @@ public class AuthController(AppDbContext context, AuthService authService) : Con
         return Ok(new { IsAdmin = user.IsAdmin });
     }
     
-
+    
     [HttpGet("{id}")]
     public async Task<ActionResult<User>> GetUserById(int id)
     {

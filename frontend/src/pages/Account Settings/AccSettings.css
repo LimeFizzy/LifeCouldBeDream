@@ -98,8 +98,8 @@
     }
     
     .profile-image {
-      width: 9rem;
-      height: 9rem;
+      width: 15rem;
+      height: 15rem;
       margin-bottom: 2vh;
       object-fit: cover;
       border-radius: 50%;
