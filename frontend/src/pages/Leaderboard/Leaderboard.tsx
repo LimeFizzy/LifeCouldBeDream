@@ -32,7 +32,13 @@ const fetchLeaderboard = async (gameType: string) => {
       nr: index + 1,
       username: item.username,
       result: item.score.toString(),
-      date: new Date(item.gameDate).toLocaleDateString(),
+      date: new Date(item.gameDate).toLocaleString("en-GB", { 
+        hour: '2-digit', 
+        minute: '2-digit', 
+        day: '2-digit', 
+        month: '2-digit', 
+        year: 'numeric'
+      }),
     }));
   } catch (error) {
     console.error("Error fetching leaderboard:", error);

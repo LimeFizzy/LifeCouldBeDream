@@ -6,6 +6,6 @@ namespace API.Models
         public required string Username { get; set; }
         public int Score { get; set; }
         public string GameType { get; set; } = "";
-        public DateTime GameDate { get; set; } = DateTime.Now;
+        public DateTime GameDate { get; set; }
     }
 }
