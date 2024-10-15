@@ -27,10 +27,10 @@ namespace API.Controllers
                                     .ToList();
 
                 var sortedLeaderboard = leaderboard
-                                        .OrderBy(us => us)
+                                        .OrderBy(us => us)      // Use of IComparable interface functional 
                                         .ToList();
 
-                sortedLeaderboard.ForEach(us =>
+                sortedLeaderboard.ForEach(us =>                 // Use of foreach
                 {
                     if (DateTime.TryParse(us.GameDate, out var parsedDate))
                     {
