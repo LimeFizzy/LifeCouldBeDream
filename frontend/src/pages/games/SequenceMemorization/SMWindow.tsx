@@ -18,23 +18,24 @@ export const SMWindow: React.FC = () => {
 
   const gridSize = 3;
 
-  // const generateRandomSequence = (length: number): number[] => {
-  //   return Array.from({ length }, () => Math.floor(Math.random() * (gridSize * gridSize)) + 1);
-  // };
+  // there is a bug
+  // after restarting the game, first attempt is marked as wrong
 
   useEffect(() => {
+    console.log("----useEffect[]");
     initializeGame();
   }, []);
   
   useEffect(() => {
-    // important - make sure the seq is ready before starting the round
     if (!isGameOver && !isRoundInProgress && sequence.length > 0) {
       startNewRound();
     }
-  }, [level, sequence]); // trigger when level changes, but only if seq is ready
+  }, [level, sequence]);
   
 
   const initializeGame = async () => {
+    console.log("----initializeGame START");
+
     const initialSquares = Array.from({ length: gridSize * gridSize }, (_, i) => ({
       id: i + 1,
       isActive: false,
@@ -42,53 +43,67 @@ export const SMWindow: React.FC = () => {
     setSquares(initialSquares);
 
     await fetchInitialSequence();
+    console.log("----initializeGame FINISH before startNewRound");
 
-    // startNewRound();
+    setTimeout(() => {
+      startNewRound();      
+    }, 2000);
   };
 
   const fetchInitialSequence = async () => {
+    console.log("----fetchInitialSequence - START");
+
     try {
-      const response = await fetch(`http://localhost:5000/api/sequence/generate-sequence/30`); // by default generates seq of size 30
+      const response = await fetch(`http://localhost:5217/api/sequence/generate-sequence/30`);
       if (!response.ok) {
         throw new Error('Failed to fetch the sequence');
       }
       const data = await response.json();
-      setSequence(data.Sequence);
+      setSequence(data.sequence);
     } catch (error) {
       console.error('Error fetching sequence:', error);
     }
+    console.log("----fetchInitialSequence - FINISH");
+
   };
 
   const startNewRound = () => {
+    console.log("----startNewRound");
     if (isRoundInProgress || isGameOver) return;
   
     setIsRoundInProgress(true);
     const currentLevelSequence = sequence.slice(0, level);
     setUserInput([]);
-    flashSequence(currentLevelSequence);
+
+    setTimeout(() => {
+      flashSequence(currentLevelSequence);      
+    }, 1000); //just looks better
   };
   
 
   const flashSequence = (sequence: number[]) => {
     setIsClickable(false);
-
+  
     sequence.forEach((id, index) => {
       const delay = index * 1000;
-
+  
       setTimeout(() => {
+        console.log(`Highlighting square ${id} (on)`); // Add logging here
         highlightSquare(id);
       }, delay);
-
+  
       setTimeout(() => {
+        console.log(`Removing highlight from square ${id} (off)`); // Add logging here
         highlightSquare(id, false);
       }, delay + 800);
     });
-
+  
     setTimeout(() => {
       setIsClickable(true);
       setIsRoundInProgress(false);
     }, sequence.length * 1000);
   };
+  
 
   const highlightSquare = (id: number, active: boolean = true) => {
     setSquares((prevSquares) =>
@@ -117,11 +132,15 @@ export const SMWindow: React.FC = () => {
   };
 
   const handleGameOver = () => {
+    console.log("----handleGameOver");
+
     setIsGameOver(true);
     setIsRoundInProgress(false);
   };
 
   const restartGame = async () => {
+    console.log("----restartGame - START");
+
     setLevel(1);
     setScore(0);
     setUserInput([]);
@@ -130,7 +149,9 @@ export const SMWindow: React.FC = () => {
 
     await fetchInitialSequence();
     // setSequence(newSequence);
-    // startNewRound();
+    console.log("----restartGame - FINISH before startNewRound");
+
+    startNewRound();
   };
 
   return (
