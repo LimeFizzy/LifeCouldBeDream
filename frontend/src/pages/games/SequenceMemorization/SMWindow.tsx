@@ -18,9 +18,9 @@ export const SMWindow: React.FC = () => {
 
   const gridSize = 3;
 
-  const generateRandomSequence = (length: number): number[] => {
-    return Array.from({ length }, () => Math.floor(Math.random() * (gridSize * gridSize)) + 1);
-  };
+  // const generateRandomSequence = (length: number): number[] => {
+  //   return Array.from({ length }, () => Math.floor(Math.random() * (gridSize * gridSize)) + 1);
+  // };
 
   useEffect(() => {
     initializeGame();
@@ -34,28 +34,36 @@ export const SMWindow: React.FC = () => {
   }, [level, sequence]); // trigger when level changes, but only if seq is ready
   
 
-  const initializeGame = () => {
+  const initializeGame = async () => {
     const initialSquares = Array.from({ length: gridSize * gridSize }, (_, i) => ({
       id: i + 1,
       isActive: false,
     }));
     setSquares(initialSquares);
 
-    setSequence(generateRandomSequence(30));
+    await fetchInitialSequence();
 
-    startNewRound();
+    // startNewRound();
   };
 
-  const startNewRound = (currentSequence: number[] = sequence) => {
+  const fetchInitialSequence = async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/sequence/generate-sequence/30`); // by default generates seq of size 30
+      if (!response.ok) {
+        throw new Error('Failed to fetch the sequence');
+      }
+      const data = await response.json();
+      setSequence(data.Sequence);
+    } catch (error) {
+      console.error('Error fetching sequence:', error);
+    }
+  };
+
+  const startNewRound = () => {
     if (isRoundInProgress || isGameOver) return;
   
-    if (currentSequence.length < level) {
-      console.error("Sequence not ready for the current level.");
-      return;
-    }
-  
     setIsRoundInProgress(true);
-    const currentLevelSequence = currentSequence.slice(0, level);
+    const currentLevelSequence = sequence.slice(0, level);
     setUserInput([]);
     flashSequence(currentLevelSequence);
   };
@@ -113,16 +121,16 @@ export const SMWindow: React.FC = () => {
     setIsRoundInProgress(false);
   };
 
-  const restartGame = () => {
+  const restartGame = async () => {
     setLevel(1);
     setScore(0);
     setUserInput([]);
     setIsGameOver(false);
     setIsRoundInProgress(false);
 
-    const newSequence = generateRandomSequence(30);
-    setSequence(newSequence);
-    startNewRound();
+    await fetchInitialSequence();
+    // setSequence(newSequence);
+    // startNewRound();
   };
 
   return (
