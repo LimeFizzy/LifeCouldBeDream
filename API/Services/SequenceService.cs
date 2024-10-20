@@ -11,14 +11,10 @@ namespace API.Services
             return Enumerable.Range(0, level).Select(_ => _random.Next(1, 10)).ToArray();
         }
 
-        public int CalculateScore(int level, int[] correctSequence, int[] guessedSequence)
+        // full score = level! (factorial)
+        public int CalculateScore(int level)
         {
-            if (correctSequence.SequenceEqual(guessedSequence))
-            {
-                return level;
-            }
-
-            return 0;
+            return (level * (level + 1)) / 2;
         }
     }
 }

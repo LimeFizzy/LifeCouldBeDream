@@ -9,11 +9,13 @@ namespace API.Controllers
     public class UserScoreController : ControllerBase
     {
         private readonly LongNumberService _longNumberService;
+        private readonly SequenceService _sequenceService;
         private readonly UserScoreService _userScoreService;
 
-        public UserScoreController(LongNumberService longNumberService, UserScoreService userScoreService)
+        public UserScoreController(LongNumberService longNumberService, SequenceService sequenceService, UserScoreService userScoreService)
         {
             _longNumberService = longNumberService;
+            _sequenceService = sequenceService;
             _userScoreService = userScoreService;
         }
 
@@ -64,8 +66,8 @@ namespace API.Controllers
                     break;
 
                 case GameTypes.SEQUENCE:
-                    // Not Implemented
-                    return StatusCode(501, new { Message = "Sequence memory game not implemented yet" });
+                    score = _sequenceService.CalculateScore(submission.Level);
+                    break;
 
                 case GameTypes.CHIMP:
                     // Not Implemented
