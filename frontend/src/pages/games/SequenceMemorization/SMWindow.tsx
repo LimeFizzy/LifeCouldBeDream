@@ -15,23 +15,21 @@ export const SMWindow: React.FC = () => {
   const [isClickable, setIsClickable] = useState(false);
   const [isGameOver, setIsGameOver] = useState<boolean>(false);
   const [isRoundInProgress, setIsRoundInProgress] = useState<boolean>(false);
+  const [isSequenceReady, setIsSequenceReady] = useState(false);
 
   const gridSize = 3;
 
-  // there is a bug
-  // after restarting the game, first attempt is marked as wrong
-
+  // Initialize game on first load
   useEffect(() => {
-    console.log("----useEffect[]");
     initializeGame();
   }, []);
-  
+
+  // Start new round only when sequence is fully fetched and set
   useEffect(() => {
-    if (!isGameOver && !isRoundInProgress && sequence.length > 0) {
+    if (isSequenceReady && !isGameOver && !isRoundInProgress) {
       startNewRound();
     }
-  }, [level, sequence]);
-  
+  }, [isSequenceReady, level]);
 
   const initializeGame = async () => {
     console.log("----initializeGame START");
@@ -44,10 +42,6 @@ export const SMWindow: React.FC = () => {
 
     await fetchInitialSequence();
     console.log("----initializeGame FINISH before startNewRound");
-
-    setTimeout(() => {
-      startNewRound();      
-    }, 2000);
   };
 
   const fetchInitialSequence = async () => {
@@ -60,50 +54,49 @@ export const SMWindow: React.FC = () => {
       }
       const data = await response.json();
       setSequence(data.sequence);
+      setIsSequenceReady(true);  // Set sequence ready only when it's fully fetched
     } catch (error) {
       console.error('Error fetching sequence:', error);
     }
     console.log("----fetchInitialSequence - FINISH");
-
   };
 
   const startNewRound = () => {
     console.log("----startNewRound");
-    if (isRoundInProgress || isGameOver) return;
-  
+    if (isRoundInProgress || isGameOver || !isSequenceReady) return;
+
     setIsRoundInProgress(true);
     const currentLevelSequence = sequence.slice(0, level);
     setUserInput([]);
-
+    
+    // Flash sequence after a delay to improve user experience
     setTimeout(() => {
-      flashSequence(currentLevelSequence);      
-    }, 1000); //just looks better
+      flashSequence(currentLevelSequence);
+    }, 1000);
   };
-  
 
   const flashSequence = (sequence: number[]) => {
     setIsClickable(false);
-  
+
     sequence.forEach((id, index) => {
       const delay = index * 1000;
-  
+
       setTimeout(() => {
-        console.log(`Highlighting square ${id} (on)`); // Add logging here
+        console.log(`Highlighting square ${id} (on)`);
         highlightSquare(id);
       }, delay);
-  
+
       setTimeout(() => {
-        console.log(`Removing highlight from square ${id} (off)`); // Add logging here
+        console.log(`Removing highlight from square ${id} (off)`);
         highlightSquare(id, false);
       }, delay + 800);
     });
-  
+
     setTimeout(() => {
-      setIsClickable(true);
+      setIsClickable(true);  // Allow clicking only after flashing is complete
       setIsRoundInProgress(false);
     }, sequence.length * 1000);
   };
-  
 
   const highlightSquare = (id: number, active: boolean = true) => {
     setSquares((prevSquares) =>
@@ -132,26 +125,21 @@ export const SMWindow: React.FC = () => {
   };
 
   const handleGameOver = () => {
-    console.log("----handleGameOver");
-
     setIsGameOver(true);
     setIsRoundInProgress(false);
+    setIsSequenceReady(false);  // Reset sequence readiness
   };
 
   const restartGame = async () => {
-    console.log("----restartGame - START");
-
     setLevel(1);
     setScore(0);
     setUserInput([]);
     setIsGameOver(false);
     setIsRoundInProgress(false);
+    setIsSequenceReady(false);  // Reset readiness before fetching
 
+    // Fetch the new sequence and let useEffect handle starting the round
     await fetchInitialSequence();
-    // setSequence(newSequence);
-    console.log("----restartGame - FINISH before startNewRound");
-
-    startNewRound();
   };
 
   return (

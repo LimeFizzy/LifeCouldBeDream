@@ -12,8 +12,9 @@ namespace API.Controllers
 
         public SequenceController(SequenceService service)
         {
-            _service = service;
+            _service = service ?? throw new ArgumentNullException(nameof(service));
         }
+
 
         [HttpGet("generate-sequence/{level}")]
         public IActionResult GenerateSequence(int level)
