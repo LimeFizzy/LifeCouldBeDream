@@ -1,8 +1,4 @@
-using API.Data;
-using API.Models;
-using API.Services;
-
-namespace API.Tests.Unit
+namespace API.Tests.Unit.ServiceTests
 {
     public class UserScoreServiceTests
     {
@@ -14,7 +10,7 @@ namespace API.Tests.Unit
         {
             // Set up in-memory database options
             _dbContextOptions = new DbContextOptionsBuilder<AppDbContext>()
-                .UseInMemoryDatabase("TestDatabase")
+                .UseInMemoryDatabase("UserScoreTestDatabase")
                 .Options;
 
             // Create the context and ensure it's fresh for each test
