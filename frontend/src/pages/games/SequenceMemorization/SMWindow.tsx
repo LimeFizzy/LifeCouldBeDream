@@ -19,12 +19,10 @@ export const SMWindow: React.FC = () => {
 
   const gridSize = 3;
 
-  // Initialize game on first load
   useEffect(() => {
     initializeGame();
   }, []);
 
-  // Start new round only when sequence is fully fetched and set
   useEffect(() => {
     if (isSequenceReady && !isGameOver && !isRoundInProgress) {
       startNewRound();
@@ -32,8 +30,6 @@ export const SMWindow: React.FC = () => {
   }, [isSequenceReady, level]);
 
   const initializeGame = async () => {
-    console.log("----initializeGame START");
-
     const initialSquares = Array.from({ length: gridSize * gridSize }, (_, i) => ({
       id: i + 1,
       isActive: false,
@@ -41,69 +37,19 @@ export const SMWindow: React.FC = () => {
     setSquares(initialSquares);
 
     await fetchInitialSequence();
-    console.log("----initializeGame FINISH before startNewRound");
   };
 
-  const fetchInitialSequence = async () => {
-    console.log("----fetchInitialSequence - START");
-
-    try {
-      const response = await fetch(`http://localhost:5217/api/sequence/generate-sequence/30`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch the sequence');
-      }
-      const data = await response.json();
-      setSequence(data.sequence);
-      setIsSequenceReady(true);  // Set sequence ready only when it's fully fetched
-    } catch (error) {
-      console.error('Error fetching sequence:', error);
-    }
-    console.log("----fetchInitialSequence - FINISH");
-  };
 
   const startNewRound = () => {
-    console.log("----startNewRound");
     if (isRoundInProgress || isGameOver || !isSequenceReady) return;
 
     setIsRoundInProgress(true);
     const currentLevelSequence = sequence.slice(0, level);
     setUserInput([]);
     
-    // Flash sequence after a delay to improve user experience
     setTimeout(() => {
       flashSequence(currentLevelSequence);
     }, 1000);
-  };
-
-  const flashSequence = (sequence: number[]) => {
-    setIsClickable(false);
-
-    sequence.forEach((id, index) => {
-      const delay = index * 1000;
-
-      setTimeout(() => {
-        console.log(`Highlighting square ${id} (on)`);
-        highlightSquare(id);
-      }, delay);
-
-      setTimeout(() => {
-        console.log(`Removing highlight from square ${id} (off)`);
-        highlightSquare(id, false);
-      }, delay + 800);
-    });
-
-    setTimeout(() => {
-      setIsClickable(true);  // Allow clicking only after flashing is complete
-      setIsRoundInProgress(false);
-    }, sequence.length * 1000);
-  };
-
-  const highlightSquare = (id: number, active: boolean = true) => {
-    setSquares((prevSquares) =>
-      prevSquares.map((square) =>
-        square.id === id ? { ...square, isActive: active } : square
-      )
-    );
   };
 
   const handleSquareClick = (id: number) => {
@@ -127,7 +73,7 @@ export const SMWindow: React.FC = () => {
   const handleGameOver = () => {
     setIsGameOver(true);
     setIsRoundInProgress(false);
-    setIsSequenceReady(false);  // Reset sequence readiness
+    setIsSequenceReady(false);
   };
 
   const restartGame = async () => {
@@ -136,11 +82,58 @@ export const SMWindow: React.FC = () => {
     setUserInput([]);
     setIsGameOver(false);
     setIsRoundInProgress(false);
-    setIsSequenceReady(false);  // Reset readiness before fetching
+    setIsSequenceReady(false);
 
-    // Fetch the new sequence and let useEffect handle starting the round
     await fetchInitialSequence();
   };
+  
+  const fetchInitialSequence = async () => {
+    try {
+      const response = await fetch(`http://localhost:5217/api/sequence/generate-sequence/30`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch the sequence');
+      }
+      const data = await response.json();
+      setSequence(data.sequence);
+      setIsSequenceReady(true);
+    } catch (error) {
+      console.error('Error fetching sequence:', error);
+    }
+  };
+
+
+  const flashSequence = (sequence: number[]) => {
+    setIsClickable(false);
+
+    sequence.forEach((id, index) => {
+      const delay = index * 1000;
+
+      setTimeout(() => {
+        console.log(`Highlighting square ${id} (on)`);
+        highlightSquare(id);
+      }, delay);
+
+      setTimeout(() => {
+        console.log(`Removing highlight from square ${id} (off)`);
+        highlightSquare(id, false);
+      }, delay + 800);
+    });
+
+    setTimeout(() => {
+      setIsClickable(true);
+      setIsRoundInProgress(false);
+    }, sequence.length * 1000);
+  };
+
+  const highlightSquare = (id: number, active: boolean = true) => {
+    setSquares((prevSquares) =>
+      prevSquares.map((square) =>
+        square.id === id ? { ...square, isActive: active } : square
+      )
+    );
+  };
+
+
 
   return (
     <div className="game-container">
