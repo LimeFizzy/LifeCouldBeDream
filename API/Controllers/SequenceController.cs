@@ -15,12 +15,10 @@ namespace API.Controllers
             _service = service ?? throw new ArgumentNullException(nameof(service));
         }
 
-
         [HttpGet("generate-sequence/{level}")]
         public IActionResult GenerateSequence(int level)
         {
             var sequence = _service.GenerateSequence(level);
-
             return Ok(new { Sequence = sequence, Level = level });
         }
 

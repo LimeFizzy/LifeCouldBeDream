@@ -9,7 +9,7 @@ interface Square {
 export const SMWindow: React.FC = () => {
   const [level, setLevel] = useState(1);
   const [score, setScore] = useState(0);
-  const [sequence, setSequence] = useState<number[]>([]);
+  const [sequence, setSequence] = useState<Square[]>([]);
   const [userInput, setUserInput] = useState<number[]>([]);
   const [squares, setSquares] = useState<Square[]>([]);
   const [isClickable, setIsClickable] = useState(false);
@@ -39,14 +39,13 @@ export const SMWindow: React.FC = () => {
     await fetchInitialSequence();
   };
 
-
   const startNewRound = () => {
     if (isRoundInProgress || isGameOver || !isSequenceReady) return;
 
     setIsRoundInProgress(true);
     const currentLevelSequence = sequence.slice(0, level);
     setUserInput([]);
-    
+
     setTimeout(() => {
       flashSequence(currentLevelSequence);
     }, 1000);
@@ -59,7 +58,7 @@ export const SMWindow: React.FC = () => {
     setUserInput(newUserInput);
 
     const correctSoFar = newUserInput.every(
-      (value, index) => value === sequence[index]
+      (value, index) => value === sequence[index].id // Adjusted to compare against Square.id
     );
 
     if (!correctSoFar) {
@@ -86,7 +85,7 @@ export const SMWindow: React.FC = () => {
 
     await fetchInitialSequence();
   };
-  
+
   const fetchInitialSequence = async () => {
     try {
       const response = await fetch(`http://localhost:5217/api/sequence/generate-sequence/30`);
@@ -94,28 +93,27 @@ export const SMWindow: React.FC = () => {
         throw new Error('Failed to fetch the sequence');
       }
       const data = await response.json();
-      setSequence(data.sequence);
+      setSequence(data.sequence.map((item: any) => ({ id: item.id, isActive: false }))); // Convert backend sequence to Square format
       setIsSequenceReady(true);
     } catch (error) {
       console.error('Error fetching sequence:', error);
     }
   };
 
-
-  const flashSequence = (sequence: number[]) => {
+  const flashSequence = (sequence: Square[]) => {
     setIsClickable(false);
 
-    sequence.forEach((id, index) => {
+    sequence.forEach((square, index) => {
       const delay = index * 1000;
 
       setTimeout(() => {
-        console.log(`Highlighting square ${id} (on)`);
-        highlightSquare(id);
+        console.log(`Highlighting square ${square.id} (on)`);
+        highlightSquare(square.id);
       }, delay);
 
       setTimeout(() => {
-        console.log(`Removing highlight from square ${id} (off)`);
-        highlightSquare(id, false);
+        console.log(`Removing highlight from square ${square.id} (off)`);
+        highlightSquare(square.id, false);
       }, delay + 800);
     });
 
@@ -132,8 +130,6 @@ export const SMWindow: React.FC = () => {
       )
     );
   };
-
-
 
   return (
     <div className="game-container">
