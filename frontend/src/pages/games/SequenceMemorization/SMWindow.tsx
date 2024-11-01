@@ -58,7 +58,7 @@ export const SMWindow: React.FC = () => {
     setUserInput(newUserInput);
 
     const correctSoFar = newUserInput.every(
-      (value, index) => value === sequence[index].id // Adjusted to compare against Square.id
+      (value, index) => value === sequence[index].id
     );
 
     if (!correctSoFar) {
@@ -69,10 +69,36 @@ export const SMWindow: React.FC = () => {
     }
   };
 
-  const handleGameOver = () => {
+  const handleGameOver = async () => {
     setIsGameOver(true);
     setIsRoundInProgress(false);
     setIsSequenceReady(false);
+  
+    const username = localStorage.getItem("username") || "Unknown User";
+  
+    try {
+      const response = await fetch(
+        `http://localhost:5217/api/userscore/submit-score/sequenceMemory`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            username,
+            guessedSequence: userInput,
+            level,
+          }),
+        }
+      );
+  
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Score submitted successfully:", data);
+      } else {
+        console.error("Error submitting score:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error submitting score:", error);
+    }
   };
 
   const restartGame = async () => {
