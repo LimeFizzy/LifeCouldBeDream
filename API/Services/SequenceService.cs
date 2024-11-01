@@ -24,7 +24,7 @@ namespace API.Services
 
         public int CalculateScore(int level)
         {
-            return (level * (level + 1)) / 2;
+            return level == 1 ? 0 : (level * (level - 1)) / 2;
         }
     }
 }
