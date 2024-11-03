@@ -1,19 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
 using API.Services;
-using API.Models;
 
 namespace API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class SequenceController : ControllerBase
+    public class SequenceController(SequenceService service) : ControllerBase
     {
-        private readonly SequenceService _service;
-
-        public SequenceController(SequenceService service)
-        {
-            _service = service ?? throw new ArgumentNullException(nameof(service));
-        }
+        private readonly SequenceService _service = service ?? throw new ArgumentNullException(nameof(service));
 
         [HttpGet("generate-sequence/{level}")]
         public IActionResult GenerateSequence(int level)

@@ -1,17 +1,9 @@
-using System;
-
 namespace API.Services
 {
-    public struct Square
+    public struct Square(int id, bool isActive)
     {
-        public int Id { get; }
-        public bool IsActive { get; }
-
-        public Square(int id, bool isActive)
-        {
-            Id = id;
-            IsActive = isActive;
-        }
+        public int Id { get; } = id;
+        public bool IsActive { get; } = isActive;
     }
     public class SequenceService
     {
@@ -24,7 +16,7 @@ namespace API.Services
 
         public int CalculateScore(int level)
         {
-            return level == 1 ? 0 : (level * (level - 1)) / 2;
+            return level == 1 ? 0 : level * (level - 1) / 2;
         }
     }
 }

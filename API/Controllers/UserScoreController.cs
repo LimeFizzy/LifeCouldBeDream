@@ -6,18 +6,11 @@ namespace API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class UserScoreController : ControllerBase
+    public class UserScoreController(LongNumberService longNumberService, SequenceService sequenceService, UserScoreService userScoreService) : ControllerBase
     {
-        private readonly LongNumberService _longNumberService;
-        private readonly SequenceService _sequenceService;
-        private readonly UserScoreService _userScoreService;
-
-        public UserScoreController(LongNumberService longNumberService, SequenceService sequenceService, UserScoreService userScoreService)
-        {
-            _longNumberService = longNumberService;
-            _sequenceService = sequenceService;
-            _userScoreService = userScoreService;
-        }
+        private readonly LongNumberService _longNumberService = longNumberService;
+        private readonly SequenceService _sequenceService = sequenceService;
+        private readonly UserScoreService _userScoreService = userScoreService;
 
         [HttpGet("leaderboard/{gameType}")]
         public IActionResult GetLeaderboard(string gameType)
