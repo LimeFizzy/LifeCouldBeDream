@@ -1,13 +1,12 @@
 using API.Data;
+using API.Interfaces;
 using System.Security.Cryptography;
 using System.Text;
 
 namespace API.Services;
 
-public class AuthService(AppDbContext context)
+public class AuthService() : IAuthService
 {
-    private readonly AppDbContext _context = context;
-
     public string HashPassword(string password)
     {
         using (var sha256 = SHA256.Create())

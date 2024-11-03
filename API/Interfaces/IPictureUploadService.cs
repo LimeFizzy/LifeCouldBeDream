@@ -1,4 +1,4 @@
-namespace API.Services
+namespace API.Interfaces
 {
     public interface IPictureUploadService
     {

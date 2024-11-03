@@ -1,16 +1,19 @@
 using Microsoft.AspNetCore.Mvc;
-using API.Services;
+using API.Interfaces;
 using API.Models;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class UserScoreController(LongNumberService longNumberService, SequenceService sequenceService, UserScoreService userScoreService) : ControllerBase
+    public class UserScoreController(ILongNumberService longNumberService, ISequenceService sequenceService, IUserScoreService userScoreService) : ControllerBase
     {
-        private readonly LongNumberService _longNumberService = longNumberService;
-        private readonly SequenceService _sequenceService = sequenceService;
-        private readonly UserScoreService _userScoreService = userScoreService;
+        private readonly ILongNumberService _longNumberService = longNumberService;
+        private readonly ISequenceService _sequenceService = sequenceService;
+        private readonly IUserScoreService _userScoreService = userScoreService;
 
         [HttpGet("leaderboard/{gameType}")]
         public IActionResult GetLeaderboard(string gameType)
@@ -22,10 +25,10 @@ namespace API.Controllers
                                     .ToList();
 
                 var sortedLeaderboard = leaderboard
-                                        .OrderBy(us => us)      // Use of IComparable interface functional 
+                                        .OrderBy(us => us) // Assuming UserScore implements IComparable
                                         .ToList();
 
-                sortedLeaderboard.ForEach(us =>                 // Use of foreach
+                sortedLeaderboard.ForEach(us => // Formatting GameDate
                 {
                     if (DateTime.TryParse(us.GameDate, out var parsedDate))
                     {
@@ -63,7 +66,6 @@ namespace API.Controllers
                     break;
 
                 case GameTypes.CHIMP:
-                    // Not Implemented
                     return StatusCode(501, new { Message = "Chimp test game not implemented yet" });
 
                 default:
