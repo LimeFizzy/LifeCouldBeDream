@@ -1,18 +1,9 @@
-using API.Models;
-using API.Data;
+using API.Interfaces;
 
 namespace API.Services
 {
-    public class LongNumberService
+    public class LongNumberService() : ILongNumberService
     {
-        private readonly AppDbContext _context;
-
-        public LongNumberService(AppDbContext context)
-        {
-            _context = context;
-        }
-
-
         public int[] GenerateSequence(int level)
         {
             var random = new Random();

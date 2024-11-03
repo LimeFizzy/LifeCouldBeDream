@@ -1,11 +1,8 @@
+using API.Interfaces;
+using API.Models;
 namespace API.Services
 {
-    public struct Square(int id, bool isActive)
-    {
-        public int Id { get; } = id;
-        public bool IsActive { get; } = isActive;
-    }
-    public class SequenceService
+    public class SequenceService : ISequenceService
     {
         private static Random _random = new Random();
 

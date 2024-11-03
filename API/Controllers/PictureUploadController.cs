@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using API.Services;
+using API.Interfaces;
 
 namespace API.Controllers
 {

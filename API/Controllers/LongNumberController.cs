@@ -2,19 +2,15 @@ using Microsoft.AspNetCore.Mvc;
 using API.Models;
 using API.Services;
 using API.Extensions;
+using API.Interfaces;
 
 namespace API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class LongNumberController : ControllerBase
+    public class LongNumberController(ILongNumberService service) : ControllerBase
     {
-        private readonly LongNumberService _service;
-
-        public LongNumberController(LongNumberService service)
-        {
-            _service = service;
-        }
+        private readonly ILongNumberService _service = service;
 
         [HttpGet("generate-sequence/{level}")]
         public IActionResult GenerateSequence(int level)
