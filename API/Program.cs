@@ -26,6 +26,7 @@ builder.Services.Configure<FormOptions>(options =>
 });
 
 builder.Services.AddScoped<LongNumberService>();
+builder.Services.AddScoped<SequenceService>();
 builder.Services.AddScoped<UserScoreService>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<IPictureUploadService, PictureUploadService>();

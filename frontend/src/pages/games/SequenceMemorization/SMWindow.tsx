@@ -9,70 +9,137 @@ interface Square {
 export const SMWindow: React.FC = () => {
   const [level, setLevel] = useState(1);
   const [score, setScore] = useState(0);
-  const [sequence, setSequence] = useState<number[]>([]);
+  const [sequence, setSequence] = useState<Square[]>([]);
   const [userInput, setUserInput] = useState<number[]>([]);
   const [squares, setSquares] = useState<Square[]>([]);
   const [isClickable, setIsClickable] = useState(false);
   const [isGameOver, setIsGameOver] = useState<boolean>(false);
   const [isRoundInProgress, setIsRoundInProgress] = useState<boolean>(false);
+  const [isSequenceReady, setIsSequenceReady] = useState(false);
 
   const gridSize = 3;
-
-  const generateRandomSequence = (length: number): number[] => {
-    return Array.from({ length }, () => Math.floor(Math.random() * (gridSize * gridSize)) + 1);
-  };
 
   useEffect(() => {
     initializeGame();
   }, []);
-  
+
   useEffect(() => {
-    // important - make sure the seq is ready before starting the round
-    if (!isGameOver && !isRoundInProgress && sequence.length > 0) {
+    if (isSequenceReady && !isGameOver && !isRoundInProgress) {
       startNewRound();
     }
-  }, [level, sequence]); // trigger when level changes, but only if seq is ready
-  
+  }, [isSequenceReady, level]);
 
-  const initializeGame = () => {
+  const initializeGame = async () => {
     const initialSquares = Array.from({ length: gridSize * gridSize }, (_, i) => ({
       id: i + 1,
       isActive: false,
     }));
     setSquares(initialSquares);
 
-    setSequence(generateRandomSequence(30));
-
-    startNewRound();
+    await fetchInitialSequence();
   };
 
-  const startNewRound = (currentSequence: number[] = sequence) => {
-    if (isRoundInProgress || isGameOver) return;
-  
-    if (currentSequence.length < level) {
-      console.error("Sequence not ready for the current level.");
-      return;
-    }
-  
+  const startNewRound = () => {
+    if (isRoundInProgress || isGameOver || !isSequenceReady) return;
+
     setIsRoundInProgress(true);
-    const currentLevelSequence = currentSequence.slice(0, level);
+    const currentLevelSequence = sequence.slice(0, level);
     setUserInput([]);
-    flashSequence(currentLevelSequence);
-  };
-  
 
-  const flashSequence = (sequence: number[]) => {
+    setTimeout(() => {
+      flashSequence(currentLevelSequence);
+    }, 1000);
+  };
+
+  const handleSquareClick = (id: number) => {
+    if (!isClickable) return;
+
+    const newUserInput = [...userInput, id];
+    setUserInput(newUserInput);
+
+    const correctSoFar = newUserInput.every(
+      (value, index) => value === sequence[index].id
+    );
+
+    if (!correctSoFar) {
+      handleGameOver();
+    } else if (newUserInput.length === level) {
+      setScore((prev) => prev + level);
+      setLevel((prev) => prev + 1);
+    }
+  };
+
+  const handleGameOver = async () => {
+    setIsGameOver(true);
+    setIsRoundInProgress(false);
+    setIsSequenceReady(false);
+  
+    const username = localStorage.getItem("username") || "Unknown User";
+  
+    try {
+      const response = await fetch(
+        `http://localhost:5217/api/userscore/submit-score/sequenceMemory`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            username,
+            guessedSequence: userInput,
+            level,
+          }),
+        }
+      );
+  
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Score submitted successfully:", data);
+      } else {
+        console.error("Error submitting score:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error submitting score:", error);
+    }
+  };
+
+  const restartGame = async () => {
+    setLevel(1);
+    setScore(0);
+    setUserInput([]);
+    setIsGameOver(false);
+    setIsRoundInProgress(false);
+    setIsSequenceReady(false);
+
+    await fetchInitialSequence();
+  };
+
+  const fetchInitialSequence = async () => {
+    try {
+      const response = await fetch(`http://localhost:5217/api/sequence/generate-sequence/30`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch the sequence');
+      }
+      const data = await response.json();
+      setSequence(data.sequence.map((item: any) => ({ id: item.id, isActive: false }))); // Convert backend sequence to Square format
+      setIsSequenceReady(true);
+    } catch (error) {
+      console.error('Error fetching sequence:', error);
+    }
+  };
+
+  const flashSequence = (sequence: Square[]) => {
     setIsClickable(false);
 
-    sequence.forEach((id, index) => {
+    sequence.forEach((square, index) => {
       const delay = index * 1000;
 
       setTimeout(() => {
-        highlightSquare(id);
+        console.log(`Highlighting square ${square.id} (on)`);
+        highlightSquare(square.id);
       }, delay);
 
       setTimeout(() => {
-        highlightSquare(id, false);
+        console.log(`Removing highlight from square ${square.id} (off)`);
+        highlightSquare(square.id, false);
       }, delay + 800);
     });
 
@@ -88,41 +155,6 @@ export const SMWindow: React.FC = () => {
         square.id === id ? { ...square, isActive: active } : square
       )
     );
-  };
-
-  const handleSquareClick = (id: number) => {
-    if (!isClickable) return;
-
-    const newUserInput = [...userInput, id];
-    setUserInput(newUserInput);
-
-    const correctSoFar = newUserInput.every(
-      (value, index) => value === sequence[index]
-    );
-
-    if (!correctSoFar) {
-      handleGameOver();
-    } else if (newUserInput.length === level) {
-      setScore((prev) => prev + level);
-      setLevel((prev) => prev + 1);
-    }
-  };
-
-  const handleGameOver = () => {
-    setIsGameOver(true);
-    setIsRoundInProgress(false);
-  };
-
-  const restartGame = () => {
-    setLevel(1);
-    setScore(0);
-    setUserInput([]);
-    setIsGameOver(false);
-    setIsRoundInProgress(false);
-
-    const newSequence = generateRandomSequence(30);
-    setSequence(newSequence);
-    startNewRound();
   };
 
   return (

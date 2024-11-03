@@ -13,6 +13,10 @@ export const LNWindow: React.FC = () => {
   const [isDevMode, setIsDevMode] = useState<boolean>(false);
 
   useEffect(() => {
+    startNewRound();
+  }, [level]);
+
+  useEffect(() => {
     const checkAdminStatus = async () => {
       const username = localStorage.getItem("username");
       if (!username) return;
@@ -129,10 +133,6 @@ export const LNWindow: React.FC = () => {
     startNewRound();
   };
 
-  useEffect(() => {
-    startNewRound();
-  }, [level]);
-
   return (
     <div className="game-container">
       <h1>Long Number Memory Game</h1>
@@ -143,7 +143,6 @@ export const LNWindow: React.FC = () => {
         </p>
       </div>
 
-      {/* If game is over, display Restart button */}
       {isGameOver ? (
         <div className="game-over">
           <p>Game Over! Your Score: {score}</p>
@@ -164,7 +163,6 @@ export const LNWindow: React.FC = () => {
             )}
           </div>
 
-          {/* Progress bar */}
           {isShowingNumber && !isDevMode && (
             <div className="progress-container">
               <div className="progress-bar-container">
@@ -176,7 +174,6 @@ export const LNWindow: React.FC = () => {
             </div>
           )}
 
-          {/* When number is hidden, display input field and Submit button */}
           {(!isShowingNumber || isDevMode) && (
             <div className="input-section">
               <input

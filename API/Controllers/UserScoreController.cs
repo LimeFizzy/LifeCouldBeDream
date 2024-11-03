@@ -6,16 +6,11 @@ namespace API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class UserScoreController : ControllerBase
+    public class UserScoreController(LongNumberService longNumberService, SequenceService sequenceService, UserScoreService userScoreService) : ControllerBase
     {
-        private readonly LongNumberService _longNumberService;
-        private readonly UserScoreService _userScoreService;
-
-        public UserScoreController(LongNumberService longNumberService, UserScoreService userScoreService)
-        {
-            _longNumberService = longNumberService;
-            _userScoreService = userScoreService;
-        }
+        private readonly LongNumberService _longNumberService = longNumberService;
+        private readonly SequenceService _sequenceService = sequenceService;
+        private readonly UserScoreService _userScoreService = userScoreService;
 
         [HttpGet("leaderboard/{gameType}")]
         public IActionResult GetLeaderboard(string gameType)
@@ -64,8 +59,8 @@ namespace API.Controllers
                     break;
 
                 case GameTypes.SEQUENCE:
-                    // Not Implemented
-                    return StatusCode(501, new { Message = "Sequence memory game not implemented yet" });
+                    score = _sequenceService.CalculateScore(submission.Level);
+                    break;
 
                 case GameTypes.CHIMP:
                     // Not Implemented
