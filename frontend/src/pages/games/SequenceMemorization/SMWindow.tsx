@@ -16,6 +16,7 @@ export const SMWindow: React.FC = () => {
   const [isGameOver, setIsGameOver] = useState<boolean>(false);
   const [isRoundInProgress, setIsRoundInProgress] = useState<boolean>(false);
   const [isSequenceReady, setIsSequenceReady] = useState(false);
+  const [isDevMode, setIsDevMode] = useState<boolean>(false);
 
   const gridSize = 3;
 
@@ -57,6 +58,35 @@ export const SMWindow: React.FC = () => {
     }, 1000);
   };
 
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      const username = localStorage.getItem("username");
+      if (!username) return;
+
+      try {
+        const response = await fetch(
+          `http://localhost:5217/api/auth/is-admin/${username}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          setIsDevMode(data.isAdmin); // Set dev mode based on admin status
+        }
+      } catch (error) {
+        console.error("Error checking admin status:", error);
+      }
+    };
+
+    checkAdminStatus();
+  }, []);
+
+  
   const handleSquareClick = (id: number) => {
     if (!isClickable) return;
 
@@ -157,6 +187,14 @@ export const SMWindow: React.FC = () => {
     );
   };
 
+  const advanceLevel = () => {
+    setLevel((prevLevel) => prevLevel + 1);
+  };
+
+  const endGame = () => {
+    handleGameOver();
+  };
+
   return (
     <div className="game-container">
       <h1>Sequence Memorization</h1>
@@ -178,6 +216,12 @@ export const SMWindow: React.FC = () => {
               onClick={() => handleSquareClick(square.id)}
             />
           ))}
+        </div>
+      )}
+    {isDevMode && !isGameOver && (
+        <div className="dev-controls">
+          <button type="button" onClick={advanceLevel}>Next Level</button>
+          <button type="button" onClick={endGame}>End Game</button>
         </div>
       )}
     </div>
