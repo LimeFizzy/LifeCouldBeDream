@@ -4,7 +4,7 @@ using API.Models;
 using API.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
+using API.Exceptions;
 
 namespace API.Controllers
 {
@@ -18,29 +18,39 @@ namespace API.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<User>> Register([FromBody] UserDto userDto)
         {
-            var existingUser = await _context.Users.AnyAsync(u => u.Username == userDto.Username);
-            if (existingUser)
+            try
             {
-                return BadRequest(error: "Username is already taken.");     // 4. Used Named Spaces
+                var existingUser = await _context.Users.AnyAsync(u => u.Username == userDto.Username);
+                if (existingUser)
+                {
+                    return BadRequest(error: "Username is already taken.");
+                }
+
+                // Validate the password strength
+                _authService.ValidatePasswordStrength(userDto.Password);
+
+                var hashedPassword = _authService.HashPassword(userDto.Password);
+
+                var user = new User
+                {
+                    Username = userDto.Username,
+                    PasswordHash = hashedPassword
+                };
+
+                _context.Users.Add(user);
+                await _context.SaveChangesAsync();
+
+                return CreatedAtAction(actionName: nameof(GetUserById), routeValues: new { id = user.UserId }, value: user);
             }
-
-            if (string.IsNullOrEmpty(userDto.Password))
+            catch (WeakPasswordException ex)
             {
-                return BadRequest(error: "Password cannot be empty.");      // 4. Used Named Spaces
+                return BadRequest(new { Message = ex.Message });
             }
-
-            var hashedPassword = _authService.HashPassword(userDto.Password);
-
-            var user = new User
+            catch (Exception ex)
             {
-                Username = userDto.Username,
-                PasswordHash = hashedPassword
-            };
-
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction(actionName: nameof(GetUserById), routeValues: new { id = user.UserId }, value: user); // 4. Used Named Spaces
+                // Handle unexpected errors
+                return StatusCode(500, new { Message = "An unexpected error occurred." });
+            }
         }
 
         [HttpPost("login")]
