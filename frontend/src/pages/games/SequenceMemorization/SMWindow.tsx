@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './SMWindow.css';
 
 interface Square {
@@ -19,8 +19,13 @@ export const SMWindow: React.FC = () => {
 
   const gridSize = 3;
 
+  const hasInitialized = useRef(false);
+
   useEffect(() => {
-    initializeGame();
+    if (!hasInitialized.current) {
+      initializeGame();
+      hasInitialized.current = true;
+    }
   }, []);
 
   useEffect(() => {
@@ -35,6 +40,7 @@ export const SMWindow: React.FC = () => {
       isActive: false,
     }));
     setSquares(initialSquares);
+    
 
     await fetchInitialSequence();
   };
@@ -73,7 +79,7 @@ export const SMWindow: React.FC = () => {
     setIsGameOver(true);
     setIsRoundInProgress(false);
     setIsSequenceReady(false);
-  
+
     const username = localStorage.getItem("username") || "Unknown User";
   
     try {
@@ -89,15 +95,12 @@ export const SMWindow: React.FC = () => {
           }),
         }
       );
-  
+
       if (response.ok) {
         const data = await response.json();
-        console.log("Score submitted successfully:", data);
       } else {
-        console.error("Error submitting score:", response.statusText);
       }
     } catch (error) {
-      console.error("Error submitting score:", error);
     }
   };
 
@@ -122,7 +125,6 @@ export const SMWindow: React.FC = () => {
       setSequence(data.sequence.map((item: any) => ({ id: item.id, isActive: false }))); // Convert backend sequence to Square format
       setIsSequenceReady(true);
     } catch (error) {
-      console.error('Error fetching sequence:', error);
     }
   };
 
@@ -133,12 +135,10 @@ export const SMWindow: React.FC = () => {
       const delay = index * 1000;
 
       setTimeout(() => {
-        console.log(`Highlighting square ${square.id} (on)`);
         highlightSquare(square.id);
       }, delay);
 
       setTimeout(() => {
-        console.log(`Removing highlight from square ${square.id} (off)`);
         highlightSquare(square.id, false);
       }, delay + 800);
     });
