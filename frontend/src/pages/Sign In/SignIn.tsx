@@ -33,8 +33,8 @@ export const SignIn: React.FC = () => {
       if (response.ok) {
         setMessage("Registration successful!");
       } else {
-        const errorText = await response.text();
-        setMessage(errorText);
+        const errorText = await response.json();
+        setMessage(errorText.message);
       }
     } catch (error) {
       setMessage("An error occurred during registration.");
