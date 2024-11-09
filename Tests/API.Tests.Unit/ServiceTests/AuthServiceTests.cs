@@ -1,7 +1,3 @@
-using API.Services;
-using Xunit;
-using FluentAssertions;
-
 namespace API.Tests.Unit.ServiceTests
 {
     public class AuthServiceTests
