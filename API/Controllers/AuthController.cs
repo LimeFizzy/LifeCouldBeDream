@@ -26,7 +26,6 @@ namespace API.Controllers
                     return BadRequest(error: "Username is already taken.");
                 }
 
-                // Validate the password strength
                 _authService.ValidatePasswordStrength(userDto.Password);
 
                 var hashedPassword = _authService.HashPassword(userDto.Password);
@@ -46,9 +45,8 @@ namespace API.Controllers
             {
                 return BadRequest(new { Message = ex.Message });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                // Handle unexpected errors
                 return StatusCode(500, new { Message = "An unexpected error occurred." });
             }
         }
