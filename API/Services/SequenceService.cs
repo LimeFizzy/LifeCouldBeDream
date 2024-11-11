@@ -5,11 +5,11 @@ namespace API.Services
 {
     public class SequenceService : ISequenceService
     {
-        private static readonly SequenseGenerator _seqGen = new();
+        private static readonly SequenseGenerator<Square> _seqGen = new();
 
         public Square[] GenerateSequence(int level)
         {
-            return _seqGen.GenerateTSequence(level, random => new Square(random.Next(1, 10), false));
+            return _seqGen.GenerateSequence(level, random => new Square(random.Next(1, 10), false));
         }
 
         public int CalculateScore(int level)
