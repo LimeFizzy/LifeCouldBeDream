@@ -3,23 +3,11 @@ namespace API.Tests.Unit.ServiceTests
     public class LongNumberServiceTests
     {
         private readonly LongNumberService _longNumberService;
-        private readonly AppDbContext _dbContext;
-        private readonly DbContextOptions<AppDbContext> _dbContextOptions;
 
         public LongNumberServiceTests()
         {
-            // Set up in-memory database options
-            _dbContextOptions = new DbContextOptionsBuilder<AppDbContext>()
-                .UseInMemoryDatabase("LongNumberTestDatabase")
-                .Options;
-
-            // Create the context and ensure it's fresh for each test
-            _dbContext = new AppDbContext(_dbContextOptions);
-            _dbContext.Database.EnsureDeleted();
-            _dbContext.Database.EnsureCreated();
-
-            // Initialize the service with the real DbContext
-            _longNumberService = new LongNumberService(_dbContext);
+            // Initialize the service without a DbContext
+            _longNumberService = new LongNumberService();
         }
 
         [Fact]
