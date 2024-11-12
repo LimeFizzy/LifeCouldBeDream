@@ -11,7 +11,7 @@ namespace API.Controllers
     [Route("api/[controller]")]
     public class UserScoreController(ILongNumberService longNumberService, ISequenceService sequenceService, IUserScoreService userScoreService) : ControllerBase
     {
-        private readonly ILongNumberService _longNumberService = longNumberService;
+        private readonly ILongNumberService _longNumberService = longNumberService ?? throw new ArgumentNullException(nameof(longNumberService));
         private readonly ISequenceService _sequenceService = sequenceService;
         private readonly IUserScoreService _userScoreService = userScoreService;
 
