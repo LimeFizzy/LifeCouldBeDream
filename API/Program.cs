@@ -7,16 +7,16 @@ using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 2.3. Logging most exceptions 
-Log.Logger = new LoggerConfiguration()
-    .MinimumLevel.Information() // minimum logging level to Information
-    .WriteTo.Console()          // log to console and to a file
-    .WriteTo.File("logs/app_log.txt", rollingInterval: RollingInterval.Day) // new log file every day
-    .CreateLogger();
+// 2.3. Logging Configuration with Serilog
+// Log.Logger = new LoggerConfiguration()
+//     .MinimumLevel.Error() // Log only Errors and above
+//     .WriteTo.Async(a => a.File("logs/app_log.txt", rollingInterval: RollingInterval.Day))
+//     .CreateLogger();
 
-// Serilog as the logging provider (replaces the default .NET logging provider)
-builder.Host.UseSerilog();
+// // Set Serilog as the logging provider (replaces the default .NET logging provider)
+// builder.Host.UseSerilog();
 
+// Add services to the container.
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontendApp",
@@ -61,7 +61,5 @@ app.MapControllers();
 app.UseStaticFiles();
 
 app.Run();
-
-Log.CloseAndFlush();
 
 public partial class Program { }
