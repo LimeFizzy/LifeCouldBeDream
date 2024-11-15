@@ -6,7 +6,7 @@ namespace API.Models
         public required string Username { get; set; }
         public int Score { get; set; }
         public string GameType { get; set; } = "";
-        public string GameDate { get; set; }
+        public required string GameDate { get; set; }  // why it was not requared before?
 
         public int CompareTo(UserScore? other)
         {

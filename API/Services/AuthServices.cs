@@ -6,10 +6,15 @@ using API.Exceptions;
 
 namespace API.Services;
 
-public class AuthService() : IAuthService
+public class AuthService : IAuthService
 {
     public string HashPassword(string password)
     {
+        if (string.IsNullOrEmpty(password))
+        {
+            throw new ArgumentNullException(nameof(password), "Password cannot be null or empty.");
+        }
+
         using (var sha256 = SHA256.Create())
         {
             var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
@@ -19,6 +24,16 @@ public class AuthService() : IAuthService
 
     public bool VerifyPassword(string password, string storedHash)
     {
+        if (string.IsNullOrEmpty(password))
+        {
+            throw new ArgumentNullException(nameof(password), "Password cannot be null or empty.");
+        }
+
+        if (string.IsNullOrEmpty(storedHash))
+        {
+            throw new ArgumentNullException(nameof(storedHash), "Stored hash cannot be null or empty.");
+        }
+
         var hashedPassword = HashPassword(password);
         return hashedPassword == storedHash;
     }

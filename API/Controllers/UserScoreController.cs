@@ -34,8 +34,13 @@ namespace API.Controllers
                                     .Where(score => score.GameType == gameType)
                                     .ToList();
 
+                if (leaderboard.Count == 0)
+                {
+                    return NotFound(new { Message = $"No scores found for game type: {gameType}" });
+                }
+
                 var sortedLeaderboard = leaderboard
-                                        .OrderBy(us => us)
+                                        .OrderByDescending(us => us.Score)
                                         .ToList();
 
                 sortedLeaderboard.ForEach(us =>
@@ -57,16 +62,20 @@ namespace API.Controllers
         [HttpPost("submit-score/{gameType}")]
         public async Task<IActionResult> SubmitScore([FromBody] ScoreSubmission submission, string gameType)
         {
+            if (submission == null || string.IsNullOrWhiteSpace(submission.Username))
+            {
+                return BadRequest(new { Message = "Invalid score submission data." });
+            }
+
             var parsedGameType = _userScoreService.GetGameTypeFromString(gameType);
             if (parsedGameType == null)
             {
                 return BadRequest(new { Message = $"Invalid game type: {gameType}" });
             }
 
-            int score;
             try
             {
-                score = parsedGameType switch
+                int score = parsedGameType switch
                 {
                     GameTypes.LONG_NUMBER => _longNumberService.CalculateScore(submission.Level),
                     GameTypes.SEQUENCE => _sequenceService.CalculateScore(submission.Level),

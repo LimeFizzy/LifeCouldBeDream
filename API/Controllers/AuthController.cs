@@ -10,20 +10,31 @@ namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthController(AppDbContext context, IAuthService authService) : ControllerBase
+    public class AuthController : ControllerBase
     {
-        private readonly AppDbContext _context = context ?? throw new ArgumentNullException(nameof(context));
-        private readonly IAuthService _authService = authService ?? throw new ArgumentNullException(nameof(authService));
+        private readonly AppDbContext _context;
+        private readonly IAuthService _authService;
+
+        public AuthController(AppDbContext context, IAuthService authService)
+        {
+            _context = context ?? throw new ArgumentNullException(nameof(context));
+            _authService = authService ?? throw new ArgumentNullException(nameof(authService));
+        }
 
         [HttpPost("register")]
         public async Task<ActionResult<User>> Register([FromBody] UserDto userDto)
         {
+            if (userDto == null)
+            {
+                throw new ArgumentNullException(nameof(userDto), "User data is required.");
+            }
+
             try
             {
                 var existingUser = await _context.Users.AnyAsync(u => u.Username == userDto.Username);
                 if (existingUser)
                 {
-                    throw new ArgumentException("Username is already taken.", nameof(userDto.Username));
+                    return BadRequest(new { Message = "Username is already taken." });
                 }
 
                 _authService.ValidatePasswordStrength(userDto.Password);
@@ -39,95 +50,72 @@ namespace API.Controllers
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
 
-                return CreatedAtAction(actionName: nameof(GetUserById), routeValues: new { id = user.UserId }, value: user);
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(new { Message = ex.Message });
+                return CreatedAtAction(nameof(GetUserById), new { id = user.UserId }, user);
             }
             catch (WeakPasswordException ex)
             {
                 return BadRequest(new { Message = ex.Message });
             }
-            catch (Exception)
+            catch (ArgumentNullException ex)
             {
-                return StatusCode(500, new { Message = "An unexpected error occurred." });
+                return BadRequest(new { Message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "An unexpected error occurred.", Error = ex.Message });
             }
         }
 
         [HttpPost("login")]
         public async Task<ActionResult<string>> Login(LoginDto loginDto)
         {
-            try
+            if (loginDto == null)
             {
-                var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == loginDto.Username);
-                if (user == null)
-                {
-                    throw new UnauthorizedAccessException("User does not exist.");
-                }
+                throw new ArgumentNullException(nameof(loginDto), "Login data is required.");
+            }
 
-                bool isValidPassword = _authService.VerifyPassword(loginDto.Password, user.PasswordHash);
-                if (!isValidPassword)
-                {
-                    throw new UnauthorizedAccessException("Invalid username or password.");
-                }
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == loginDto.Username);
+            if (user == null)
+            {
+                return NotFound(new { Message = "User does not exist." });
+            }
 
-                return Ok(new { userId = user.UserId, username = user.Username });
-            }
-            catch (UnauthorizedAccessException ex)
+            bool isValidPassword = _authService.VerifyPassword(loginDto.Password, user.PasswordHash);
+            if (!isValidPassword)
             {
-                return Unauthorized(new { Message = ex.Message });
+                return Unauthorized(new { Message = "Invalid username or password." });
             }
-            catch (Exception)
-            {
-                return StatusCode(500, new { Message = "An unexpected error occurred while logging in." });
-            }
+
+            return Ok(new { userId = user.UserId, username = user.Username });
         }
 
         [HttpGet("is-admin/{username}")]
         public async Task<IActionResult> IsAdmin(string username)
         {
-            try
+            if (string.IsNullOrWhiteSpace(username))
             {
-                var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
-                if (user == null)
-                {
-                    throw new InvalidOperationException("User not found.");
-                }
+                return BadRequest(new { Message = "Username cannot be empty." });
+            }
 
-                return Ok(new { IsAdmin = user.IsAdmin });
-            }
-            catch (InvalidOperationException ex)
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
+            if (user == null)
             {
-                return NotFound(new { Message = ex.Message });
+                return NotFound(new { Message = "User not found." });
             }
-            catch (Exception)
-            {
-                return StatusCode(500, new { Message = "An unexpected error occurred while checking admin status." });
-            }
+
+            return Ok(new { IsAdmin = user.IsAdmin });
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUserById(int id)
         {
-            try
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
             {
-                var user = await _context.Users.FindAsync(id);
-                if (user == null)
-                {
-                    throw new InvalidOperationException("User not found.");
-                }
+                return NotFound(new { Message = "User not found." });
+            }
 
-                return user;
-            }
-            catch (InvalidOperationException ex)
-            {
-                return NotFound(new { Message = ex.Message });
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new { Message = "An unexpected error occurred while fetching the user." });
-            }
+            return user;
         }
     }
 }
