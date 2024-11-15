@@ -3,8 +3,19 @@ using API.Data;
 using API.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http.Features;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// 2.3. Logging most exceptions 
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Information() // minimum logging level to Information
+    .WriteTo.Console()          // log to console and to a file
+    .WriteTo.File("logs/app_log.txt", rollingInterval: RollingInterval.Day) // new log file every day
+    .CreateLogger();
+
+// Serilog as the logging provider (replaces the default .NET logging provider)
+builder.Host.UseSerilog();
 
 builder.Services.AddCors(options =>
 {
@@ -50,5 +61,7 @@ app.MapControllers();
 app.UseStaticFiles();
 
 app.Run();
+
+Log.CloseAndFlush();
 
 public partial class Program { }
