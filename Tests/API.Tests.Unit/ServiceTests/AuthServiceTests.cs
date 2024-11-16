@@ -3,23 +3,11 @@ namespace API.Tests.Unit.ServiceTests
     public class AuthServiceTests
     {
         private readonly AuthService _authService;
-        private readonly AppDbContext _dbContext;
-        private readonly DbContextOptions<AppDbContext> _dbContextOptions;
 
         public AuthServiceTests()
         {
-            // Set up in-memory database options (if needed)
-            _dbContextOptions = new DbContextOptionsBuilder<AppDbContext>()
-                .UseInMemoryDatabase("AuthTestDatabase")
-                .Options;
-
-            // Create the context and ensure it's fresh for each test
-            _dbContext = new AppDbContext(_dbContextOptions);
-            _dbContext.Database.EnsureDeleted();
-            _dbContext.Database.EnsureCreated();
-
-            // Initialize the service with the real DbContext
-            _authService = new AuthService(_dbContext);
+            // Initialize the service without a DbContext
+            _authService = new AuthService();
         }
 
         [Fact]

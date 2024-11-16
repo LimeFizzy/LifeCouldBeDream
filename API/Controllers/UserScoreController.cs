@@ -1,9 +1,11 @@
-using Microsoft.AspNetCore.Mvc;
-using API.Interfaces;
-using API.Models;
 using System;
+using API.Models;
 using System.Linq;
+using API.Interfaces;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using System.Collections.Concurrent;
 
 namespace API.Controllers
 {
@@ -14,29 +16,44 @@ namespace API.Controllers
         ISequenceService sequenceService, 
         IUserScoreService userScoreService,
         IUnifiedGamesService<int> uniServInt,
-        IUnifiedGamesService<Square> uniServSquare
+        IUnifiedGamesService<Square> uniServSquare,
+        ILogger<UserScoreController> logger
         ) : ControllerBase
     {
         private readonly ILongNumberService _longNumberService = longNumberService ?? throw new ArgumentNullException(nameof(longNumberService));
-        private readonly ISequenceService _sequenceService = sequenceService;
-        private readonly IUserScoreService _userScoreService = userScoreService;
-        private readonly IUnifiedGamesService<int> _uniServInt = uniServInt;
-        private readonly IUnifiedGamesService<Square> _uniServSquare = uniServSquare;
+        private readonly ISequenceService _sequenceService = sequenceService ?? throw new ArgumentNullException(nameof(sequenceService));
+        private readonly IUserScoreService _userScoreService = userScoreService ?? throw new ArgumentNullException(nameof(userScoreService));
+        private readonly IUnifiedGamesService<int> _uniServInt = uniServInt ?? throw new ArgumentNullException(nameof(uniServInt));
+        private readonly IUnifiedGamesService<Square> _uniServSquare = uniServSquare ?? throw new ArgumentNullException(nameof(uniServSquare));
+        private readonly ILogger<UserScoreController> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
+        // Thread-safe in-memory storage for user scores
+        private static readonly ConcurrentDictionary<string, ConcurrentBag<UserScore>> _scores = new();
 
         [HttpGet("leaderboard/{gameType}")]
         public IActionResult GetLeaderboard(string gameType)
         {
             try
             {
-                var leaderboard = _userScoreService.GetLeaderboard()
-                                    .Where(score => score.GameType == gameType)
-                                    .ToList();
+                // Retrieve scores from memory or fallback to persistent storage
+                var leaderboard = _scores.ContainsKey(gameType)
+                    ? _scores[gameType].ToList()
+                    : _userScoreService.GetLeaderboard()
+                        .Where(score => score.GameType == gameType)
+                        .ToList();
 
+                if (!leaderboard.Any())
+                {
+                    _logger.LogWarning("No scores found for game type: {GameType}", gameType);
+                    return NotFound(new { Message = $"No scores found for game type: {gameType}" });
+                }
+
+                // Sort by score (descending) and format dates
                 var sortedLeaderboard = leaderboard
-                                        .OrderBy(us => us) // Assuming UserScore implements IComparable
-                                        .ToList();
+                    .OrderByDescending(us => us.Score)
+                    .ToList();
 
-                sortedLeaderboard.ForEach(us => // Formatting GameDate
+                sortedLeaderboard.ForEach(us =>
                 {
                     if (DateTime.TryParse(us.GameDate, out var parsedDate))
                     {
@@ -48,49 +65,75 @@ namespace API.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, "An error occurred while fetching the leaderboard: " + ex);
+                _logger.LogError(ex, "An error occurred while fetching the leaderboard for game type: {GameType}", gameType);
+                return StatusCode(500, new { Message = "An error occurred while fetching the leaderboard." });
             }
         }
 
         [HttpPost("submit-score/{gameType}")]
         public async Task<IActionResult> SubmitScore([FromBody] ScoreSubmission submission, string gameType)
         {
+            if (submission == null || string.IsNullOrWhiteSpace(submission.Username))
+            {
+                _logger.LogWarning("Invalid score submission data for game type: {GameType}", gameType);
+                return BadRequest(new { Message = "Invalid score submission data." });
+            }
+
             var parsedGameType = _userScoreService.GetGameTypeFromString(gameType);
             if (parsedGameType == null)
             {
+                _logger.LogWarning("Invalid game type provided: {GameType}", gameType);
                 return BadRequest(new { Message = $"Invalid game type: {gameType}" });
             }
 
-            int score;
-
-            switch (parsedGameType)
+            try
             {
-                case GameTypes.LONG_NUMBER:
-                    score = _uniServInt.CalculateScore(_longNumberService, submission.Level);
-                    break;
+                int score = parsedGameType switch
+                {
+                    GameTypes.LONG_NUMBER => _uniServInt.CalculateScore(_longNumberService, submission.Level),
+                    GameTypes.SEQUENCE => _uniServSquare.CalculateScore(_sequenceService, submission.Level),
+                    GameTypes.CHIMP => throw new NotImplementedException("Chimp test game not implemented yet"),
+                    _ => throw new ArgumentException($"Unhandled game type: {gameType}")
+                };
 
-                case GameTypes.SEQUENCE:
-                    score = _uniServSquare.CalculateScore(_sequenceService, submission.Level);
-                    break;
+                var userScore = new UserScore
+                {
+                    Username = submission.Username,
+                    Score = score,
+                    GameType = gameType,
+                    GameDate = DateTime.Now.ToString()
+                };
 
-                case GameTypes.CHIMP:
-                    return StatusCode(501, new { Message = "Chimp test game not implemented yet" });
+                // Add score to in-memory collection
+                _scores.AddOrUpdate(
+                    gameType,
+                    new ConcurrentBag<UserScore> { userScore },
+                    (key, existingBag) =>
+                    {
+                        existingBag.Add(userScore);
+                        return existingBag;
+                    });
 
-                default:
-                    return BadRequest(new { Message = $"Unhandled game type: {gameType}" });
+                // Persist the score asynchronously
+                await _userScoreService.SaveScoreAsync(userScore);
+
+                return Ok(new { Message = "Score saved successfully", Score = score });
             }
-
-            var userScore = new UserScore
+            catch (NotImplementedException ex)
             {
-                Username = submission.Username,
-                Score = score,
-                GameType = gameType,
-                GameDate = DateTime.Now.ToString()
-            };
-
-            await _userScoreService.SaveScoreAsync(userScore);
-
-            return Ok(new { Message = "Score saved successfully", Score = score });
+                _logger.LogWarning(ex, "Feature not implemented for game type: {GameType}", gameType);
+                return StatusCode(501, new { Message = ex.Message });
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogWarning(ex, "Invalid argument provided for game type: {GameType}", gameType);
+                return BadRequest(new { Message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An unexpected error occurred while submitting the score for game type: {GameType}", gameType);
+                return StatusCode(500, new { Message = "An error occurred while submitting the score." });
+            }
         }
     }
 }

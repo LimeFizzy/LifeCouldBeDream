@@ -5,7 +5,7 @@ using API.DTOs;
 namespace API.Data;
 public class AppDbContext : DbContext
 {
-    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options ?? throw new ArgumentNullException(nameof(options))) { }
 
     public DbSet<GameDTO> Games { get; set; }
     public DbSet<UserScore> UserScores { get; set; }

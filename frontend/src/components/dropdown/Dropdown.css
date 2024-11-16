@@ -1,15 +1,44 @@
-.custom-select {
-    appearance: none; 
-    background: linear-gradient(243deg, #4E3C6A, #6F618A); /* Gradient background */
+.dropdown-container {
+    position: relative;
+    width: 200px;
+  }
+  
+  .custom-select {
+    background: linear-gradient(243deg, #4E3C6A, #6F618A);
     color: white;
     font-size: 14px;
     border: 1px solid rgba(255, 255, 255, 0.18);
     border-radius: 30px;
-    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2); 
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
     padding: 0.5rem 1.5rem;
     cursor: pointer;
     outline: none;
     transition: 0.3s ease;
-}
-
+    text-align: center;
+  }
+  
+  .dropdown-options {
+    position: absolute;
+    top: 110%;
+    left: 0;
+    width: 100%;
+    background-color: #4E3C6A;
+    border-radius: 15px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    z-index: 1000;
+  }
+  
+  .dropdown-option {
+    padding: 0.5rem 1.5rem;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    text-align: left;
+  }
+  
+  .dropdown-option:hover {
+    background-color: #6F618A;
+  }
   

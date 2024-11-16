@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './SMWindow.css';
 
 interface Square {
@@ -16,11 +16,17 @@ export const SMWindow: React.FC = () => {
   const [isGameOver, setIsGameOver] = useState<boolean>(false);
   const [isRoundInProgress, setIsRoundInProgress] = useState<boolean>(false);
   const [isSequenceReady, setIsSequenceReady] = useState(false);
+  const [isDevMode, setIsDevMode] = useState<boolean>(false);
 
   const gridSize = 3;
 
+  const hasInitialized = useRef(false);
+
   useEffect(() => {
-    initializeGame();
+    if (!hasInitialized.current) {
+      initializeGame();
+      hasInitialized.current = true;
+    }
   }, []);
 
   useEffect(() => {
@@ -35,6 +41,7 @@ export const SMWindow: React.FC = () => {
       isActive: false,
     }));
     setSquares(initialSquares);
+    
 
     await fetchInitialSequence();
   };
@@ -51,6 +58,35 @@ export const SMWindow: React.FC = () => {
     }, 1000);
   };
 
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      const username = localStorage.getItem("username");
+      if (!username) return;
+
+      try {
+        const response = await fetch(
+          `http://localhost:5217/api/auth/is-admin/${username}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          setIsDevMode(data.isAdmin); // Set dev mode based on admin status
+        }
+      } catch (error) {
+        console.error("Error checking admin status:", error);
+      }
+    };
+
+    checkAdminStatus();
+  }, []);
+
+  
   const handleSquareClick = (id: number) => {
     if (!isClickable) return;
 
@@ -73,7 +109,7 @@ export const SMWindow: React.FC = () => {
     setIsGameOver(true);
     setIsRoundInProgress(false);
     setIsSequenceReady(false);
-  
+
     const username = localStorage.getItem("username") || "Unknown User";
   
     try {
@@ -89,15 +125,12 @@ export const SMWindow: React.FC = () => {
           }),
         }
       );
-  
+
       if (response.ok) {
         const data = await response.json();
-        console.log("Score submitted successfully:", data);
       } else {
-        console.error("Error submitting score:", response.statusText);
       }
     } catch (error) {
-      console.error("Error submitting score:", error);
     }
   };
 
@@ -122,7 +155,6 @@ export const SMWindow: React.FC = () => {
       setSequence(data.sequence.map((item: any) => ({ id: item.id, isActive: false }))); // Convert backend sequence to Square format
       setIsSequenceReady(true);
     } catch (error) {
-      console.error('Error fetching sequence:', error);
     }
   };
 
@@ -133,12 +165,10 @@ export const SMWindow: React.FC = () => {
       const delay = index * 1000;
 
       setTimeout(() => {
-        console.log(`Highlighting square ${square.id} (on)`);
         highlightSquare(square.id);
       }, delay);
 
       setTimeout(() => {
-        console.log(`Removing highlight from square ${square.id} (off)`);
         highlightSquare(square.id, false);
       }, delay + 800);
     });
@@ -155,6 +185,14 @@ export const SMWindow: React.FC = () => {
         square.id === id ? { ...square, isActive: active } : square
       )
     );
+  };
+
+  const advanceLevel = () => {
+    setLevel((prevLevel) => prevLevel + 1);
+  };
+
+  const endGame = () => {
+    handleGameOver();
   };
 
   return (
@@ -178,6 +216,12 @@ export const SMWindow: React.FC = () => {
               onClick={() => handleSquareClick(square.id)}
             />
           ))}
+        </div>
+      )}
+    {isDevMode && !isGameOver && (
+        <div className="dev-controls">
+          <button type="button" onClick={advanceLevel}>Next Level</button>
+          <button type="button" onClick={endGame}>End Game</button>
         </div>
       )}
     </div>
