@@ -9,11 +9,19 @@ namespace API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class UserScoreController(ILongNumberService longNumberService, ISequenceService sequenceService, IUserScoreService userScoreService) : ControllerBase
+    public class UserScoreController(
+        ILongNumberService longNumberService, 
+        ISequenceService sequenceService, 
+        IUserScoreService userScoreService,
+        IUnifiedGamesService<int> uniServInt,
+        IUnifiedGamesService<Square> uniServSquare
+        ) : ControllerBase
     {
         private readonly ILongNumberService _longNumberService = longNumberService ?? throw new ArgumentNullException(nameof(longNumberService));
         private readonly ISequenceService _sequenceService = sequenceService;
         private readonly IUserScoreService _userScoreService = userScoreService;
+        private readonly IUnifiedGamesService<int> _uniServInt = uniServInt;
+        private readonly IUnifiedGamesService<Square> _uniServSquare = uniServSquare;
 
         [HttpGet("leaderboard/{gameType}")]
         public IActionResult GetLeaderboard(string gameType)
@@ -58,11 +66,11 @@ namespace API.Controllers
             switch (parsedGameType)
             {
                 case GameTypes.LONG_NUMBER:
-                    score = _longNumberService.CalculateScore(submission.Level);
+                    score = _uniServInt.CalculateScore(_longNumberService, submission.Level);
                     break;
 
                 case GameTypes.SEQUENCE:
-                    score = _sequenceService.CalculateScore(submission.Level);
+                    score = _uniServSquare.CalculateScore(_sequenceService, submission.Level);
                     break;
 
                 case GameTypes.CHIMP:

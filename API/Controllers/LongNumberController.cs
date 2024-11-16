@@ -8,17 +8,18 @@ namespace API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class LongNumberController(ILongNumberService service) : ControllerBase
+    public class LongNumberController(ILongNumberService service, IUnifiedGamesService<int> uni) : ControllerBase
     {
         private readonly ILongNumberService _service = service;
+        private readonly IUnifiedGamesService<int> _uni = uni;
 
         [HttpGet("generate-sequence/{level}")]
         public IActionResult GenerateSequence(int level)
         {
-            var sequence = _service.GenerateSequence(level);
+            var sequence = _uni.GenerateSequence(_service, level);
             while (!sequence.IsValidSequence(level))
             {
-                sequence = _service.GenerateSequence(level);
+                sequence = _uni.GenerateSequence(_service, level);
             }
             int timeLimit = 3 + level - 1;
 

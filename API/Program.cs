@@ -1,4 +1,5 @@
 using API.Services;
+using API.Models;
 using API.Data;
 using API.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -31,6 +32,8 @@ builder.Services.AddScoped<ISequenceService, SequenceService>();
 builder.Services.AddScoped<IUserScoreService, UserScoreService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IPictureUploadService, PictureUploadService>();
+builder.Services.AddScoped<IUnifiedGamesService<int>, UnifiedGamesService<int>>();
+builder.Services.AddScoped<IUnifiedGamesService<Square>, UnifiedGamesService<Square>>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
