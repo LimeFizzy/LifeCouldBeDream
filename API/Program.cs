@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Http.Features;
 
 
 Log.Logger = new LoggerConfiguration() // 2.3. Logging Configuration with Serilog
-    .MinimumLevel.Warning() // Log warnings and above (Error and Fatal)
+    .MinimumLevel.Warning() // Logs warnings, error and fatal
     .WriteTo.Async(a => a.File("logs/app_log.txt", rollingInterval: RollingInterval.Day))
     .CreateLogger();
 
