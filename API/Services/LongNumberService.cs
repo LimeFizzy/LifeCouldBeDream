@@ -5,7 +5,7 @@ namespace API.Services
 {
     public class LongNumberService() : ILongNumberService
     {
-        private static readonly SequenseGenerator<int> _seqGen = new();
+        private static readonly SequenseGenerator _seqGen = new();
 
         public int[] GenerateSequence(int level)
         {

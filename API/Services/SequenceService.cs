@@ -5,7 +5,7 @@ namespace API.Services
 {
     public class SequenceService : ISequenceService
     {
-        private static readonly SequenseGenerator<Square> _seqGen = new();
+        private static readonly SequenseGenerator _seqGen = new();
 
         public Square[] GenerateSequence(int level)
         {
