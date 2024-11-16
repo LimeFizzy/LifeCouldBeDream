@@ -100,7 +100,7 @@ export const SMWindow: React.FC = () => {
     if (!correctSoFar) {
       handleGameOver();
     } else if (newUserInput.length === level) {
-      setScore((prev) => prev + level);
+      setScore(level <= 2 ? level : level * (level - 1) / 2);
       setLevel((prev) => prev + 1);
     }
   };
@@ -188,6 +188,7 @@ export const SMWindow: React.FC = () => {
   };
 
   const advanceLevel = () => {
+    setScore(level <= 2 ? level : level * (level - 1) / 2);
     setLevel((prevLevel) => prevLevel + 1);
   };
 

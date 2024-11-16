@@ -22,7 +22,7 @@ namespace API.Services
             if (service is ILongNumberService) {
                 return level - 1;
             } else if (service is ISequenceService) {
-                return level == 1 ? 0 : level * (level - 1) / 2;
+                return level <= 2 ? level : level * (level - 1) / 2;
             } else {
                 throw new ArgumentException("Unsupported service type");
             }
