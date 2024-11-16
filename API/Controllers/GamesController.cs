@@ -5,7 +5,7 @@ using API.Data;
 using API.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging; // namespace for ILogger
+using Microsoft.Extensions.Logging;
 
 namespace API.Controllers
 {

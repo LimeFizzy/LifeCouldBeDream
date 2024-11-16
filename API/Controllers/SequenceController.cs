@@ -21,8 +21,6 @@ namespace API.Controllers
         [HttpGet("generate-sequence/{level}")]
         public IActionResult GenerateSequence(int level)
         {
-            _logger.LogInformation("Received request to generate sequence for level {Level}", level);
-
             if (level <= 0)
             {
                 _logger.LogWarning("Level {Level} is invalid. Must be greater than zero.", level);
@@ -31,8 +29,6 @@ namespace API.Controllers
 
             try
             {
-                _logger.LogDebug("Calling service to generate sequence for level {Level}", level);
-
                 var sequence = _service.GenerateSequence(level);
 
                 if (sequence == null || sequence.Length == 0)
@@ -41,7 +37,6 @@ namespace API.Controllers
                     return StatusCode(500, new { Message = "Failed to generate a valid sequence." });
                 }
 
-                _logger.LogInformation("Successfully generated sequence for level {Level}", level);
                 return Ok(new { Sequence = sequence, Level = level });
             }
             catch (ArgumentOutOfRangeException ex)

@@ -1,7 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using API.Interfaces;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace API.Controllers
 {
@@ -10,10 +14,12 @@ namespace API.Controllers
     public class PictureUploadController : ControllerBase
     {
         private readonly IPictureUploadService _userService;
+        private readonly ILogger<PictureUploadController> _logger;
 
-        public PictureUploadController(IPictureUploadService userService)
+        public PictureUploadController(IPictureUploadService userService, ILogger<PictureUploadController> logger)
         {
             _userService = userService ?? throw new ArgumentNullException(nameof(userService));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         [HttpPost("upload-profile-image/{userId}")]
@@ -21,32 +27,34 @@ namespace API.Controllers
         {
             if (profileImage == null || profileImage.Length == 0)
             {
+                _logger.LogWarning("Profile image is null or empty for user {UserId}.", userId);
                 return BadRequest(new { Message = "Profile image cannot be null or empty." });
             }
 
             try
             {
                 var filePath = await _userService.UploadProfileImageAsync(userId, profileImage);
+
                 return Ok(new { Message = "Profile image uploaded successfully.", ProfileImagePath = filePath });
             }
             catch (UnauthorizedAccessException ex)
             {
-                // Handle cases where access is denied
+                _logger.LogWarning(ex, "Access denied while uploading profile image for user {UserId}.", userId);
                 return StatusCode(StatusCodes.Status403Forbidden, new { Message = ex.Message });
             }
             catch (ArgumentException ex)
             {
-                // Handle invalid arguments, such as an invalid userId or unsupported format
+                _logger.LogWarning(ex, "Invalid argument provided while uploading profile image for user {UserId}.", userId);
                 return BadRequest(new { Message = ex.Message });
             }
             catch (KeyNotFoundException ex)
             {
-                // Handle cases where the user is not found
+                _logger.LogWarning(ex, "User not found: {UserId}.", userId);
                 return NotFound(new { Message = ex.Message });
             }
             catch (Exception ex)
             {
-                // Generic catch for unexpected errors
+                _logger.LogError(ex, "An unexpected error occurred while uploading profile image for user {UserId}.", userId);
                 return StatusCode(StatusCodes.Status500InternalServerError, new { Message = "An error occurred while uploading the profile image.", Error = ex.Message });
             }
         }
@@ -60,6 +68,7 @@ namespace API.Controllers
 
                 if (fileBytes == null || fileBytes.Length == 0)
                 {
+                    _logger.LogWarning("Profile image not found for user {UserId}.", userId);
                     return NotFound(new { Message = "Profile image not found." });
                 }
 
@@ -67,22 +76,22 @@ namespace API.Controllers
             }
             catch (FileNotFoundException ex)
             {
-                // Handle explicitly not found files
+                _logger.LogWarning(ex, "File not found for user {UserId}.", userId);
                 return NotFound(new { Message = ex.Message });
             }
             catch (KeyNotFoundException ex)
             {
-                // Handle cases where user or profile image not found
+                _logger.LogWarning(ex, "User or profile image not found: {UserId}.", userId);
                 return NotFound(new { Message = ex.Message });
             }
             catch (UnauthorizedAccessException ex)
             {
-                // Handle cases where access is denied
+                _logger.LogWarning(ex, "Access denied while fetching profile image for user {UserId}.", userId);
                 return StatusCode(StatusCodes.Status403Forbidden, new { Message = ex.Message });
             }
             catch (Exception ex)
             {
-                // Generic catch for unexpected errors
+                _logger.LogError(ex, "An unexpected error occurred while retrieving profile image for user {UserId}.", userId);
                 return StatusCode(StatusCodes.Status500InternalServerError, new { Message = "An error occurred while retrieving the profile image.", Error = ex.Message });
             }
         }

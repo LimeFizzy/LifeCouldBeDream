@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging; // Required for ILogger
 using API.Interfaces;
 using API.Models;
 using System;
@@ -14,15 +15,18 @@ namespace API.Controllers
         private readonly ILongNumberService _longNumberService;
         private readonly ISequenceService _sequenceService;
         private readonly IUserScoreService _userScoreService;
+        private readonly ILogger<UserScoreController> _logger;
 
         public UserScoreController(
             ILongNumberService longNumberService,
             ISequenceService sequenceService,
-            IUserScoreService userScoreService)
+            IUserScoreService userScoreService,
+            ILogger<UserScoreController> logger)
         {
             _longNumberService = longNumberService ?? throw new ArgumentNullException(nameof(longNumberService));
             _sequenceService = sequenceService ?? throw new ArgumentNullException(nameof(sequenceService));
             _userScoreService = userScoreService ?? throw new ArgumentNullException(nameof(userScoreService));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         [HttpGet("leaderboard/{gameType}")]
@@ -36,6 +40,7 @@ namespace API.Controllers
 
                 if (leaderboard.Count == 0)
                 {
+                    _logger.LogWarning("No scores found for game type: {GameType}", gameType);
                     return NotFound(new { Message = $"No scores found for game type: {gameType}" });
                 }
 
@@ -53,8 +58,9 @@ namespace API.Controllers
 
                 return Ok(sortedLeaderboard);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "An error occurred while fetching the leaderboard for game type: {GameType}", gameType);
                 return StatusCode(500, new { Message = "An error occurred while fetching the leaderboard." });
             }
         }
@@ -64,12 +70,14 @@ namespace API.Controllers
         {
             if (submission == null || string.IsNullOrWhiteSpace(submission.Username))
             {
+                _logger.LogWarning("Invalid score submission data for game type: {GameType}", gameType);
                 return BadRequest(new { Message = "Invalid score submission data." });
             }
 
             var parsedGameType = _userScoreService.GetGameTypeFromString(gameType);
             if (parsedGameType == null)
             {
+                _logger.LogWarning("Invalid game type provided: {GameType}", gameType);
                 return BadRequest(new { Message = $"Invalid game type: {gameType}" });
             }
 
@@ -97,14 +105,17 @@ namespace API.Controllers
             }
             catch (NotImplementedException ex)
             {
+                _logger.LogWarning(ex, "Feature not implemented for game type: {GameType}", gameType);
                 return StatusCode(501, new { Message = ex.Message });
             }
             catch (ArgumentException ex)
             {
+                _logger.LogWarning(ex, "Invalid argument provided for game type: {GameType}", gameType);
                 return BadRequest(new { Message = ex.Message });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "An unexpected error occurred while submitting the score for game type: {GameType}", gameType);
                 return StatusCode(500, new { Message = "An error occurred while submitting the score." });
             }
         }
