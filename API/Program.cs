@@ -1,22 +1,21 @@
-using API.Services;
+using Serilog;
 using API.Data;
+using API.Services;
 using API.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http.Features;
-using Serilog;
+
+
+Log.Logger = new LoggerConfiguration() // 2.3. Logging Configuration with Serilog
+    .MinimumLevel.Warning() // Log warnings and above (Error and Fatal)
+    .WriteTo.Async(a => a.File("logs/app_log.txt", rollingInterval: RollingInterval.Day))
+    .CreateLogger();
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 2.3. Logging Configuration with Serilog
-// Log.Logger = new LoggerConfiguration()
-//     .MinimumLevel.Error() // Log only Errors and above
-//     .WriteTo.Async(a => a.File("logs/app_log.txt", rollingInterval: RollingInterval.Day))
-//     .CreateLogger();
+builder.Host.UseSerilog();
 
-// // Set Serilog as the logging provider (replaces the default .NET logging provider)
-// builder.Host.UseSerilog();
 
-// Add services to the container.
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontendApp",

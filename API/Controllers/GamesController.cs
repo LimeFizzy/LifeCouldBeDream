@@ -5,7 +5,7 @@ using API.Data;
 using API.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging; // Correct namespace for ILogger
+using Microsoft.Extensions.Logging; // namespace for ILogger
 
 namespace API.Controllers
 {
@@ -14,12 +14,12 @@ namespace API.Controllers
     public class GamesController : ControllerBase
     {
         private readonly AppDbContext _context;
-        // private readonly ILogger<GamesController> _logger;
+        private readonly ILogger<GamesController> _logger;
 
         public GamesController(AppDbContext context, ILogger<GamesController> logger)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
-            // _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         [HttpGet]
@@ -30,14 +30,14 @@ namespace API.Controllers
                 var games = await _context.Games.ToListAsync();
                 if (games == null || games.Count == 0)
                 {
-                    // _logger.LogWarning("No games found in the database.");
+                    _logger.LogWarning("No games found in the database.");
                     return NotFound(new { Message = "No games found in the database." });
                 }
                 return Ok(games);
             }
             catch (Exception ex)
             {
-                // _logger.LogError(ex, "An error occurred while fetching games.");
+                _logger.LogError(ex, "An error occurred while fetching games.");
                 return StatusCode(500, new { Message = "An error occurred while fetching games.", Error = ex.Message });
             }
         }
@@ -47,7 +47,7 @@ namespace API.Controllers
         {
             if (newGame == null || string.IsNullOrWhiteSpace(newGame.Title))
             {
-                // _logger.LogWarning("Game details cannot be empty or missing a title.");
+                _logger.LogWarning("Game details cannot be empty or missing a title.");
                 return BadRequest(new { Message = "Game details cannot be empty or missing a title." });
             }
 
@@ -60,12 +60,12 @@ namespace API.Controllers
             }
             catch (DbUpdateException ex)
             {
-                // _logger.LogError(ex, "An error occurred while saving the game to the database.");
+                _logger.LogError(ex, "An error occurred while saving the game to the database.");
                 return StatusCode(500, new { Message = "An error occurred while saving the game to the database.", Error = ex.Message });
             }
             catch (Exception ex)
             {
-                // _logger.LogError(ex, "An unexpected error occurred while adding the game.");
+                _logger.LogError(ex, "An unexpected error occurred while adding the game.");
                 return StatusCode(500, new { Message = "An unexpected error occurred while adding the game.", Error = ex.Message });
             }
         }
