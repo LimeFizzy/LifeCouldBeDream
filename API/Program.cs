@@ -1,10 +1,20 @@
-using API.Services;
+using Serilog;
 using API.Data;
+using API.Services;
 using API.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http.Features;
 
+
+Log.Logger = new LoggerConfiguration() // 2.3. Logging Configuration with Serilog
+    .MinimumLevel.Warning() // Logs warnings, error and fatal
+    .WriteTo.Async(a => a.File("logs/app_log.txt", rollingInterval: RollingInterval.Day))
+    .CreateLogger();
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseSerilog();
+
 
 builder.Services.AddCors(options =>
 {
