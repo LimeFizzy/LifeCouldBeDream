@@ -37,8 +37,6 @@ builder.Services.Configure<FormOptions>(options =>
     options.MultipartBodyLengthLimit = 10 * 1024 * 1024; // Set to 10 MB
 });
 
-builder.Services.AddScoped<ILongNumberService, LongNumberService>();
-builder.Services.AddScoped<ISequenceService, SequenceService>();
 builder.Services.AddScoped<IUserScoreService, UserScoreService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IPictureUploadService, PictureUploadService>();

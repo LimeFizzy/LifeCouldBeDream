@@ -4,20 +4,17 @@ using API.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-
 namespace API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
     public class SequenceController : ControllerBase
     {
-        private readonly ISequenceService _service;
         private readonly ILogger<SequenceController> _logger;
         private readonly IUnifiedGamesService<Square> _uniServ;
 
-        public SequenceController(ISequenceService service, ILogger<SequenceController> logger, IUnifiedGamesService<Square> uniServ)
+        public SequenceController(ILogger<SequenceController> logger, IUnifiedGamesService<Square> uniServ)
         {
-            _service = service ?? throw new ArgumentNullException(nameof(service));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _uniServ = uniServ ?? throw new ArgumentNullException(nameof(uniServ));
         }
@@ -33,7 +30,7 @@ namespace API.Controllers
 
             try
             {
-                var sequence = _uniServ.GenerateSequence(_service, level);
+                var sequence = _uniServ.GenerateSequence(this, level);
 
                 if (sequence == null || sequence.Length == 0)
                 {

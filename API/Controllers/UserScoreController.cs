@@ -13,8 +13,6 @@ namespace API.Controllers
     [Route("api/[controller]")]
     public class UserScoreController : ControllerBase
     {
-        private readonly ILongNumberService _longNumberService;
-        private readonly ISequenceService _sequenceService;
         private readonly IUserScoreService _userScoreService;
         private readonly IUnifiedGamesService<int> _uniServInt;
         private readonly IUnifiedGamesService<Square> _uniServSquare;
@@ -26,15 +24,11 @@ namespace API.Controllers
         private static readonly object _initializationLock = new();
 
         public UserScoreController(
-            ILongNumberService longNumberService,
-            ISequenceService sequenceService,
             IUserScoreService userScoreService,
             IUnifiedGamesService<int> uniServInt,
             IUnifiedGamesService<Square> uniServSquare,
             ILogger<UserScoreController> logger)
         {
-            _longNumberService = longNumberService ?? throw new ArgumentNullException(nameof(longNumberService));
-            _sequenceService = sequenceService ?? throw new ArgumentNullException(nameof(sequenceService));
             _userScoreService = userScoreService ?? throw new ArgumentNullException(nameof(userScoreService));
             _uniServInt = uniServInt ?? throw new ArgumentNullException(nameof(uniServInt));
             _uniServSquare = uniServSquare ?? throw new ArgumentNullException(nameof(uniServSquare));
@@ -131,8 +125,8 @@ namespace API.Controllers
             {
                 int score = parsedGameType switch
                 {
-                    GameTypes.LONG_NUMBER => _uniServInt.CalculateScore(_longNumberService, submission.Level),
-                    GameTypes.SEQUENCE => _uniServSquare.CalculateScore(_sequenceService, submission.Level),
+                    GameTypes.LONG_NUMBER => _uniServInt.CalculateScore(GameTypes.LONG_NUMBER, submission.Level),
+                    GameTypes.SEQUENCE => _uniServSquare.CalculateScore(GameTypes.SEQUENCE, submission.Level),
                     GameTypes.CHIMP => throw new NotImplementedException("Chimp test game not implemented yet"),
                     _ => throw new ArgumentException($"Unhandled game type: {gameType}")
                 };
