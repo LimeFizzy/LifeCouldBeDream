@@ -1,4 +1,5 @@
 using System;
+using API.Services;
 using API.Extensions;
 using API.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -10,13 +11,13 @@ namespace API.Controllers
     [Route("api/[controller]")]
     public class LongNumberController : ControllerBase
     {
-        private readonly ILongNumberService _service;
         private readonly ILogger<LongNumberController> _logger;
+        private readonly IUnifiedGamesService<int> _uniServ;
 
-        public LongNumberController(ILongNumberService service, ILogger<LongNumberController> logger)
+        public LongNumberController(ILogger<LongNumberController> logger, IUnifiedGamesService<int> uniServ)
         {
-            _service = service ?? throw new ArgumentNullException(nameof(service));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _uniServ = uniServ ?? throw new ArgumentNullException(nameof(uniServ));
         }
 
         [HttpGet("generate-sequence/{level}")]
@@ -33,11 +34,11 @@ namespace API.Controllers
 
             try
             {
-                var sequence = _service.GenerateSequence(level);
+                var sequence = _uniServ.GenerateSequence(this, level);
 
                 while (!sequence.IsValidSequence(level) && retries < maxRetries)
                 {
-                    sequence = _service.GenerateSequence(level);
+                    sequence = _uniServ.GenerateSequence(this, level);
                     retries++;
                 }
 

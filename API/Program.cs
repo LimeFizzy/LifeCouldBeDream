@@ -1,6 +1,7 @@
 using Serilog;
 using API.Data;
 using API.Services;
+using API.Models;
 using API.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http.Features;
@@ -36,11 +37,11 @@ builder.Services.Configure<FormOptions>(options =>
     options.MultipartBodyLengthLimit = 10 * 1024 * 1024; // Set to 10 MB
 });
 
-builder.Services.AddScoped<ILongNumberService, LongNumberService>();
-builder.Services.AddScoped<ISequenceService, SequenceService>();
 builder.Services.AddScoped<IUserScoreService, UserScoreService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IPictureUploadService, PictureUploadService>();
+builder.Services.AddScoped<IUnifiedGamesService<int>, UnifiedGamesService<int>>();
+builder.Services.AddScoped<IUnifiedGamesService<Square>, UnifiedGamesService<Square>>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

@@ -1,4 +1,5 @@
 using System;
+using API.Models;
 using API.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -9,13 +10,13 @@ namespace API.Controllers
     [Route("api/[controller]")]
     public class SequenceController : ControllerBase
     {
-        private readonly ISequenceService _service;
         private readonly ILogger<SequenceController> _logger;
+        private readonly IUnifiedGamesService<Square> _uniServ;
 
-        public SequenceController(ISequenceService service, ILogger<SequenceController> logger)
+        public SequenceController(ILogger<SequenceController> logger, IUnifiedGamesService<Square> uniServ)
         {
-            _service = service ?? throw new ArgumentNullException(nameof(service));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _uniServ = uniServ ?? throw new ArgumentNullException(nameof(uniServ));
         }
 
         [HttpGet("generate-sequence/{level}")]
@@ -29,7 +30,7 @@ namespace API.Controllers
 
             try
             {
-                var sequence = _service.GenerateSequence(level);
+                var sequence = _uniServ.GenerateSequence(this, level);
 
                 if (sequence == null || sequence.Length == 0)
                 {

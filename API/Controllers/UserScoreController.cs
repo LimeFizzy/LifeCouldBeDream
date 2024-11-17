@@ -11,19 +11,59 @@ namespace API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class UserScoreController(
-        ILongNumberService longNumberService,
-        ISequenceService sequenceService,
-        IUserScoreService userScoreService,
-        ILogger<UserScoreController> logger) : ControllerBase
+    public class UserScoreController : ControllerBase
     {
-        private readonly ILongNumberService _longNumberService = longNumberService ?? throw new ArgumentNullException(nameof(longNumberService));
-        private readonly ISequenceService _sequenceService = sequenceService ?? throw new ArgumentNullException(nameof(sequenceService));
-        private readonly IUserScoreService _userScoreService = userScoreService ?? throw new ArgumentNullException(nameof(userScoreService));
-        private readonly ILogger<UserScoreController> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        private readonly IUserScoreService _userScoreService;
+        private readonly IUnifiedGamesService<int> _uniServInt;
+        private readonly IUnifiedGamesService<Square> _uniServSquare;
+        private readonly ILogger<UserScoreController> _logger;
 
         // Thread-safe in-memory storage for user scores
         private static readonly ConcurrentDictionary<string, ConcurrentBag<UserScore>> _scores = new();
+        private static bool _isInitialized = false;
+        private static readonly object _initializationLock = new();
+
+        public UserScoreController(
+            IUserScoreService userScoreService,
+            IUnifiedGamesService<int> uniServInt,
+            IUnifiedGamesService<Square> uniServSquare,
+            ILogger<UserScoreController> logger)
+        {
+            _userScoreService = userScoreService ?? throw new ArgumentNullException(nameof(userScoreService));
+            _uniServInt = uniServInt ?? throw new ArgumentNullException(nameof(uniServInt));
+            _uniServSquare = uniServSquare ?? throw new ArgumentNullException(nameof(uniServSquare));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
+            InitializeScores();
+        }
+
+        private void InitializeScores()
+        {
+            lock (_initializationLock)
+            {
+                if (_isInitialized) return;
+
+                try
+                {
+                    // Fetch all leaderboard scores
+                    var allScores = _userScoreService.GetLeaderboard();
+
+                    // Group scores by game type and populate the _scores collection
+                    foreach (var scoreGroup in allScores.GroupBy(score => score.GameType))
+                    {
+                        var scoreBag = new ConcurrentBag<UserScore>(scoreGroup);
+                        _scores.TryAdd(scoreGroup.Key, scoreBag);
+                    }
+
+                    _isInitialized = true;
+                    _logger.LogInformation("In-memory scores initialized from database.");
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to initialize in-memory scores from database.");
+                }
+            }
+        }
 
         [HttpGet("leaderboard/{gameType}")]
         public IActionResult GetLeaderboard(string gameType)
@@ -31,8 +71,8 @@ namespace API.Controllers
             try
             {
                 // Retrieve scores from memory or fallback to persistent storage
-                var leaderboard = _scores.ContainsKey(gameType)
-                    ? _scores[gameType].ToList()
+                var leaderboard = _scores.TryGetValue(gameType, out var value)
+                    ? value.ToList()
                     : _userScoreService.GetLeaderboard()
                         .Where(score => score.GameType == gameType)
                         .ToList();
@@ -85,8 +125,8 @@ namespace API.Controllers
             {
                 int score = parsedGameType switch
                 {
-                    GameTypes.LONG_NUMBER => _longNumberService.CalculateScore(submission.Level),
-                    GameTypes.SEQUENCE => _sequenceService.CalculateScore(submission.Level),
+                    GameTypes.LONG_NUMBER => _uniServInt.CalculateScore(GameTypes.LONG_NUMBER, submission.Level),
+                    GameTypes.SEQUENCE => _uniServSquare.CalculateScore(GameTypes.SEQUENCE, submission.Level),
                     GameTypes.CHIMP => throw new NotImplementedException("Chimp test game not implemented yet"),
                     _ => throw new ArgumentException($"Unhandled game type: {gameType}")
                 };
@@ -100,14 +140,8 @@ namespace API.Controllers
                 };
 
                 // Add score to in-memory collection
-                _scores.AddOrUpdate(
-                    gameType,
-                    new ConcurrentBag<UserScore> { userScore },
-                    (key, existingBag) =>
-                    {
-                        existingBag.Add(userScore);
-                        return existingBag;
-                    });
+                var scoreBag = _scores.GetOrAdd(gameType, new ConcurrentBag<UserScore>());
+                scoreBag.Add(userScore);
 
                 // Persist the score asynchronously
                 await _userScoreService.SaveScoreAsync(userScore);
