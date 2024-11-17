@@ -4,6 +4,7 @@ namespace API.Tests.Unit.ControllerTests
     {
         private readonly AppDbContext _context;
         private readonly GamesController _controller;
+        private readonly ILogger<GamesController> _logger;
 
         public GamesControllerTests()
         {
@@ -24,7 +25,19 @@ namespace API.Tests.Unit.ControllerTests
             );
             _context.SaveChanges();
 
-            _controller = new GamesController(_context);
+            // Configure Serilog
+            Log.Logger = new LoggerConfiguration()
+                .WriteTo.Console() // or .WriteTo.File("log.txt")
+                .CreateLogger();
+
+            // Wrap Serilog in Microsoft.Extensions.Logging.ILogger
+            var loggerFactory = LoggerFactory.Create(builder =>
+            {
+                builder.AddSerilog();
+            });
+            _logger = loggerFactory.CreateLogger<GamesController>();
+
+            _controller = new GamesController(_context, _logger);
         }
 
         public void Dispose()

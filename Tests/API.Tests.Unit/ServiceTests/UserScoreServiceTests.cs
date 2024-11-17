@@ -5,6 +5,7 @@ namespace API.Tests.Unit.ServiceTests
         private readonly UserScoreService _userScoreService;
         private readonly AppDbContext _dbContext;
         private readonly DbContextOptions<AppDbContext> _dbContextOptions;
+        private readonly ILogger<UserScoreService> _logger;
 
         public UserScoreServiceTests()
         {
@@ -18,8 +19,20 @@ namespace API.Tests.Unit.ServiceTests
             _dbContext.Database.EnsureDeleted();
             _dbContext.Database.EnsureCreated();
 
+            // Configure Serilog
+            Log.Logger = new LoggerConfiguration()
+                .WriteTo.Console() // or .WriteTo.File("log.txt")
+                .CreateLogger();
+
+            // Wrap Serilog in Microsoft.Extensions.Logging.ILogger
+            var loggerFactory = LoggerFactory.Create(builder =>
+            {
+                builder.AddSerilog();
+            });
+            _logger = loggerFactory.CreateLogger<UserScoreService>();
+
             // Initialize the service with the real DbContext
-            _userScoreService = new UserScoreService(_dbContext);
+            _userScoreService = new UserScoreService(_dbContext, _logger);
         }
 
         [Fact]
