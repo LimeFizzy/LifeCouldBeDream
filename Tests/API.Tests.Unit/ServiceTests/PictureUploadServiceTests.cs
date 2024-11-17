@@ -5,6 +5,7 @@ namespace API.Tests.Unit.ServiceTests
         private readonly PictureUploadService _pictureUploadService;
         private readonly AppDbContext _dbContext;
         private readonly DbContextOptions<AppDbContext> _dbContextOptions;
+        private readonly ILogger<PictureUploadService> _logger;
 
         public PictureUploadServiceTests()
         {
@@ -18,8 +19,20 @@ namespace API.Tests.Unit.ServiceTests
             _dbContext.Database.EnsureDeleted();
             _dbContext.Database.EnsureCreated();
 
+            // Configure Serilog
+            Log.Logger = new LoggerConfiguration()
+                .WriteTo.Console() // or .WriteTo.File("log.txt")
+                .CreateLogger();
+
+            // Wrap Serilog in Microsoft.Extensions.Logging.ILogger
+            var loggerFactory = LoggerFactory.Create(builder =>
+            {
+                builder.AddSerilog();
+            });
+            _logger = loggerFactory.CreateLogger<PictureUploadService>();
+
             // Initialize the service with the real DbContext
-            _pictureUploadService = new PictureUploadService(_dbContext);
+            _pictureUploadService = new PictureUploadService(_dbContext, _logger);
         }
 
         [Fact]
@@ -119,7 +132,7 @@ namespace API.Tests.Unit.ServiceTests
 
             // Assert
             await act.Should().ThrowAsync<KeyNotFoundException>()
-                .WithMessage("User or profile image not found.");
+                .WithMessage("User with ID 999 or their profile image was not found.");
         }
     }
 }

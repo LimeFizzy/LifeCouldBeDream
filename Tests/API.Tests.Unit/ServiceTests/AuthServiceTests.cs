@@ -3,11 +3,24 @@ namespace API.Tests.Unit.ServiceTests
     public class AuthServiceTests
     {
         private readonly AuthService _authService;
+        private readonly ILogger<AuthService> _logger;
 
         public AuthServiceTests()
         {
+            // Configure Serilog
+            Log.Logger = new LoggerConfiguration()
+                .WriteTo.Console() // or .WriteTo.File("log.txt")
+                .CreateLogger();
+
+            // Wrap Serilog in Microsoft.Extensions.Logging.ILogger
+            var loggerFactory = LoggerFactory.Create(builder =>
+            {
+                builder.AddSerilog();
+            });
+            _logger = loggerFactory.CreateLogger<AuthService>();
+
             // Initialize the service without a DbContext
-            _authService = new AuthService();
+            _authService = new AuthService(_logger);
         }
 
         [Fact]

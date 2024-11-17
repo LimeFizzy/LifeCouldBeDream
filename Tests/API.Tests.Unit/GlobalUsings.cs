@@ -7,6 +7,8 @@ global using System.Threading.Tasks;
 global using System.IO;
 global using Microsoft.AspNetCore.Http;
 global using Microsoft.AspNetCore.Mvc;
+global using Serilog;
+global using Microsoft.Extensions.Logging;
 
 global using API.DTOs;
 global using API.Data;
