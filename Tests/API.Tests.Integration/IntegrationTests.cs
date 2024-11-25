@@ -20,34 +20,28 @@ namespace API.Tests.Integration
         }
 
         [Theory]
-        [InlineData("/api/auth/register", "POST", $"{{\"Username\":\"{username}\",\"Password\":\"{password}\"}}")]
-        [InlineData("/api/auth/login", "POST", $"{{\"Username\":\"{username}\",\"Password\":\"{password}\"}}")]
-        [InlineData($"/api/auth/is-admin/{username}", "GET", null)]
-        public async Task Auth_EndpointsReturnSuccessAndCorrectContentType(string url, string method, string body)
+        [InlineData(
+            "/api/auth/register", 
+            "/api/auth/login", 
+            $"/api/auth/is-admin/{username}",
+            $"{{\"Username\":\"{username}\",\"Password\":\"{password}\"}}"
+            )]
+        public async Task Auth_EndpointsReturnSuccessAndCorrectContentType(string registerUrl, string loginUrl, string isAdminUrl, string body)
         {
-            // Arrange
             var client = _factory.CreateClient();
-            HttpResponseMessage response;
 
-            // Act
-            if (method == "POST")
-            {
-                var content = new StringContent(body ?? "{}", Encoding.UTF8, "application/json");
-                response = await client.PostAsync(url, content);
-            }
-            else
-            {
-                response = await client.GetAsync(url);
-            }
-
-            // Get and log the response body
-            var responseBody = await response.Content.ReadAsStringAsync();
+            var content = new StringContent(body ?? "{}", Encoding.UTF8, "application/json");
+            var registerResponse = await client.PostAsync(registerUrl, content);
+            var loginResponse = await client.PostAsync(loginUrl, content);
+            var isAdminResponse = await client.GetAsync(isAdminUrl);
             
-            // Assert
-            response.EnsureSuccessStatusCode(); // Status Code 200-299
+            registerResponse.EnsureSuccessStatusCode();
+            loginResponse.EnsureSuccessStatusCode();
+            isAdminResponse.EnsureSuccessStatusCode();
 
-            //Assert.False(true, responseBody);     // for testing purpose only!
-            Assert.Equal("application/json; charset=utf-8", response.Content.Headers.ContentType.ToString());
+            Assert.Equal("application/json; charset=utf-8", registerResponse.Content.Headers.ContentType.ToString());
+            Assert.Equal("application/json; charset=utf-8", loginResponse.Content.Headers.ContentType.ToString());
+            Assert.Equal("application/json; charset=utf-8", isAdminResponse.Content.Headers.ContentType.ToString());
         }
 
         [Theory]
@@ -63,16 +57,13 @@ namespace API.Tests.Integration
             )]
         public async Task SubmitScore_EndpointsReturnSuccessAndCorrectContentType(string submitUrl, string leaderboardUrl, string body)
         {
-            // Arrange
             var client = _factory.CreateClient();
 
-            // Act
             var content = new StringContent(body ?? "{}", Encoding.UTF8, "application/json");
             var submissionResponse = await client.PostAsync(submitUrl, content);
             var leaderboardResponse = await client.GetAsync(leaderboardUrl);
 
-            // Assert
-            submissionResponse.EnsureSuccessStatusCode(); // Status Code 200-299
+            submissionResponse.EnsureSuccessStatusCode();
             leaderboardResponse.EnsureSuccessStatusCode();
             
             Assert.Equal("application/json; charset=utf-8", submissionResponse.Content.Headers.ContentType.ToString());
@@ -84,22 +75,14 @@ namespace API.Tests.Integration
         [InlineData($"/api/sequence/generate-sequence/{level}")]
         public async Task Get_EndpointsReturnSuccessAndCorrectContentType(string url)
         {
-            // Arrange
             var client = _factory.CreateClient();
             HttpResponseMessage response;
 
-            // Act
-                response = await client.GetAsync(url);
-
-            // Get and log the response body
-            var responseBody = await response.Content.ReadAsStringAsync();
+            response = await client.GetAsync(url);
             
-            // Assert
-            response.EnsureSuccessStatusCode(); // Status Code 200-299
+            response.EnsureSuccessStatusCode();
 
-            //Assert.False(true, responseBody);     // for testing purpose only!
-            Assert.Equal("application/json; charset=utf-8",
-                response.Content.Headers.ContentType.ToString());
+            Assert.Equal("application/json; charset=utf-8", response.Content.Headers.ContentType.ToString());
         }
     }
 }
