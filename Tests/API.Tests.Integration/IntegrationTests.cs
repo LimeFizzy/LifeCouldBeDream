@@ -7,9 +7,17 @@ using Newtonsoft.Json;
 using API.DTOs;
 using API.Models;
 using System;
+using System.Collections.Generic;
 
 namespace API.Tests.Integration
 {
+    // Wrapwer class for deserialization of UserScore objects
+    public class SubmitScoreResponse
+    {
+        public string Message { get; set; }
+        public UserScore Score { get; set; }
+    }
+
     public class IntegrationTests
         : IClassFixture<WebApplicationFactory<Program>>
     {
@@ -87,27 +95,44 @@ namespace API.Tests.Integration
 
             var submissionResponse = await client.PostAsync(submitUrl, content);
             var submissionRead = await submissionResponse.Content.ReadAsStringAsync();
-            var submissionValue = JsonConvert.DeserializeObject<UserScore>(submissionRead);
+            var submissionValue = JsonConvert.DeserializeObject<SubmitScoreResponse>(submissionRead);
 
             var leaderboardResponse = await client.GetAsync(leaderboardUrl);
             var leaderboardRead = await leaderboardResponse.Content.ReadAsStringAsync();
-            var leaderboardValue = JsonConvert.DeserializeObject(leaderboardRead);
+            var leaderboardValue = JsonConvert.DeserializeObject<List<UserScore>>(leaderboardRead);
+
+            var deleteUrl = $"/api/UserScore/delete-leaderboard/{submissionValue.Score.Id}";
+            var deleteResponse = await client.DeleteAsync(deleteUrl);
+
+          
 
             submissionResponse.EnsureSuccessStatusCode();
             leaderboardResponse.EnsureSuccessStatusCode();
+            deleteResponse.EnsureSuccessStatusCode();
+
+            Assert.NotNull(submissionValue);
+            Assert.True(submissionValue.Score.Id > 0);
+            Assert.Contains(leaderboardValue, score => score.Id == submissionValue.Score.Id);
             
             switch (gameType) {
                 case "longNumberMemory":
-                    Assert.Equal(int.Parse(level) - 1, submissionValue.Score);
+                    Assert.Equal(int.Parse(level) - 1, submissionValue.Score.Score);
                     break;
                 case "sequenceMemory":
                     int parsedLevel = int.Parse(level);
                     parsedLevel--;
-                    Assert.Equal(parsedLevel <= 2 ? parsedLevel : parsedLevel * (parsedLevel - 1) / 2, submissionValue.Score);
+                    Assert.Equal(parsedLevel <= 2 ? parsedLevel : parsedLevel * (parsedLevel - 1) / 2, submissionValue.Score.Score);
                     break;
                 default:
                     throw new ArgumentException("Invalid game type");
             }
+
+            leaderboardResponse = await client.GetAsync(leaderboardUrl);
+            leaderboardResponse.EnsureSuccessStatusCode();
+            leaderboardRead = await leaderboardResponse.Content.ReadAsStringAsync();
+            leaderboardValue = JsonConvert.DeserializeObject<List<UserScore>>(leaderboardRead);
+
+            Assert.DoesNotContain(leaderboardValue, score => score.Id == submissionValue.Score.Id);
         }
     }
 }

@@ -147,7 +147,7 @@ namespace API.Controllers
                 // Persist the score asynchronously
                 await _userScoreService.SaveScoreAsync(userScore);
 
-                return Ok(new { Message = "Score saved successfully", Score = score });
+                return Ok(new { Message = "Score saved successfully", Score = userScore });
             }
             catch (NotImplementedException ex)
             {
@@ -166,7 +166,7 @@ namespace API.Controllers
             }
         }
         
-        [HttpDelete("leaderboard/{scoreId}")]
+        [HttpDelete("delete-leaderboard/{scoreId}")]
         public async Task<IActionResult> DeleteScore(int scoreId)
         {
             if (scoreId <= 0)
