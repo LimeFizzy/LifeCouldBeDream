@@ -103,6 +103,42 @@ namespace API.Controllers
             return Ok(new { userId = user.UserId, username = user.Username });
         }
 
+        [HttpDelete("delete/{username}")]
+        public async Task<ActionResult<User>> Delete(string username)
+        {
+            if (username == null)
+            {
+                _logger.LogWarning("Attempt to delete with null user data.");
+                throw new ArgumentNullException(username, "Username is required.");
+            }
+
+            try
+            {
+                var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
+                if (existingUser == null)
+                {
+                    _logger.LogWarning("No such user in database '{username}'", username);
+                    return BadRequest(new { Message = "Username does not exist" });
+                }
+
+                _context.Users.Remove(existingUser);
+                await _context.SaveChangesAsync();
+
+                return Ok(new { Message = "User deleted successfully.", Username = username });
+            }
+        
+            catch (ArgumentNullException ex)
+            {
+                _logger.LogError(ex, "Null argument encountered during registration.");
+                return BadRequest(new { Message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An unexpected error occurred during registration.");
+                return StatusCode(500, new { Message = "An unexpected error occurred.", Error = ex.Message });
+            }
+        }
+
         [HttpGet("is-admin/{username}")]
         public async Task<IActionResult> IsAdmin(string username)
         {
