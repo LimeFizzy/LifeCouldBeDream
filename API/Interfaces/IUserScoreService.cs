@@ -7,5 +7,7 @@ namespace API.Interfaces
         IEnumerable<UserScore> GetLeaderboard();
         Task SaveScoreAsync(UserScore userScore);
         GameTypes? GetGameTypeFromString(string gameType);
+        Task<UserScore> GetScoreByIdAsync(int scoreId);
+        Task DeleteScoreAsync(UserScore score);
     }
 }

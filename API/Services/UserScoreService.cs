@@ -21,6 +21,7 @@ namespace API.Services
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+
         public IEnumerable<UserScore> GetLeaderboard()
         {
             try
@@ -76,6 +77,55 @@ namespace API.Services
             }
 
             return result;
+        }
+        public async Task<UserScore> GetScoreByIdAsync(int scoreId)
+        {
+            if (scoreId <= 0)
+            {
+                _logger.LogWarning("Invalid score ID provided: {ScoreId}.", scoreId);
+                throw new ArgumentException("Score ID must be greater than zero.", nameof(scoreId));
+            }
+
+            try
+            {
+                var score = await _dbContext.UserScores.AsNoTracking().FirstOrDefaultAsync(us => us.Id == scoreId);
+                if (score == null)
+                {
+                    _logger.LogWarning("Score not found for ID: {ScoreId}.", scoreId);
+                }
+
+                return score;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while retrieving the score with ID: {ScoreId}.", scoreId);
+                throw new IOException("An error occurred while retrieving the score.", ex);
+            }
+        }
+        public async Task DeleteScoreAsync(UserScore score)
+        {
+            if (score == null)
+            {
+                _logger.LogWarning("Attempted to delete a null UserScore object.");
+                throw new ArgumentNullException(nameof(score), "UserScore object cannot be null.");
+            }
+
+            try
+            {
+                _dbContext.UserScores.Remove(score);
+                await _dbContext.SaveChangesAsync();
+                _logger.LogInformation("Score deleted successfully for user {Username} with ID {ScoreId}.", score.Username, score.Id);
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError(ex, "An error occurred while deleting the score with ID {ScoreId} for user {Username}.", score.Id, score.Username);
+                throw new DbUpdateException("An error occurred while deleting the score from the database.", ex);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical(ex, "An unexpected error occurred while deleting the score with ID {ScoreId} for user {Username}.", score.Id, score.Username);
+                throw;
+            }
         }
     }
 }
