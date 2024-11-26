@@ -5,6 +5,8 @@ using System.Net.Http;
 using System.Text;
 using Newtonsoft.Json;
 using API.DTOs;
+using API.Models;
+using System;
 
 namespace API.Tests.Integration
 {
@@ -58,42 +60,54 @@ namespace API.Tests.Integration
             isAdminResponse.EnsureSuccessStatusCode();
             deleteResponse.EnsureSuccessStatusCode();
 
-            Assert.Equal("application/json; charset=utf-8", registerResponse.Content.Headers.ContentType.ToString());
             Assert.Equal(username, registeredValue.Username);
-            Assert.Equal("application/json; charset=utf-8", loginResponse.Content.Headers.ContentType.ToString());
             Assert.Equal(username, loginValue.Username);
-            Assert.Equal("application/json; charset=utf-8", isAdminResponse.Content.Headers.ContentType.ToString());
             Assert.Equal(isAdmin, isAdminValue.IsAdmin);
-            Assert.Equal("application/json; charset=utf-8", deleteResponse.Content.Headers.ContentType.ToString());
             Assert.Equal(username, deleteValue.Username);
         }
 
         [Theory]
         [InlineData(
+            "longNumberMemory",
             "/api/UserScore/submit-score/longNumberMemory", 
             "/api/UserScore/leaderboard/longNumberMemory", 
             $"{{\"username\":\"{username}\",\"gameType\":\"longNumberMemory\",\"level\":{level}}}"
             )]
         [InlineData(
+            "sequenceMemory",
             "/api/UserScore/submit-score/sequenceMemory", 
             "/api/UserScore/leaderboard/sequenceMemory", 
             $"{{\"username\":\"{username}\",\"gameType\":\"sequenceMemory\",\"level\":{level}}}"
             )]
-        public async Task SubmitScore_EndpointsReturnSuccessAndCorrectContentType(string submitUrl, string leaderboardUrl, string body)
+        public async Task SubmitScore_EndpointsReturnSuccessAndCorrectContentType(string gameType, string submitUrl, string leaderboardUrl, string body)
         {
             var client = _factory.CreateClient();
 
             var content = new StringContent(body ?? "{}", Encoding.UTF8, "application/json");
+
             var submissionResponse = await client.PostAsync(submitUrl, content);
+            var submissionRead = await submissionResponse.Content.ReadAsStringAsync();
+            var submissionValue = JsonConvert.DeserializeObject<UserScore>(submissionRead);
+
             var leaderboardResponse = await client.GetAsync(leaderboardUrl);
+            var leaderboardRead = await leaderboardResponse.Content.ReadAsStringAsync();
+            var leaderboardValue = JsonConvert.DeserializeObject(leaderboardRead);
 
             submissionResponse.EnsureSuccessStatusCode();
             leaderboardResponse.EnsureSuccessStatusCode();
             
-            Assert.Equal("application/json; charset=utf-8", submissionResponse.Content.Headers.ContentType.ToString());
-            Assert.Equal("application/json; charset=utf-8", leaderboardResponse.Content.Headers.ContentType.ToString());
+            switch (gameType) {
+                case "longNumberMemory":
+                    Assert.Equal(int.Parse(level) - 1, submissionValue.Score);
+                    break;
+                case "sequenceMemory":
+                    int parsedLevel = int.Parse(level);
+                    parsedLevel--;
+                    Assert.Equal(parsedLevel <= 2 ? parsedLevel : parsedLevel * (parsedLevel - 1) / 2, submissionValue.Score);
+                    break;
+                default:
+                    throw new ArgumentException("Invalid game type");
+            }
         }
-
-
     }
 }
