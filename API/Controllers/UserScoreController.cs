@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
+
 namespace API.Controllers
 {
     [ApiController]
@@ -146,7 +147,7 @@ namespace API.Controllers
                 // Persist the score asynchronously
                 await _userScoreService.SaveScoreAsync(userScore);
 
-                return Ok(new { Message = "Score saved successfully", Score = score });
+                return Ok(new { Message = "Score saved successfully", Score = userScore });
             }
             catch (NotImplementedException ex)
             {
@@ -164,5 +165,60 @@ namespace API.Controllers
                 return StatusCode(500, new { Message = "An error occurred while submitting the score." });
             }
         }
+        
+        [HttpDelete("delete-leaderboard/{scoreId}")]
+        public async Task<IActionResult> DeleteScore(int scoreId)
+        {
+            if (scoreId <= 0)
+            {
+                _logger.LogWarning("Invalid score ID provided for deletion: {ScoreId}", scoreId);
+                return BadRequest(new { Message = "Invalid score ID." });
+            }
+
+            try
+            {
+                // Find and remove the score from in-memory storage
+                bool inMemoryDeleted = false;
+                foreach (var gameType in _scores.Keys)
+                {
+                    if (_scores.TryGetValue(gameType, out var scoreBag))
+                    {
+                        var scoreToDelete = scoreBag.FirstOrDefault(score => score.Id == scoreId);
+                        if (scoreToDelete != null)
+                        {
+                            var newScoreBag = new ConcurrentBag<UserScore>(scoreBag.Except(new[] { scoreToDelete }));
+                            _scores[gameType] = newScoreBag;
+                            inMemoryDeleted = true;
+                            _logger.LogInformation("Score deleted from in-memory collection. Score ID: {ScoreId}", scoreId);
+                            break;
+                        }
+                    }
+                }
+
+                if (!inMemoryDeleted)
+                {
+                    _logger.LogWarning("Score not found in in-memory storage for ID: {ScoreId}", scoreId);
+                }
+
+                // Remove from persistent storage
+                var scoreFromDb = await _userScoreService.GetScoreByIdAsync(scoreId);
+                if (scoreFromDb == null)
+                {
+                    _logger.LogWarning("Score not found in database for ID: {ScoreId}", scoreId);
+                    return NotFound(new { Message = "Score not found." });
+                }
+
+                await _userScoreService.DeleteScoreAsync(scoreFromDb);
+
+                return Ok(new { Message = $"Score with ID '{scoreId}' has been deleted." });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An unexpected error occurred while deleting score with ID: {ScoreId}", scoreId);
+                return StatusCode(500, new { Message = "An error occurred while deleting the score." });
+            }
+        }
+
+
     }
 }

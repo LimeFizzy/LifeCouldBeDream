@@ -13,13 +13,9 @@ public class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<UserScore>().HasKey(u => u.Id);     // User ID creation
+        modelBuilder.Entity<UserScore>().HasKey(u => u.Id);
 
         modelBuilder.Entity<User>().HasKey(u => u.UserId);
-        // .HasMany(u => u.Scores)
-        // .WithOne(s => s.User)
-        // .HasForeignKey(u => u.UserId)
-        // .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<GameDTO>()
         .HasKey(g => g.GameID);

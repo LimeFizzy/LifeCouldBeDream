@@ -1,9 +1,7 @@
-using API.Data;
 using System.Text;
 using API.Exceptions;
 using API.Interfaces;
 using System.Security.Cryptography;
-using Microsoft.Extensions.Logging;
 
 namespace API.Services
 {
@@ -35,7 +33,7 @@ namespace API.Services
             catch (Exception ex)
             {
                 _logger.LogCritical(ex, "An unexpected error occurred while hashing the password.");
-                throw; // Re-throw the exception to propagete it
+                throw;
             }
         }
 
