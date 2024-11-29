@@ -121,8 +121,8 @@ namespace API.Controllers
             {
                 int score = parsedGameType switch
                 {
-                    GameTypes.LONG_NUMBER => _uniServInt.CalculateScore(GameTypes.LONG_NUMBER, submission.Level),
-                    GameTypes.SEQUENCE => _uniServSquare.CalculateScore(GameTypes.SEQUENCE, submission.Level),
+                    GameTypes.LONG_NUMBER => _uniServInt.CalculateScore(submission.Level),
+                    GameTypes.SEQUENCE => _uniServSquare.CalculateScore(submission.Level),
                     GameTypes.CHIMP => throw new NotImplementedException("Chimp test game not implemented yet"),
                     _ => throw new ArgumentException($"Unhandled game type: {gameType}")
                 };

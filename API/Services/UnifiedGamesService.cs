@@ -1,19 +1,14 @@
 using API.Models;
 using API.Interfaces;
-using API.Controllers;
-using Microsoft.AspNetCore.Mvc;
+
 namespace API.Services
 {
-    public class UnifiedGamesService<Type> : IUnifiedGamesService<Type> where Type : struct
+    public class UnifiedGamesService<T>(ILogger<UnifiedGamesService<T>> logger) : IUnifiedGamesService<T>
     {
         private readonly Random _random = new();
-        private readonly ILogger<UnifiedGamesService<Type>> _logger;
-        public UnifiedGamesService(ILogger<UnifiedGamesService<Type>> logger)
-        {
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        }
+        private readonly ILogger<UnifiedGamesService<T>> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
-        public Type[] GenerateSequence<T>(T controller, int level) where T : ControllerBase
+        public T[] GenerateSequence(int level)
         {
             if (level <= 0)
             {
@@ -23,17 +18,21 @@ namespace API.Services
 
             try
             {
-                if (controller is LongNumberController)
+                if (typeof(T) == typeof(int))
                 {
-                    return Enumerable.Range(0, level).Select(_ => (Type)(object)_random.Next(0, 10)).ToArray();
+                    return Enumerable.Range(0, level)
+                        .Select(_ => (T)(object)_random.Next(0, 10))
+                        .ToArray();
                 }
-                else if (controller is SequenceController)
+                else if (typeof(T) == typeof(Square))
                 {
-                    return Enumerable.Range(0, level).Select(_ => (Type)(object)new Square(_random.Next(1, 10), false)).ToArray();
+                    return Enumerable.Range(0, level)
+                        .Select(_ => (T)(object)new Square(_random.Next(1, 10), false))
+                        .ToArray();
                 }
                 else
                 {
-                    throw new ArgumentException("Unsupported game type");
+                    throw new InvalidOperationException($"Unsupported type {typeof(T)} for sequence generation.");
                 }
             }
             catch (Exception ex)
@@ -42,7 +41,8 @@ namespace API.Services
                 throw new InvalidOperationException("An error occurred while generating the sequence.", ex);
             }
         }
-        public int CalculateScore<T>(T gameType, int level) where T : struct, System.Enum
+
+        public int CalculateScore(int level)
         {
             if (level < 1)
             {
@@ -52,18 +52,18 @@ namespace API.Services
 
             try
             {
-                if (gameType is GameTypes.LONG_NUMBER)
+                if (typeof(T) == typeof(int))
                 {
                     return level - 1;
                 }
-                else if (gameType is GameTypes.SEQUENCE)
+                else if (typeof(T) == typeof(Square))
                 {
                     level--;
                     return level <= 2 ? level : level * (level - 1) / 2;
                 }
                 else
                 {
-                    throw new ArgumentException("Unsupported service type");
+                    throw new InvalidOperationException($"Unsupported type {typeof(T)} for score calculation.");
                 }
             }
             catch (Exception ex)
