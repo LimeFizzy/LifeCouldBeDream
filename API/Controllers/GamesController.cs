@@ -7,16 +7,10 @@ namespace API.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class GamesController : ControllerBase
+    public class GamesController(AppDbContext context, ILogger<GamesController> logger) : ControllerBase
     {
-        private readonly AppDbContext _context;
-        private readonly ILogger<GamesController> _logger;
-
-        public GamesController(AppDbContext context, ILogger<GamesController> logger)
-        {
-            _context = context ?? throw new ArgumentNullException(nameof(context));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        }
+        private readonly AppDbContext _context = context ?? throw new ArgumentNullException(nameof(context));
+        private readonly ILogger<GamesController> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<GameDTO>>> GetGames()
@@ -53,11 +47,6 @@ namespace API.Controllers
                 await _context.SaveChangesAsync();
 
                 return CreatedAtAction(nameof(GetGames), new { id = newGame.GameID }, newGame);
-            }
-            catch (DbUpdateException ex)
-            {
-                _logger.LogError(ex, "An error occurred while saving the game to the database.");
-                return StatusCode(500, new { Message = "An error occurred while saving the game to the database.", Error = ex.Message });
             }
             catch (Exception ex)
             {

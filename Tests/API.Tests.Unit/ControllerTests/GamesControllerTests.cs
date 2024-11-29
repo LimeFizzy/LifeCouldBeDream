@@ -66,6 +66,22 @@ namespace API.Tests.Unit.ControllerTests
         }
 
         [Fact]
+        public async Task GetGames_ReturnsNotFound_WhenNoGamesInDatabase()
+        {
+            // Arrange: Remove all games from the database to simulate no games scenario
+            _context.Games.RemoveRange(_context.Games);
+            _context.SaveChanges();
+
+            // Act
+            var result = await _controller.GetGames();
+
+            // Assert
+            var notFoundResult = result.Result as NotFoundObjectResult;
+            notFoundResult.Should().NotBeNull();
+            notFoundResult!.StatusCode.Should().Be(404);
+        }
+
+        [Fact]
         public async Task AddGame_ValidGame_ReturnsCreatedAtAction()
         {
             // Arrange

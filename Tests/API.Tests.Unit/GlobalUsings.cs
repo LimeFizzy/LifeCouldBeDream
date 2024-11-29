@@ -14,5 +14,5 @@ global using API.DTOs;
 global using API.Data;
 global using API.Models;
 global using API.Services;
-global using API.Interfaces;
 global using API.Controllers;
+global using API.Exceptions;

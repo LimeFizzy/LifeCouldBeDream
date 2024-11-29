@@ -16,30 +16,24 @@ namespace API.Services
                 throw new ArgumentOutOfRangeException(nameof(level), "Level must be greater than zero.");
             }
 
-            try
+
+            if (typeof(T) == typeof(int))
             {
-                if (typeof(T) == typeof(int))
-                {
-                    return Enumerable.Range(0, level)
-                        .Select(_ => (T)(object)_random.Next(0, 10))
-                        .ToArray();
-                }
-                else if (typeof(T) == typeof(Square))
-                {
-                    return Enumerable.Range(0, level)
-                        .Select(_ => (T)(object)new Square(_random.Next(1, 10), false))
-                        .ToArray();
-                }
-                else
-                {
-                    throw new InvalidOperationException($"Unsupported type {typeof(T)} for sequence generation.");
-                }
+                return Enumerable.Range(0, level)
+                    .Select(_ => (T)(object)_random.Next(0, 10))
+                    .ToArray();
             }
-            catch (Exception ex)
+            else if (typeof(T) == typeof(Square))
             {
-                _logger.LogError(ex, "An error occurred while generating the sequence for level {Level}.", level);
-                throw new InvalidOperationException("An error occurred while generating the sequence.", ex);
+                return Enumerable.Range(0, level)
+                    .Select(_ => (T)(object)new Square(_random.Next(1, 10), false))
+                    .ToArray();
             }
+            else
+            {
+                return [];
+            }
+
         }
 
         public int CalculateScore(int level)
@@ -50,27 +44,22 @@ namespace API.Services
                 throw new ArgumentOutOfRangeException(nameof(level), "Level must be greater than or equal to 1.");
             }
 
-            try
+
+            if (typeof(T) == typeof(int))
             {
-                if (typeof(T) == typeof(int))
-                {
-                    return level - 1;
-                }
-                else if (typeof(T) == typeof(Square))
-                {
-                    level--;
-                    return level <= 2 ? level : level * (level - 1) / 2;
-                }
-                else
-                {
-                    throw new InvalidOperationException($"Unsupported type {typeof(T)} for score calculation.");
-                }
+                return level - 1;
             }
-            catch (Exception ex)
+            else if (typeof(T) == typeof(Square))
             {
-                _logger.LogError(ex, "An unexpected error occurred while calculating the score for level {Level}.", level);
-                throw new InvalidOperationException("An error occurred while calculating the score.", ex);
+                level--;
+                return level <= 2 ? level : level * (level - 1) / 2;
             }
+            else
+            {
+                return level;
+            }
+
+
         }
     }
 }

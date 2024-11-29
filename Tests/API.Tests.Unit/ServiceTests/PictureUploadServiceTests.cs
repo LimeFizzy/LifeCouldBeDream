@@ -84,22 +84,40 @@ namespace API.Tests.Unit.ServiceTests
                 UserId = userId,
                 Username = "User1",
                 PasswordHash = "hashedpassword",
-                ProfileImagePath = "uploads/image.jpg"
+                ProfileImagePath = Path.Combine("uploads", "image.jpg")
             };
 
             _dbContext.Users.Add(user);
             await _dbContext.SaveChangesAsync();
 
-            // Simulate the existence of the file
-            File.WriteAllText(user.ProfileImagePath, "fake image content");
+            // Generate file content
+            var fileContent = Enumerable.Range(0, 256).Select(b => (byte)b).ToArray();
 
-            // Act
-            var result = await _pictureUploadService.GetProfileImageAsync(userId);
+            // Ensure the uploads directory exists
+            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "uploads");
+            Directory.CreateDirectory(uploadsFolder);
 
-            // Assert
-            result.Should().NotBeNullOrEmpty();
-            result.Should().BeEquivalentTo(File.ReadAllBytes(user.ProfileImagePath));
+            var filePath = Path.Combine(uploadsFolder, "image.jpg");
+            try
+            {
+                // Simulate file existence
+                await File.WriteAllBytesAsync(filePath, fileContent);
+
+                // Act
+                var result = await _pictureUploadService.GetProfileImageAsync(userId);
+
+                // Assert
+                result.Should().NotBeNullOrEmpty();
+                result.Should().BeEquivalentTo(fileContent);
+            }
+            finally
+            {
+                // Cleanup
+                if (File.Exists(filePath))
+                    File.Delete(filePath);
+            }
         }
+
 
         [Fact]
         public async Task UploadProfileImageAsync_ThrowsException_WhenNoFileUploaded()
@@ -133,6 +151,112 @@ namespace API.Tests.Unit.ServiceTests
             // Assert
             await act.Should().ThrowAsync<KeyNotFoundException>()
                 .WithMessage("User with ID 999 or their profile image was not found.");
+        }
+
+        [Fact]
+        public async Task UploadProfileImageAsync_CreatesUploadsDirectory_WhenNotExisting()
+        {
+            // Arrange
+            var userId = 1;
+            var user = new User
+            {
+                UserId = userId,
+                Username = "User1",
+                PasswordHash = "hashedpassword"
+            };
+
+            _dbContext.Users.Add(user);
+            await _dbContext.SaveChangesAsync();
+
+            var fileMock = new Mock<IFormFile>();
+            var fileName = "profile.jpg";
+            var fileContent = "This is a test file.";
+            var stream = new MemoryStream();
+            await new StreamWriter(stream).WriteAsync(fileContent);
+            stream.Position = 0;
+
+            fileMock.Setup(f => f.FileName).Returns(fileName);
+            fileMock.Setup(f => f.Length).Returns(stream.Length);
+            fileMock.Setup(f => f.OpenReadStream()).Returns(stream);
+
+            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "uploads");
+            if (Directory.Exists(uploadsFolder))
+            {
+                Directory.Delete(uploadsFolder, true);
+            }
+
+            // Act
+            var result = await _pictureUploadService.UploadProfileImageAsync(userId, fileMock.Object);
+
+            // Assert
+            Directory.Exists(uploadsFolder).Should().BeTrue();
+            File.Exists(result).Should().BeTrue();
+
+            // Cleanup
+            Directory.Delete(uploadsFolder, true);
+        }
+
+        [Fact]
+        public async Task GetProfileImageAsync_ThrowsFileNotFoundException_WhenImageNotFound()
+        {
+            // Arrange
+            var userId = 1;
+            var user = new User
+            {
+                UserId = userId,
+                Username = "User1",
+                PasswordHash = "hashedpassword",
+                ProfileImagePath = "nonexistent/path.jpg"
+            };
+
+            _dbContext.Users.Add(user);
+            await _dbContext.SaveChangesAsync();
+
+            // Act
+            Func<Task> act = async () => await _pictureUploadService.GetProfileImageAsync(userId);
+
+            // Assert
+            await act.Should().ThrowAsync<FileNotFoundException>()
+                .WithMessage("Image file not found.");
+        }
+
+        [Fact]
+        public async Task UploadProfileImageAsync_ThrowsException_WhenUserNotFound()
+        {
+            // Arrange
+            var userId = 999;
+            var fileMock = new Mock<IFormFile>();
+
+            // Act
+            Func<Task> act = async () => await _pictureUploadService.UploadProfileImageAsync(userId, fileMock.Object);
+
+            // Assert
+            await act.Should().ThrowAsync<KeyNotFoundException>()
+                .WithMessage($"User with ID {userId} not found.");
+        }
+
+        [Fact]
+        public async Task GetProfileImageAsync_ReturnsNull_WhenProfileImagePathIsEmpty()
+        {
+            // Arrange
+            var userId = 1;
+            var user = new User
+            {
+                UserId = userId,
+                Username = "User1",
+                PasswordHash = "hashedpassword",
+                ProfileImagePath = string.Empty
+            };
+
+            _dbContext.Users.Add(user);
+            await _dbContext.SaveChangesAsync();
+
+            // Act
+            Func<Task> act = async () => await _pictureUploadService.GetProfileImageAsync(userId);
+
+            // Assert
+            await act.Should().ThrowAsync<FileNotFoundException>()
+                .WithMessage("Profile image path is missing.");
         }
     }
 }

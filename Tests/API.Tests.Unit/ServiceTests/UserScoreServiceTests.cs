@@ -56,6 +56,16 @@ namespace API.Tests.Unit.ServiceTests
         }
 
         [Fact]
+        public void GetLeaderboard_ReturnsEmpty_WhenNoScores()
+        {
+            // Act
+            var result = _userScoreService.GetLeaderboard();
+
+            // Assert
+            result.Should().BeEmpty();
+        }
+
+        [Fact]
         public async Task SaveScoreAsync_SavesUserScore()
         {
             // Arrange
@@ -67,6 +77,13 @@ namespace API.Tests.Unit.ServiceTests
             // Assert
             var savedScore = await _dbContext.UserScores.FindAsync(userScore.Id);
             savedScore.Should().BeEquivalentTo(userScore);
+        }
+
+        [Fact]
+        public async Task SaveScoreAsync_ThrowsArgumentNullException_WhenUserScoreIsNull()
+        {
+            // Act & Assert
+            await Assert.ThrowsAsync<ArgumentNullException>(() => _userScoreService.SaveScoreAsync(null));
         }
 
         [Theory]
@@ -81,6 +98,69 @@ namespace API.Tests.Unit.ServiceTests
 
             // Assert
             result.Should().Be(expected);
+        }
+
+        [Fact]
+        public async Task GetScoreByIdAsync_ReturnsCorrectScore()
+        {
+            // Arrange
+            var userScore = new UserScore { Score = 150, Username = "User1", GameDate = "2024-12-31" };
+            _dbContext.UserScores.Add(userScore);
+            await _dbContext.SaveChangesAsync();
+
+            // Act
+            var result = await _userScoreService.GetScoreByIdAsync(userScore.Id);
+
+            // Assert
+            result.Should().BeEquivalentTo(userScore);
+        }
+
+        [Fact]
+        public async Task GetScoreByIdAsync_ThrowsArgumentNullException_WhenScoreNotFound()
+        {
+            // Act & Assert
+            await Assert.ThrowsAsync<IOException>(() => _userScoreService.GetScoreByIdAsync(999));
+        }
+
+        [Fact]
+        public async Task GetScoreByIdAsync_ThrowsArgumentException_WhenInvalidId()
+        {
+            // Act & Assert
+            await Assert.ThrowsAsync<ArgumentException>(() => _userScoreService.GetScoreByIdAsync(0));
+            await Assert.ThrowsAsync<ArgumentException>(() => _userScoreService.GetScoreByIdAsync(-1));
+        }
+
+        [Fact]
+        public async Task DeleteScoreAsync_DeletesScore()
+        {
+            // Arrange
+            var userScore = new UserScore { Score = 150, Username = "User1", GameDate = "2024-12-31" };
+            _dbContext.UserScores.Add(userScore);
+            await _dbContext.SaveChangesAsync();
+
+            // Act
+            await _userScoreService.DeleteScoreAsync(userScore);
+
+            // Assert
+            var deletedScore = await _dbContext.UserScores.FindAsync(userScore.Id);
+            deletedScore.Should().BeNull();
+        }
+
+        [Fact]
+        public async Task DeleteScoreAsync_ThrowsArgumentNullException_WhenScoreIsNull()
+        {
+            // Act & Assert
+            await Assert.ThrowsAsync<ArgumentNullException>(() => _userScoreService.DeleteScoreAsync(null));
+        }
+
+        [Fact]
+        public async Task DeleteScoreAsync_ThrowsException_WhenScoreNotFound()
+        {
+            // Arrange
+            var userScore = new UserScore { Id = 999, Score = 150, Username = "NonExistingUser", GameDate = "2024-12-31" };
+
+            // Act & Assert
+            await Assert.ThrowsAsync<DbUpdateException>(() => _userScoreService.DeleteScoreAsync(userScore));
         }
     }
 }

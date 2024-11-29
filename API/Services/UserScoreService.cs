@@ -44,11 +44,6 @@ namespace API.Services
                 _dbContext.UserScores.Add(userScore);
                 await _dbContext.SaveChangesAsync();
             }
-            catch (DbUpdateException ex)
-            {
-                _logger.LogError(ex, "An error occurred while saving the score to the database for user {Username}.", userScore.Username);
-                throw new DbUpdateException("An error occurred while saving the score to the database.", ex);
-            }
             catch (Exception ex)
             {
                 _logger.LogCritical(ex, "An unexpected error occurred while saving the score for user {Username}.", userScore.Username);
