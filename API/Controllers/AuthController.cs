@@ -1,14 +1,10 @@
-using Serilog;
 using API.DTOs;
 using API.Data;
-using ZstdSharp;
 using API.Models;
 using API.Exceptions;
 using API.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-
 
 namespace API.Controllers
 {
@@ -126,7 +122,7 @@ namespace API.Controllers
 
                 return Ok(new { Message = "User deleted successfully.", Username = username });
             }
-        
+
             catch (ArgumentNullException ex)
             {
                 _logger.LogError(ex, "Null argument encountered during registration.");

@@ -1,12 +1,5 @@
-using System;
 using API.Data;
-using System.IO;
 using API.Interfaces;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using System.Collections.Generic;
-using Microsoft.Extensions.Logging;
-using Microsoft.EntityFrameworkCore;
 
 namespace API.Services
 {
@@ -29,7 +22,7 @@ namespace API.Services
                 throw new ArgumentException("No file uploaded.");
             }
 
-            var user = await _context.Users.FindAsync(userId) 
+            var user = await _context.Users.FindAsync(userId)
                        ?? throw new KeyNotFoundException($"User with ID {userId} not found.");
 
             var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "uploads");
@@ -68,7 +61,7 @@ namespace API.Services
 
         public async Task<byte[]> GetProfileImageAsync(int userId)
         {
-            var user = await _context.Users.FindAsync(userId) 
+            var user = await _context.Users.FindAsync(userId)
                        ?? throw new KeyNotFoundException($"User with ID {userId} or their profile image was not found.");
 
             if (string.IsNullOrEmpty(user.ProfileImagePath))

@@ -1,12 +1,7 @@
-using System;
 using API.Models;
-using System.Linq;
 using API.Interfaces;
 using System.Collections.Concurrent;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-
 
 namespace API.Controllers
 {
@@ -165,7 +160,7 @@ namespace API.Controllers
                 return StatusCode(500, new { Message = "An error occurred while submitting the score." });
             }
         }
-        
+
         [HttpDelete("delete-leaderboard/{scoreId}")]
         public async Task<IActionResult> DeleteScore(int scoreId)
         {

@@ -5,7 +5,7 @@ using API.Models;
 using API.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http.Features;
-
+using System.Diagnostics.CodeAnalysis;
 
 Log.Logger = new LoggerConfiguration() // 2.3. Logging Configuration with Serilog
     .MinimumLevel.Warning() // Logs warnings, error and fatal
@@ -62,4 +62,5 @@ app.UseStaticFiles();
 
 app.Run();
 
+[ExcludeFromCodeCoverage]
 public partial class Program { }

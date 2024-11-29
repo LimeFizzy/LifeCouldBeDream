@@ -1,12 +1,7 @@
 using API.Data;
-using System.IO;
 using API.Models;
 using API.Interfaces;
-using System.Threading.Tasks;
-using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-
 
 namespace API.Services
 {
@@ -92,6 +87,7 @@ namespace API.Services
                 if (score == null)
                 {
                     _logger.LogWarning("Score not found for ID: {ScoreId}.", scoreId);
+                    throw new ArgumentNullException(nameof(score), "UserScore object cannot be null.");
                 }
 
                 return score;

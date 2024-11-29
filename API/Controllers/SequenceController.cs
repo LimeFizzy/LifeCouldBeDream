@@ -1,8 +1,6 @@
-using System;
 using API.Models;
 using API.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace API.Controllers
 {
