@@ -16,3 +16,4 @@ global using API.Models;
 global using API.Services;
 global using API.Controllers;
 global using API.Exceptions;
+global using API.Interfaces;
