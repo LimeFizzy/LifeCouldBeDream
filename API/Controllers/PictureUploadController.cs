@@ -31,21 +31,6 @@ namespace API.Controllers
 
                 return Ok(new { Message = "Profile image uploaded successfully.", ProfileImagePath = filePath });
             }
-            catch (UnauthorizedAccessException ex)
-            {
-                _logger.LogWarning(ex, "Access denied while uploading profile image for user {UserId}.", userId);
-                return StatusCode(StatusCodes.Status403Forbidden, new { Message = ex.Message });
-            }
-            catch (ArgumentException ex)
-            {
-                _logger.LogWarning(ex, "Invalid argument provided while uploading profile image for user {UserId}.", userId);
-                return BadRequest(new { Message = ex.Message });
-            }
-            catch (KeyNotFoundException ex)
-            {
-                _logger.LogWarning(ex, "User not found: {UserId}.", userId);
-                return NotFound(new { Message = ex.Message });
-            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An unexpected error occurred while uploading profile image for user {UserId}.", userId);
@@ -67,16 +52,6 @@ namespace API.Controllers
                 }
 
                 return File(fileBytes, "image/jpeg");
-            }
-            catch (FileNotFoundException ex)
-            {
-                _logger.LogWarning(ex, "File not found for user {UserId}.", userId);
-                return NotFound(new { Message = ex.Message });
-            }
-            catch (KeyNotFoundException ex)
-            {
-                _logger.LogWarning(ex, "User or profile image not found: {UserId}.", userId);
-                return NotFound(new { Message = ex.Message });
             }
             catch (UnauthorizedAccessException ex)
             {

@@ -71,43 +71,33 @@ namespace API.Services
                 throw new WeakPasswordException("Password cannot be null or empty.");
             }
 
-            try
+
+            if (password.Length < 4)
             {
-                if (password.Length < 4)
-                {
-                    throw new WeakPasswordException("Password must be at least 4 characters long.");
-                }
-
-                if (!password.Any(char.IsUpper))
-                {
-                    throw new WeakPasswordException("Password must contain at least one uppercase letter.");
-                }
-
-                if (!password.Any(char.IsLower))
-                {
-                    throw new WeakPasswordException("Password must contain at least one lowercase letter.");
-                }
-
-                if (!password.Any(char.IsDigit))
-                {
-                    throw new WeakPasswordException("Password must contain at least one digit.");
-                }
-
-                if (!password.Any(ch => !char.IsLetterOrDigit(ch)))
-                {
-                    throw new WeakPasswordException("Password must contain at least one special character.");
-                }
+                throw new WeakPasswordException("Password must be at least 4 characters long.");
             }
-            catch (WeakPasswordException ex)
+
+            if (!password.Any(char.IsUpper))
             {
-                _logger.LogWarning(ex, "Password strength validation failed.");
-                throw;
+                throw new WeakPasswordException("Password must contain at least one uppercase letter.");
             }
-            catch (Exception ex)
+
+            if (!password.Any(char.IsLower))
             {
-                _logger.LogCritical(ex, "An unexpected error occurred during password strength validation.");
-                throw;
+                throw new WeakPasswordException("Password must contain at least one lowercase letter.");
             }
+
+            if (!password.Any(char.IsDigit))
+            {
+                throw new WeakPasswordException("Password must contain at least one digit.");
+            }
+
+            if (!password.Any(ch => !char.IsLetterOrDigit(ch)))
+            {
+                throw new WeakPasswordException("Password must contain at least one special character.");
+            }
+
+
         }
     }
 }
