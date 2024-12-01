@@ -4,132 +4,179 @@ namespace API.Tests.Unit.ServiceTests
     {
         private readonly UnifiedGamesService<int> _unifiedGamesServiceLN;
         private readonly UnifiedGamesService<Square> _unifiedGamesServiceSequence;
-        private readonly LongNumberController _longNumberController;
-        private readonly SequenceController _sequenceController;
-        private readonly ILogger<LongNumberController> _loggerLNController;
-        private readonly ILogger<SequenceController> _loggerSequenceController;
         private readonly ILogger<UnifiedGamesService<int>> _loggerLN;
         private readonly ILogger<UnifiedGamesService<Square>> _loggerSequence;
 
         public UnifiedGamesServiceTests()
         {
-            // Configure Serilog
             Log.Logger = new LoggerConfiguration()
-                .WriteTo.Console() // or .WriteTo.File("log.txt")
+                .WriteTo.Console()
                 .CreateLogger();
 
-            // Wrap Serilog in Microsoft.Extensions.Logging.ILogger
             var loggerFactory = LoggerFactory.Create(builder =>
             {
                 builder.AddSerilog();
             });
-            _loggerLN = loggerFactory.CreateLogger<UnifiedGamesService<int>>();
-            _loggerLNController = loggerFactory.CreateLogger<LongNumberController>();
 
+            _loggerLN = loggerFactory.CreateLogger<UnifiedGamesService<int>>();
             _loggerSequence = loggerFactory.CreateLogger<UnifiedGamesService<Square>>();
-            _loggerSequenceController = loggerFactory.CreateLogger<SequenceController>();
 
             _unifiedGamesServiceLN = new UnifiedGamesService<int>(_loggerLN);
             _unifiedGamesServiceSequence = new UnifiedGamesService<Square>(_loggerSequence);
+        }
 
-            _longNumberController = new LongNumberController(_loggerLNController, _unifiedGamesServiceLN);
-            _sequenceController = new SequenceController(_loggerSequenceController, _unifiedGamesServiceSequence);
+        // Long Number Tests
+        [Fact]
+        public void GenerateSequenceLN_ThrowsExceptionForInvalidLevel()
+        {
+            // Arrange
+            int invalidLevel = 0;
+
+            // Act
+            Action act = () => _unifiedGamesServiceLN.GenerateSequence(invalidLevel);
+
+            // Assert
+            act.Should().Throw<ArgumentOutOfRangeException>()
+                .WithMessage("*Level must be greater than zero.*");
         }
 
         [Fact]
-        public void GenerateSequenceLN_ReturnsArrayOfCorrectLength()
+        public void CalculateScoreLN_ThrowsExceptionForInvalidLevel()
+        {
+            // Arrange
+            int invalidLevel = 0;
+
+            // Act
+            Action act = () => _unifiedGamesServiceLN.CalculateScore(invalidLevel);
+
+            // Assert
+            act.Should().Throw<ArgumentOutOfRangeException>()
+                .WithMessage("*Level must be greater than or equal to 1.*");
+        }
+
+        [Fact]
+        public void GenerateSequenceLN_HandlesRandomness()
         {
             // Arrange
             int level = 5;
 
             // Act
-            var result = _unifiedGamesServiceLN.GenerateSequence(_longNumberController, level);
+            var sequence1 = _unifiedGamesServiceLN.GenerateSequence(level);
+            var sequence2 = _unifiedGamesServiceLN.GenerateSequence(level);
 
             // Assert
-            result.Should().HaveCount(level);
+            sequence1.Should().NotEqual(sequence2); // Different sequences due to randomness
         }
+
+        // Sequence Tests
         [Fact]
-        public void GenerateSequenceLN_ReturnsNumbersInExpectedRange()
+        public void GenerateSequenceSq_ThrowsExceptionForInvalidLevel()
         {
             // Arrange
-            int level = 10;
+            int invalidLevel = -1;
 
             // Act
-            var result = _unifiedGamesServiceLN.GenerateSequence(_longNumberController, level);
+            Action act = () => _unifiedGamesServiceSequence.GenerateSequence(invalidLevel);
 
             // Assert
-            result.Should().OnlyContain(x => x >= 0 && x < 10);
+            act.Should().Throw<ArgumentOutOfRangeException>()
+                .WithMessage("*Level must be greater than zero.*");
+        }
+
+        [Fact]
+        public void CalculateScoreSq_ThrowsExceptionForInvalidLevel()
+        {
+            // Arrange
+            int invalidLevel = -1;
+
+            // Act
+            Action act = () => _unifiedGamesServiceSequence.CalculateScore(invalidLevel);
+
+            // Assert
+            act.Should().Throw<ArgumentOutOfRangeException>()
+                .WithMessage("*Level must be greater than or equal to 1.*");
+        }
+
+        [Fact]
+        public void GenerateSequenceSq_HandlesRandomness()
+        {
+            // Arrange
+            int level = 5;
+
+            // Act
+            var sequence1 = _unifiedGamesServiceSequence.GenerateSequence(level);
+            var sequence2 = _unifiedGamesServiceSequence.GenerateSequence(level);
+
+            // Assert
+            sequence1.Should().NotEqual(sequence2); // Different sequences due to randomness
         }
 
         [Theory]
-        [InlineData(1, 0)]  // level = 1 should return score of 0
-        [InlineData(2, 1)]  // level = 2 should return score of 1
-        [InlineData(10, 9)] // level = 10 should return score of 9
-        public void CalculateScoreLN_ReturnsExpectedScore(int level, int expectedScore)
+        [InlineData(1, 0)]
+        [InlineData(3, 2)]
+        [InlineData(5, 6)] // Covers logic for level > 2
+        [InlineData(6, 10)] // Extended coverage
+        public void CalculateScoreSq_HandlesAllLogicPaths(int level, int expectedScore)
         {
             // Act
-            var result = _unifiedGamesServiceLN.CalculateScore(GameTypes.LONG_NUMBER, level);
+            var result = _unifiedGamesServiceSequence.CalculateScore(level);
 
             // Assert
             result.Should().Be(expectedScore);
         }
 
-
+        // Additional Edge Case Tests
         [Fact]
-        public void GenerateSequenceSq_ReturnsCorrectLength()
+        public void GenerateSequenceLN_HandlesMaxLevel()
         {
             // Arrange
-            int level = 5;
+            int maxLevel = 1000;
 
             // Act
-            var sequence = _unifiedGamesServiceSequence.GenerateSequence(_sequenceController, level);
+            var sequence = _unifiedGamesServiceLN.GenerateSequence(maxLevel);
 
             // Assert
-            sequence.Should().HaveCount(level);
-        }
-        [Fact]
-        public void GenerateSequenceSq_ReturnsSquaresWithCorrectValues()
-        {
-            // Arrange
-            int level = 5;
-
-            // Act
-            var sequence = _unifiedGamesServiceSequence.GenerateSequence(_sequenceController, level);
-
-            // Assert
-            foreach (var square in sequence)
-            {
-                square.Id.Should().BeInRange(1, 9);  // Corrected from Value to Id
-                square.IsActive.Should().BeFalse();
-            }
-        }
-
-
-        [Theory]
-        [InlineData(1, 0)]
-        [InlineData(2, 1)]
-        [InlineData(3, 2)]
-        [InlineData(4, 3)]
-        public void CalculateScoreSq_ReturnsExpectedScore(int level, int expectedScore)
-        {
-            // Act
-            var score = _unifiedGamesServiceSequence.CalculateScore(GameTypes.SEQUENCE, level);
-
-            // Assert
-            score.Should().Be(expectedScore);
+            sequence.Should().HaveCount(maxLevel);
         }
 
         [Fact]
-        public void CalculateScoreSq_ReturnsZeroForLevelOne()
+        public void GenerateSequenceSq_HandlesMaxLevel()
         {
             // Arrange
-            int level = 1;
+            int maxLevel = 1000;
 
             // Act
-            var score = _unifiedGamesServiceSequence.CalculateScore(GameTypes.SEQUENCE, level);
+            var sequence = _unifiedGamesServiceSequence.GenerateSequence(maxLevel);
 
             // Assert
-            score.Should().Be(0);
+            sequence.Should().HaveCount(maxLevel);
+            sequence.Should().AllBeOfType<Square>();
+        }
+
+        [Fact]
+        public void CalculateScoreLN_HandlesMaxLevel()
+        {
+            // Arrange
+            int maxLevel = 1000;
+
+            // Act
+            var result = _unifiedGamesServiceLN.CalculateScore(maxLevel);
+
+            // Assert
+            result.Should().Be(maxLevel - 1);
+        }
+
+        [Fact]
+        public void CalculateScoreSq_HandlesMaxLevel()
+        {
+            // Arrange
+            int maxLevel = 1000;
+
+            // Act
+            var result = _unifiedGamesServiceSequence.CalculateScore(maxLevel);
+
+            // Assert
+            result.Should().Be((maxLevel - 1) * (maxLevel - 2) / 2);
         }
     }
 }

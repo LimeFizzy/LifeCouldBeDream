@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -7,6 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace API.Migrations
 {
+    [ExcludeFromCodeCoverage]
     /// <inheritdoc />
     public partial class InitialCreate : Migration
     {

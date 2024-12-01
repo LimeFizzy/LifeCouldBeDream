@@ -1,12 +1,7 @@
-using System;
 using API.Models;
-using System.Linq;
 using API.Interfaces;
 using System.Collections.Concurrent;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-
 
 namespace API.Controllers
 {
@@ -126,8 +121,8 @@ namespace API.Controllers
             {
                 int score = parsedGameType switch
                 {
-                    GameTypes.LONG_NUMBER => _uniServInt.CalculateScore(GameTypes.LONG_NUMBER, submission.Level),
-                    GameTypes.SEQUENCE => _uniServSquare.CalculateScore(GameTypes.SEQUENCE, submission.Level),
+                    GameTypes.LONG_NUMBER => _uniServInt.CalculateScore(submission.Level),
+                    GameTypes.SEQUENCE => _uniServSquare.CalculateScore(submission.Level),
                     GameTypes.CHIMP => throw new NotImplementedException("Chimp test game not implemented yet"),
                     _ => throw new ArgumentException($"Unhandled game type: {gameType}")
                 };
@@ -165,7 +160,7 @@ namespace API.Controllers
                 return StatusCode(500, new { Message = "An error occurred while submitting the score." });
             }
         }
-        
+
         [HttpDelete("delete-leaderboard/{scoreId}")]
         public async Task<IActionResult> DeleteScore(int scoreId)
         {

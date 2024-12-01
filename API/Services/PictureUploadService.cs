@@ -1,35 +1,22 @@
-using System;
 using API.Data;
-using System.IO;
 using API.Interfaces;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using System.Collections.Generic;
-using Microsoft.Extensions.Logging;
-using Microsoft.EntityFrameworkCore;
 
 namespace API.Services
 {
-    public class PictureUploadService : IPictureUploadService
+    public class PictureUploadService(AppDbContext context, ILogger<PictureUploadService> logger) : IPictureUploadService
     {
-        private readonly AppDbContext _context;
-        private readonly ILogger<PictureUploadService> _logger;
-
-        public PictureUploadService(AppDbContext context, ILogger<PictureUploadService> logger)
-        {
-            _context = context ?? throw new ArgumentNullException(nameof(context));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        }
+        private readonly AppDbContext _context = context ?? throw new ArgumentNullException(nameof(context));
+        private readonly ILogger<PictureUploadService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
         public async Task<string> UploadProfileImageAsync(int userId, IFormFile profileImage)
         {
-            if (profileImage == null || profileImage.Length == 0)
+            if (profileImage == null)
             {
                 _logger.LogWarning("No file uploaded for user ID {UserId}.", userId);
                 throw new ArgumentException("No file uploaded.");
             }
 
-            var user = await _context.Users.FindAsync(userId) 
+            var user = await _context.Users.FindAsync(userId)
                        ?? throw new KeyNotFoundException($"User with ID {userId} not found.");
 
             var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "uploads");
@@ -52,11 +39,6 @@ namespace API.Services
                 user.ProfileImagePath = filePath;
                 await _context.SaveChangesAsync();
             }
-            catch (UnauthorizedAccessException ex)
-            {
-                _logger.LogError(ex, "Access to the file path {FilePath} is denied for user ID {UserId}.", filePath, userId);
-                throw new UnauthorizedAccessException("Access to the file path is denied.", ex);
-            }
             catch (IOException ex)
             {
                 _logger.LogError(ex, "An error occurred while saving the profile image for user ID {UserId}.", userId);
@@ -68,7 +50,7 @@ namespace API.Services
 
         public async Task<byte[]> GetProfileImageAsync(int userId)
         {
-            var user = await _context.Users.FindAsync(userId) 
+            var user = await _context.Users.FindAsync(userId)
                        ?? throw new KeyNotFoundException($"User with ID {userId} or their profile image was not found.");
 
             if (string.IsNullOrEmpty(user.ProfileImagePath))
@@ -78,7 +60,7 @@ namespace API.Services
             }
 
             var imagePath = user.ProfileImagePath;
-            if (!System.IO.File.Exists(imagePath))
+            if (!File.Exists(imagePath))
             {
                 _logger.LogWarning("Profile image file not found for user ID {UserId} at path {ImagePath}.", userId, imagePath);
                 throw new FileNotFoundException("Image file not found.");
@@ -86,12 +68,7 @@ namespace API.Services
 
             try
             {
-                return await System.IO.File.ReadAllBytesAsync(imagePath);
-            }
-            catch (UnauthorizedAccessException ex)
-            {
-                _logger.LogError(ex, "Access to the file path {ImagePath} is denied for user ID {UserId}.", imagePath, userId);
-                throw new UnauthorizedAccessException("Access to the file path is denied.", ex);
+                return await File.ReadAllBytesAsync(imagePath);
             }
             catch (IOException ex)
             {
