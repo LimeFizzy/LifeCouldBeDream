@@ -1,0 +1,70 @@
+.game {
+  width: 100%;
+  margin: auto;
+  margin-top: 25px;
+  display: flex;
+  flex-direction: column;
+}
+
+.game table {
+  width: 100%;
+}
+
+.game table td {
+  width: 70px;
+  height: 70px;
+}
+
+.chimp-square {
+  width: 70px;
+  height: 70px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  line-height: 50px;
+  background-color: #8b5cf6;
+  font-size: 0;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+  margin: 5px;
+}
+
+.chimp-square:active {
+  background-color: #bdb1dc;
+}
+
+.show-number {
+  font-size: 1.5rem !important;
+}
+
+.chimp-square-hidden {
+  opacity: 100%;
+}
+
+.startButton {
+  display: block;
+  width: 100%;
+  margin: 20px 0;
+  font-size: 1.2em;
+}
+
+.message {
+  text-align: center;
+  font-size: 1.2em;
+  color: white;
+}
+
+h2 {
+  font-size: 2rem;
+  margin-top: 5%;
+  margin-bottom: 1%;
+  color: white;
+}
+
+p {
+  font-size: 1rem;
+  margin-top: 5%;
+  margin-bottom: 1%;
+  color: white;
+}
