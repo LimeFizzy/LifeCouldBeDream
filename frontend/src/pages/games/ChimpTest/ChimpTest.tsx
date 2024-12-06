@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Board from "./Board";
 import "./ChimpTest.css";
 
@@ -20,8 +20,13 @@ export const ChimpTest: React.FC = () => {
     }>>([]);
   const [expectedNumber, setExpectedNumber] = useState(1);
 
+  const hasInitialized = useRef(false);
+
   useEffect(() => {
-    restartGame();
+    if (!hasInitialized.current) {
+      restartGame();
+      hasInitialized.current = true;
+    }
   }, []);
 
   const restartGame = async () => {
@@ -112,7 +117,7 @@ export const ChimpTest: React.FC = () => {
       
         {level === 1 && (
           <div className="game-info">
-          <p>
+          <p> 
             You must click the numbers in order after they are hidden.
           </p>
 
@@ -136,11 +141,13 @@ export const ChimpTest: React.FC = () => {
         onNumberClick={onNumberClick}
         onBlankClick={onBlankClick}
       />
+      <div className="button-placeholder">
       {gameState === "MEMORIZE" && (
         <button className="startButton" onClick={beginPlay}>
           Start
         </button>
       )}
+    </div>
       {(gameState === "WIN" || gameState === "FAIL") && (
         <div className="message">
           <p>
