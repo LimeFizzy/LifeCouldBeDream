@@ -32,6 +32,8 @@ const Board: React.FC<BoardProps> = ({
         {rows.map((row) => (
           <tr key={row}>
             {cells.map((cell) => {
+              
+              console.log(`Rendering cell at row ${row}, cell ${cell}`);
               const number = numbers.find((n) => n.X === cell && n.Y === row);
 
               return (

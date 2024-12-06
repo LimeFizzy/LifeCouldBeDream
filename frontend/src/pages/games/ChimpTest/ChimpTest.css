@@ -68,3 +68,8 @@ p {
   margin-bottom: 1%;
   color: white;
 }
+
+/* temporaty for testing */
+.chimp-square, .chimp-square-hidden { 
+  border: 1px solid black;
+}

@@ -15,43 +15,46 @@ export const ChimpTest: React.FC = () => {
       X: number;
       Y: number;
       revealed: boolean;
-    }>
-  >([]);
+    }>>([]);
   const [expectedNumber, setExpectedNumber] = useState(1);
 
   useEffect(() => {
+    console.log("========================================================");
+    console.log("In useEffect");
     restartGame();
   }, []);
 
-  const getRandomInt = (min: number, max: number) => {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  };
+  const restartGame = async () => {
+    try {
 
-  const restartGame = () => {
-    const newNumbers = [];
-    const positions = Array.from(
-      { length: boardWidth * boardHeight },
-      (_, i) => ({
-        X: i % boardWidth,
-        Y: Math.floor(i / boardWidth),
-      })
-    );
+      console.log("In restartGame\n");
 
-    for (let i = 0; i < sequenceLength; i++) {
-      const randomIndex = getRandomInt(0, positions.length - 1);
-      const chosenPos = positions.splice(randomIndex, 1)[0];
 
-      newNumbers.push({
-        number: i + 1,
-        X: chosenPos.X,
-        Y: chosenPos.Y,
+      const response = await fetch(`http://localhost:5217/api/chimptest/generate-sequence/${sequenceLength}`);
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch sequence from the server.");
+      }
+
+      const data: Array<{ number: number; x: number; y: number }> = await response.json();
+      console.log("Received data from server:", data);
+
+
+      const newNumbers = data.map((item) => ({
+        number: item.number,
+        X: item.x,
+        Y: item.y,
         revealed: false,
-      });
-    }
+      }));
+      console.log("Mapped newNumbers:", newNumbers);
 
     setNumbers(newNumbers);
     setGameState("MEMORIZE");
     setExpectedNumber(1);
+    
+    } catch (error) {
+      console.error("Error fetching sequence:", error);
+    }
   };
 
   const beginPlay = () => setGameState("PLAY");

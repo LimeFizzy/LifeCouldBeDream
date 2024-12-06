@@ -1,6 +1,3 @@
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-
 using API.Models;
 using API.Interfaces;
 using Microsoft.AspNetCore.Mvc;
