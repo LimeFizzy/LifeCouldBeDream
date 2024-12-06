@@ -21,16 +21,11 @@ export const ChimpTest: React.FC = () => {
   const [expectedNumber, setExpectedNumber] = useState(1);
 
   useEffect(() => {
-    console.log("========================================================");
-    console.log("In useEffect");
     restartGame();
   }, []);
 
   const restartGame = async () => {
     try {
-      console.log("In restartGame\n");
-
-
       const response = await fetch(`http://localhost:5217/api/chimpTest/generate-sequence/${sequenceLength}`);
 
       if (!response.ok) {
@@ -38,7 +33,6 @@ export const ChimpTest: React.FC = () => {
       }
 
       const data: Array<{ number: number; x: number; y: number }> = await response.json();
-      console.log("Received data from server:", data);
 
 
       const newNumbers = data.map((item) => ({
@@ -115,14 +109,25 @@ export const ChimpTest: React.FC = () => {
   return (
     <div className="game">
       <h2>Chimp Memory Test</h2>
+      
+        {level === 1 && (
+          <div className="game-info">
+          <p>
+            You must click the numbers in order after they are hidden.
+          </p>
+
+          <p>
+             The sequence increases with each round. Good luck!
+          </p>
+          </div>
+        )}
+
       <div className="game-info">
         <p>
-          Level: {level} | Score: {score} </p>
-        <p>
-          You must click the numbers in order after they are hidden. The sequence increases with each round. Good luck!
+          Level: {level} | Score: {score}
         </p>
-
       </div>
+
       <Board
         width={boardWidth}
         height={boardHeight}
@@ -138,10 +143,12 @@ export const ChimpTest: React.FC = () => {
       )}
       {(gameState === "WIN" || gameState === "FAIL") && (
         <div className="message">
-          {gameState === "WIN"
-            ? "You Win! Starting next round..."
-            : "Game Over!"}
-          <button className="startButton" onClick={restartGame}>
+          <p>
+            {gameState === "WIN"
+              ? "You Win! Starting next round..."
+              : "Game Over!"}
+          </p>
+            <button className="startButton" onClick={restartGame}>
             {gameState === "WIN" ? "Next Round" : "Play Again"}
           </button>
         </div>

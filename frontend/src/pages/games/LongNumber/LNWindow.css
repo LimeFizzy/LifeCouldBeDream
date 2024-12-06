@@ -25,7 +25,7 @@ h1 {
   margin: auto;
   text-align: center;
   display: flex;
-  flex-direction: column; /* Stack elements vertically */
+  flex-direction: column;
   justify-content: center;
   align-items: center;
 
@@ -83,25 +83,25 @@ h1 {
 
 .progress-bar-container {
   display: flex;
-  justify-content: center; /* Center items horizontally */
+  justify-content: center;
   width: 40%; 
   background-color: rgba(255, 255, 255, 0.3);
   border-radius: 10px;
   height: 10px;
-  margin: 10px auto; /* Center the container horizontally */
+  margin: 10px auto;
 }
 
 .progress-bar {
   background-color: #ff6347;
   height: 100%;
   border-radius: 10px;
-  transition: width 0.1s linear; /* For smooth transition */
+  transition: width 0.1s linear;
 }
 
 .number-display p {
   font-size: 1.5rem;
   color: white;
-  margin-bottom: 10px; /* Space between the number and the progress bar */
+  margin-bottom: 10px;
 }
 
 .game-over {

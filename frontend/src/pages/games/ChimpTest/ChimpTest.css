@@ -64,12 +64,8 @@ h2 {
 
 p {
   font-size: 1rem;
-  margin-top: 5%;
+  margin-top: 1%;
   margin-bottom: 1%;
   color: white;
 }
 
-/* temporaty for testing */
-.chimp-square, .chimp-square-hidden { 
-  border: 1px solid black;
-}
