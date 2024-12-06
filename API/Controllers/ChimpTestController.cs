@@ -18,26 +18,7 @@ namespace API.Controllers
         {
             try
             {
-                var allCoordinates = new List<(int X, int Y)>();
-                for (int x = 0; x < 8; x++)
-                {
-                    for (int y = 0; y < 5; y++)
-                    {
-                        allCoordinates.Add((x, y));
-                    }
-                }
-
-                var random = new Random();
-                var shuffled = allCoordinates.OrderBy(_ => random.Next()).ToList();
-
-                var coordinates = shuffled.Take(level)
-                                          .Select((coord, index) => new {
-                                              Number = index + 1,
-                                              X = coord.X,
-                                              Y = coord.Y
-                                          })
-                                          .ToList();
-
+                var coordinates = _uniServ.GenerateSequence(level);
                 return Ok(coordinates);
             }
             catch (Exception ex)

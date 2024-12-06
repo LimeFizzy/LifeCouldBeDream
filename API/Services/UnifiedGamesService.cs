@@ -31,14 +31,28 @@ namespace API.Services
             }
             else if (typeof(T) == typeof(SquareChimp))
             {
-                return Enumerable.Range(1, level)
-                    .Select(i => (T)(object)new SquareChimp(
-                        number: i,
+                var allCoordinates = new List<(int X, int Y)>();
+                for (int x = 0; x < 8; x++)
+                {
+                    for (int y = 0; y < 5; y++)
+                    {
+                        allCoordinates.Add((x, y));
+                    }
+                }
+
+                var shuffled = allCoordinates.OrderBy(_ => _random.Next()).ToList();
+                var chosenCoords = shuffled.Take(level).ToList();
+
+                var squares = chosenCoords.Select((coord, index) =>
+                    new SquareChimp(
+                        number: index + 1,
                         revealed: false,
-                        x: _random.Next(0, 8),
-                        y: _random.Next(0, 5)
-                    ))
-                    .ToArray();
+                        x: coord.X,
+                        y: coord.Y
+                    )
+                ).ToArray();
+
+                return (T[])(object)squares;
             }
             else
             {
