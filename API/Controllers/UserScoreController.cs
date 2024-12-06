@@ -12,6 +12,7 @@ namespace API.Controllers
         private readonly IUserScoreService _userScoreService;
         private readonly IUnifiedGamesService<int> _uniServInt;
         private readonly IUnifiedGamesService<Square> _uniServSquare;
+        private readonly IUnifiedGamesService<SquareChimp> _uniServSquareChimp;
         private readonly ILogger<UserScoreController> _logger;
 
         // Thread-safe in-memory storage for user scores
@@ -23,11 +24,13 @@ namespace API.Controllers
             IUserScoreService userScoreService,
             IUnifiedGamesService<int> uniServInt,
             IUnifiedGamesService<Square> uniServSquare,
+            IUnifiedGamesService<SquareChimp> uniServSquareChimp,
             ILogger<UserScoreController> logger)
         {
             _userScoreService = userScoreService ?? throw new ArgumentNullException(nameof(userScoreService));
             _uniServInt = uniServInt ?? throw new ArgumentNullException(nameof(uniServInt));
             _uniServSquare = uniServSquare ?? throw new ArgumentNullException(nameof(uniServSquare));
+            _uniServSquareChimp = uniServSquareChimp ?? throw new ArgumentNullException(nameof(uniServSquareChimp));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
             InitializeScores();
@@ -123,7 +126,7 @@ namespace API.Controllers
                 {
                     GameTypes.LONG_NUMBER => _uniServInt.CalculateScore(submission.Level),
                     GameTypes.SEQUENCE => _uniServSquare.CalculateScore(submission.Level),
-                    GameTypes.CHIMP => throw new NotImplementedException("Chimp test game not implemented yet"),
+                    GameTypes.CHIMP => _uniServSquareChimp.CalculateScore(submission.Level),
                     _ => throw new ArgumentException($"Unhandled game type: {gameType}")
                 };
 

@@ -29,6 +29,17 @@ namespace API.Services
                     .Select(_ => (T)(object)new Square(_random.Next(1, 10), false))
                     .ToArray();
             }
+            else if (typeof(T) == typeof(SquareChimp))
+            {
+                return Enumerable.Range(1, level)
+                    .Select(i => (T)(object)new SquareChimp(
+                        number: i,
+                        revealed: false,
+                        x: _random.Next(0, 8),
+                        y: _random.Next(0, 5)
+                    ))
+                    .ToArray();
+            }
             else
             {
                 return [];
@@ -54,12 +65,14 @@ namespace API.Services
                 level--;
                 return level <= 2 ? level : level * (level - 1) / 2;
             }
+            else if (typeof(T) == typeof(SquareChimp))
+            {
+                return level - 1;
+            }
             else
             {
                 return level;
             }
-
-
         }
     }
 }

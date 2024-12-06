@@ -42,6 +42,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IPictureUploadService, PictureUploadService>();
 builder.Services.AddScoped<IUnifiedGamesService<int>, UnifiedGamesService<int>>();
 builder.Services.AddScoped<IUnifiedGamesService<Square>, UnifiedGamesService<Square>>();
+builder.Services.AddScoped<IUnifiedGamesService<SquareChimp>, UnifiedGamesService<SquareChimp>>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
