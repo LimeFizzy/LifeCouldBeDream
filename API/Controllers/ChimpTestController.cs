@@ -18,13 +18,25 @@ namespace API.Controllers
         {
             try
             {
-                var random = new Random();
-                var coordinates = Enumerable.Range(0, level).Select(i => new
+                var allCoordinates = new List<(int X, int Y)>();
+                for (int x = 0; x < 8; x++)
                 {
-                    Number = i + 1,
-                    X = random.Next(0, 8),
-                    Y = random.Next(0, 5)
-                }).ToList();
+                    for (int y = 0; y < 5; y++)
+                    {
+                        allCoordinates.Add((x, y));
+                    }
+                }
+
+                var random = new Random();
+                var shuffled = allCoordinates.OrderBy(_ => random.Next()).ToList();
+
+                var coordinates = shuffled.Take(level)
+                                          .Select((coord, index) => new {
+                                              Number = index + 1,
+                                              X = coord.X,
+                                              Y = coord.Y
+                                          })
+                                          .ToList();
 
                 return Ok(coordinates);
             }

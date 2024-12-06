@@ -38,8 +38,8 @@ export const ChimpTest: React.FC = () => {
       }
 
       const data: Array<{ number: number; x: number; y: number }> = await response.json();
-
-
+      
+      console.log("Fetched sequence:", data);
       const newNumbers = data.map((item) => ({
         number: item.number,
         X: item.x,
