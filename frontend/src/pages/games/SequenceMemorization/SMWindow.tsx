@@ -42,7 +42,6 @@ export const SMWindow: React.FC = () => {
     }));
     setSquares(initialSquares);
     
-
     await fetchInitialSequence();
   };
 
@@ -126,11 +125,10 @@ export const SMWindow: React.FC = () => {
         }
       );
 
-      if (response.ok) {
-        const data = await response.json();
-      } else {
-      }
+      const data = await response.json();
+      console.log("Score submitted", data);
     } catch (error) {
+      console.error("Error submitting score:", error);
     }
   };
 
