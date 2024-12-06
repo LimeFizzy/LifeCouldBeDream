@@ -6,7 +6,8 @@ interface BoardProps {
   height: number;
   numbers: Array<{
     number: number;
-    position: { x: number; y: number };
+    X: number;
+    Y: number;
     revealed: boolean;
   }>;
   gameState: "MEMORIZE" | "PLAY" | "WIN" | "FAIL";
@@ -31,9 +32,8 @@ const Board: React.FC<BoardProps> = ({
         {rows.map((row) => (
           <tr key={row}>
             {cells.map((cell) => {
-              const number = numbers.find(
-                (n) => n.position.x === cell && n.position.y === row
-              );
+              const number = numbers.find((n) => n.X === cell && n.Y === row);
+
               return (
                 <td key={cell}>
                   <Square

@@ -12,7 +12,8 @@ export const ChimpTest: React.FC = () => {
   const [numbers, setNumbers] = useState<
     Array<{
       number: number;
-      position: { x: number; y: number };
+      X: number;
+      Y: number;
       revealed: boolean;
     }>
   >([]);
@@ -31,16 +32,19 @@ export const ChimpTest: React.FC = () => {
     const positions = Array.from(
       { length: boardWidth * boardHeight },
       (_, i) => ({
-        x: i % boardWidth,
-        y: Math.floor(i / boardWidth),
+        X: i % boardWidth,
+        Y: Math.floor(i / boardWidth),
       })
     );
 
     for (let i = 0; i < sequenceLength; i++) {
       const randomIndex = getRandomInt(0, positions.length - 1);
+      const chosenPos = positions.splice(randomIndex, 1)[0];
+
       newNumbers.push({
         number: i + 1,
-        position: positions.splice(randomIndex, 1)[0],
+        X: chosenPos.X,
+        Y: chosenPos.Y,
         revealed: false,
       });
     }

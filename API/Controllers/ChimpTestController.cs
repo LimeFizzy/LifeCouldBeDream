@@ -9,33 +9,24 @@ namespace API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ChimpTestController : ControllerBase
+    public class ChimpTestController(ILogger<ChimpTestController> logger, IUnifiedGamesService<SquareChimp> uniServ) : ControllerBase
     {
+
+        private readonly ILogger<ChimpTestController> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        private readonly IUnifiedGamesService<SquareChimp> _uniServ = uniServ ?? throw new ArgumentNullException(nameof(uniServ));
         
-        private readonly ILogger<ChimpTestController> _logger;
 
-        public ChimpTestController(ILogger<ChimpTestController> logger)
+        [HttpGet("generate-sequence/{level}")]
+        public IActionResult GenerateSequence(int level)
         {
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        }
-
-        [HttpGet("generate-coordinates")]
-        public IActionResult GenerateCoordinates([FromQuery] int level)
-        {
-            if (level <= 0)
-            {
-                _logger.LogWarning("Invalid level for chimp test: {Level}", level);
-                return BadRequest(new { Message = "Level must be greater than zero." });
-            }
-
             try
             {
                 var random = new Random();
                 var coordinates = Enumerable.Range(0, level).Select(i => new
                 {
                     Number = i + 1,
-                    X = random.Next(0, 8),  // board width
-                    Y = random.Next(0, 5)   // board height
+                    X = random.Next(0, 8),
+                    Y = random.Next(0, 5)
                 }).ToList();
 
                 return Ok(coordinates);
