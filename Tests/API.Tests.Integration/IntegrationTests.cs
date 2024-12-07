@@ -87,6 +87,12 @@ namespace API.Tests.Integration
             "/api/UserScore/leaderboard/sequenceMemory", 
             $"{{\"username\":\"{username}\",\"gameType\":\"sequenceMemory\",\"level\":{level}}}"
             )]
+        [InlineData(
+            "chimpTest",
+            "/api/UserScore/submit-score/chimpTest",
+            "/api/UserScore/leaderboard/chimpTest",
+            $"{{\"username\":\"{username}\",\"gameType\":\"chimpTest\",\"level\":{level}}}"
+        )]
         public async Task SubmitScore_EndpointsReturnSuccessAndCorrectContentType(string gameType, string submitUrl, string leaderboardUrl, string body)
         {
             var client = _factory.CreateClient();
@@ -114,14 +120,21 @@ namespace API.Tests.Integration
             Assert.True(submissionValue.Score.Id > 0);
             Assert.Contains(leaderboardValue, score => score.Id == submissionValue.Score.Id);
             
+            int parsedLevel = int.Parse(level);
+            
             switch (gameType) {
                 case "longNumberMemory":
                     Assert.Equal(int.Parse(level) - 1, submissionValue.Score.Score);
                     break;
                 case "sequenceMemory":
-                    int parsedLevel = int.Parse(level);
+                    parsedLevel = int.Parse(level);
                     parsedLevel--;
                     Assert.Equal(parsedLevel <= 2 ? parsedLevel : parsedLevel * (parsedLevel - 1) / 2, submissionValue.Score.Score);
+                    break;
+                case "chimpTest":
+                    parsedLevel--;
+                    int expectedChimpScore = (parsedLevel * parsedLevel + 5 * parsedLevel) / 2;
+                    Assert.Equal(expectedChimpScore, submissionValue.Score.Score);
                     break;
                 default:
                     throw new ArgumentException("Invalid game type");
