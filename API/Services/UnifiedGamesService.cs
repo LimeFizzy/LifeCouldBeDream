@@ -81,7 +81,8 @@ namespace API.Services
             }
             else if (typeof(T) == typeof(SquareChimp))
             {
-                return level - 1;
+                level--;
+                return (level * level  +  5 * level) / 2;
             }
             else
             {

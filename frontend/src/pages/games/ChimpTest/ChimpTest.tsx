@@ -19,7 +19,8 @@ export const ChimpTest: React.FC = () => {
       revealed: boolean;
     }>>([]);
   const [expectedNumber, setExpectedNumber] = useState(1);
-
+  const [isDevMode, setIsDevMode] = useState<boolean>(false);
+  
   const hasInitialized = useRef(false);
 
   useEffect(() => {
@@ -59,6 +60,72 @@ export const ChimpTest: React.FC = () => {
 
   const beginPlay = () => setGameState("PLAY");
 
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      const username = localStorage.getItem("username");
+      if (!username) return;
+
+      try {
+        const response = await fetch(
+          `http://localhost:5217/api/auth/is-admin/${username}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          setIsDevMode(data.isAdmin); // Set dev mode based on admin status
+        }
+      } catch (error) {
+        console.error("Error checking admin status:", error);
+      }
+    };
+
+    checkAdminStatus();
+  }, []);
+
+  const skipLevel = () => {
+    setSequenceLength((prev) => prev + 1);
+    setLevel((prev) => prev + 1);
+    setScore(level < 2 ? 3 : (prev) => prev + level + 2);
+    restartGame();
+  };
+  
+  const submitResults = async () => {
+    const username = localStorage.getItem("username") || "Unknown User";
+  
+    try {
+      const response = await fetch(
+        `http://localhost:5217/api/userscore/submit-score/chimpTest`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            username: username,
+            level: level,
+            score: score,
+          }),
+        }
+      );
+  
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Results submitted successfully:", data);
+        alert("Results submitted successfully!");
+      } else {
+        console.error("Failed to submit results.");
+        alert("Failed to submit results. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error submitting results:", error);
+      alert("An error occurred while submitting results.");
+    }
+  };
+  
 
   const onNumberClick = async (num: number) => {
     if (gameState !== "PLAY") return;
@@ -114,7 +181,7 @@ export const ChimpTest: React.FC = () => {
   return (
     <div className="game">
       <h2>Chimp Memory Test</h2>
-      
+    
         {level === 1 && (
           <div className="game-info">
           <p> 
@@ -158,6 +225,13 @@ export const ChimpTest: React.FC = () => {
             <button className="startButton" onClick={restartGame}>
             {gameState === "WIN" ? "Next Round" : "Play Again"}
           </button>
+        </div>
+      )}
+
+      {isDevMode && (
+        <div className="dev-tools">
+          <button onClick={skipLevel}>Skip Level</button>
+          <button onClick={submitResults}>Submit</button>
         </div>
       )}
     </div>
