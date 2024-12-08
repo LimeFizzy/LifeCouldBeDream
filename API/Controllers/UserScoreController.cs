@@ -147,16 +147,6 @@ namespace API.Controllers
 
                 return Ok(new { Message = "Score saved successfully", Score = userScore });
             }
-            catch (NotImplementedException ex)
-            {
-                _logger.LogWarning(ex, "Feature not implemented for game type: {GameType}", gameType);
-                return StatusCode(501, new { Message = ex.Message });
-            }
-            catch (ArgumentException ex)
-            {
-                _logger.LogWarning(ex, "Invalid argument provided for game type: {GameType}", gameType);
-                return BadRequest(new { Message = ex.Message });
-            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An unexpected error occurred while submitting the score for game type: {GameType}", gameType);
