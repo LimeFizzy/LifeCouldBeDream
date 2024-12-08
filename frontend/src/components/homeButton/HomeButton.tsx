@@ -7,7 +7,7 @@ const HomeButton: React.FC = () => {
 
   return (
     <button className="home-button" onClick={() => navigate("/")}>
-      Go home
+      Back to Home page
     </button>
   );
 };

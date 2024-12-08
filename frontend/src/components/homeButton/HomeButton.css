@@ -1,7 +1,7 @@
 .home-button {
     position: fixed;
-    bottom: 30px;
-    left: 30px;
+    top: 50px;
+    left: 35px;
     padding: 10px 20px;
     font-size: 1.2rem;
     cursor: pointer;
