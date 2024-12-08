@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Board from "./Board";
 import "./ChimpTest.css";
 
 export const ChimpTest: React.FC = () => {
+  const [level, setLevel] = useState(1);
+  const [score, setScore] = useState(0);
   const [sequenceLength, setSequenceLength] = useState(3);
   const boardWidth = 8;
   const boardHeight = 5;
@@ -12,61 +14,160 @@ export const ChimpTest: React.FC = () => {
   const [numbers, setNumbers] = useState<
     Array<{
       number: number;
-      position: { x: number; y: number };
+      X: number;
+      Y: number;
       revealed: boolean;
-    }>
-  >([]);
+    }>>([]);
   const [expectedNumber, setExpectedNumber] = useState(1);
+  const [isDevMode, setIsDevMode] = useState<boolean>(false);
+  
+  const hasInitialized = useRef(false);
 
   useEffect(() => {
-    restartGame();
+    if (!hasInitialized.current) {
+      restartGame();
+      hasInitialized.current = true;
+    }
   }, []);
 
-  const getRandomInt = (min: number, max: number) => {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  };
+  const restartGame = async () => {
+    try {
+      const response = await fetch(`http://localhost:5217/api/chimpTest/generate-sequence/${sequenceLength}`);
 
-  const restartGame = () => {
-    const newNumbers = [];
-    const positions = Array.from(
-      { length: boardWidth * boardHeight },
-      (_, i) => ({
-        x: i % boardWidth,
-        y: Math.floor(i / boardWidth),
-      })
-    );
+      if (!response.ok) {
+        throw new Error("Failed to fetch sequence from the server.");
+      }
 
-    for (let i = 0; i < sequenceLength; i++) {
-      const randomIndex = getRandomInt(0, positions.length - 1);
-      newNumbers.push({
-        number: i + 1,
-        position: positions.splice(randomIndex, 1)[0],
+      const data: Array<{ number: number; x: number; y: number }> = await response.json();
+      
+      console.log("Fetched sequence:", data);
+      const newNumbers = data.map((item) => ({
+        number: item.number,
+        X: item.x,
+        Y: item.y,
         revealed: false,
-      });
-    }
+      }));
+      console.log("Mapped newNumbers:", newNumbers);
 
     setNumbers(newNumbers);
     setGameState("MEMORIZE");
     setExpectedNumber(1);
+    
+    } catch (error) {
+      console.error("Error fetching sequence:", error);
+    }
   };
 
   const beginPlay = () => setGameState("PLAY");
 
-  const onNumberClick = (num: number) => {
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      const username = localStorage.getItem("username");
+      if (!username) return;
+
+      try {
+        const response = await fetch(
+          `http://localhost:5217/api/auth/is-admin/${username}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          setIsDevMode(data.isAdmin); // Set dev mode based on admin status
+        }
+      } catch (error) {
+        console.error("Error checking admin status:", error);
+      }
+    };
+
+    checkAdminStatus();
+  }, []);
+
+  const skipLevel = () => {
+    setSequenceLength((prev) => prev + 1);
+    setLevel((prev) => prev + 1);
+    setScore(level < 2 ? 3 : (prev) => prev + level + 2);
+    restartGame();
+  };
+  
+  const submitResults = async () => {
+    const username = localStorage.getItem("username") || "Unknown User";
+  
+    try {
+      const response = await fetch(
+        `http://localhost:5217/api/userscore/submit-score/chimpTest`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            username: username,
+            level: level,
+            score: score,
+          }),
+        }
+      );
+  
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Results submitted successfully:", data);
+        alert("Results submitted successfully!");
+      } else {
+        console.error("Failed to submit results.");
+        alert("Failed to submit results. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error submitting results:", error);
+      alert("An error occurred while submitting results.");
+    }
+  };
+  
+
+  const onNumberClick = async (num: number) => {
     if (gameState !== "PLAY") return;
 
     if (num === expectedNumber) {
       if (num === sequenceLength) {
         setSequenceLength((prev) => prev + 1);
+        setLevel((prev) => prev + 1);
+        setScore(level < 2 ? 3 : (prev) => prev + level + 2);
         setGameState("WIN");
       } else {
-        setNumbers((prev) =>
+          setNumbers((prev) =>
           prev.map((n) => (n.number === num ? { ...n, revealed: true } : n))
         );
         setExpectedNumber((prev) => prev + 1);
       }
-    } else {
+    } 
+    
+    else {
+      const username = localStorage.getItem("username") || "Unknown User";
+      try {
+        const response = await fetch(`http://localhost:5217/api/userscore/submit-score/chimpTest`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              username: username,
+              level: level,
+              score: score
+            }),
+          }
+        );
+        
+        const data = await response.json();
+        console.log("Score submitted", data);
+      } catch (error) {
+        console.error("Error submitting score:", error);
+      }
+      
       setGameState("FAIL");
+      setLevel(1);
+      setScore(0);
       setSequenceLength(3);
     }
   };
@@ -80,10 +181,25 @@ export const ChimpTest: React.FC = () => {
   return (
     <div className="game">
       <h2>Chimp Memory Test</h2>
-      <p>
-        You must click the numbers in order after they are hidden. The sequence
-        increases with each round. Good luck!
-      </p>
+    
+        {level === 1 && (
+          <div className="game-info">
+          <p> 
+            You must click the numbers in order after they are hidden.
+          </p>
+
+          <p>
+             The sequence increases with each round. Good luck!
+          </p>
+          </div>
+        )}
+
+      <div className="game-info">
+        <p>
+          Level: {level} | Score: {score}
+        </p>
+      </div>
+
       <Board
         width={boardWidth}
         height={boardHeight}
@@ -92,19 +208,30 @@ export const ChimpTest: React.FC = () => {
         onNumberClick={onNumberClick}
         onBlankClick={onBlankClick}
       />
+      <div className="button-placeholder">
       {gameState === "MEMORIZE" && (
         <button className="startButton" onClick={beginPlay}>
           Start
         </button>
       )}
+    </div>
       {(gameState === "WIN" || gameState === "FAIL") && (
         <div className="message">
-          {gameState === "WIN"
-            ? "You Win! Starting next round..."
-            : "Game Over!"}
-          <button className="startButton" onClick={restartGame}>
+          <p>
+            {gameState === "WIN"
+              ? "You Win! Starting next round..."
+              : "Game Over!"}
+          </p>
+            <button className="startButton" onClick={restartGame}>
             {gameState === "WIN" ? "Next Round" : "Play Again"}
           </button>
+        </div>
+      )}
+
+      {isDevMode && (
+        <div className="dev-tools">
+          <button onClick={skipLevel}>Skip Level</button>
+          <button onClick={submitResults}>Submit</button>
         </div>
       )}
     </div>

@@ -49,6 +49,13 @@
   font-size: 1.2em;
 }
 
+.button-placeholder {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .message {
   text-align: center;
   font-size: 1.2em;
@@ -64,7 +71,28 @@ h2 {
 
 p {
   font-size: 1rem;
-  margin-top: 5%;
+  margin-top: 1%;
   margin-bottom: 1%;
   color: white;
+}
+
+.dev-tools {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin-top: 20px; 
+  align-items: center; 
+  gap: 15px;
+}
+
+.dev-tools button {
+  font-size: 1.2rem;
+  padding: 10px 20px;
+  cursor: pointer;
+
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.56);
+  background: #643392;
+  box-shadow: 0px 4px 24px -1px rgba(0, 0, 0, 0.20);
+  backdrop-filter: blur(20px);
 }

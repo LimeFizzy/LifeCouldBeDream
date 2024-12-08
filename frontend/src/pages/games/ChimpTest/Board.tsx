@@ -6,7 +6,8 @@ interface BoardProps {
   height: number;
   numbers: Array<{
     number: number;
-    position: { x: number; y: number };
+    X: number;
+    Y: number;
     revealed: boolean;
   }>;
   gameState: "MEMORIZE" | "PLAY" | "WIN" | "FAIL";
@@ -31,15 +32,14 @@ const Board: React.FC<BoardProps> = ({
         {rows.map((row) => (
           <tr key={row}>
             {cells.map((cell) => {
-              const number = numbers.find(
-                (n) => n.position.x === cell && n.position.y === row
-              );
+              const number = numbers.find((n) => n.X === cell && n.Y === row);
+              const isNumberedBlock = Boolean(number);
               return (
                 <td key={cell}>
                   <Square
-                    hidden={gameState === "PLAY" && !number?.number}
+                    hidden={!isNumberedBlock || gameState === "PLAY" && !number?.number}
                     number={number?.revealed ? undefined : number?.number}
-                    showNum={gameState !== "PLAY"}
+                    showNum={gameState !== "PLAY" && isNumberedBlock}
                     onClick={
                       number ? () => onNumberClick(number.number) : onBlankClick
                     }

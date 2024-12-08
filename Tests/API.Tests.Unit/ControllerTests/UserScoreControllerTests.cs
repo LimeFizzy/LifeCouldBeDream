@@ -5,6 +5,7 @@ namespace API.Tests.Unit.ControllerTests
         private readonly Mock<IUserScoreService> _mockUserScoreService;
         private readonly Mock<IUnifiedGamesService<int>> _mockUniServInt;
         private readonly Mock<IUnifiedGamesService<Square>> _mockUniServSquare;
+        private readonly Mock<IUnifiedGamesService<SquareChimp>> _mockUniServSquareChimp;
         private readonly Mock<ILogger<UserScoreController>> _mockLogger;
         private readonly UserScoreController _controller;
 
@@ -13,12 +14,14 @@ namespace API.Tests.Unit.ControllerTests
             _mockUserScoreService = new Mock<IUserScoreService>();
             _mockUniServInt = new Mock<IUnifiedGamesService<int>>();
             _mockUniServSquare = new Mock<IUnifiedGamesService<Square>>();
+            _mockUniServSquareChimp = new Mock<IUnifiedGamesService<SquareChimp>>();
             _mockLogger = new Mock<ILogger<UserScoreController>>();
 
             _controller = new UserScoreController(
                 _mockUserScoreService.Object,
                 _mockUniServInt.Object,
                 _mockUniServSquare.Object,
+                _mockUniServSquareChimp.Object,
                 _mockLogger.Object
             );
         }
@@ -33,6 +36,7 @@ namespace API.Tests.Unit.ControllerTests
                 null,
                 _mockUniServInt.Object,
                 _mockUniServSquare.Object,
+                _mockUniServSquareChimp.Object,
                 _mockLogger.Object
             ));
         }
@@ -45,6 +49,7 @@ namespace API.Tests.Unit.ControllerTests
                 _mockUserScoreService.Object,
                 null,
                 _mockUniServSquare.Object,
+                _mockUniServSquareChimp.Object,
                 _mockLogger.Object
             ));
         }
@@ -57,6 +62,7 @@ namespace API.Tests.Unit.ControllerTests
                 _mockUserScoreService.Object,
                 _mockUniServInt.Object,
                 null,
+                _mockUniServSquareChimp.Object,
                 _mockLogger.Object
             ));
         }
@@ -69,6 +75,7 @@ namespace API.Tests.Unit.ControllerTests
                 _mockUserScoreService.Object,
                 _mockUniServInt.Object,
                 _mockUniServSquare.Object,
+                _mockUniServSquareChimp.Object,
                 null
             ));
         }
@@ -160,7 +167,7 @@ namespace API.Tests.Unit.ControllerTests
         {
             // Arrange
             var submission = new ScoreSubmission { Username = "user1", Level = 5 };
-            var gameType = "chimp"; // This game type is not implemented
+            var gameType = "unknownGame"; // This game type is not implemented
 
             // Act
             var result = await _controller.SubmitScore(submission, gameType);

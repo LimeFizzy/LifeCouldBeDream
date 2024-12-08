@@ -21,7 +21,7 @@ const Square: React.FC<SquareProps> = ({
       }`}
       onClick={onClick}
     >
-      {!hidden && number}
+      {!hidden && showNum && number}
     </div>
   );
 };

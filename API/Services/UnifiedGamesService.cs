@@ -29,6 +29,31 @@ namespace API.Services
                     .Select(_ => (T)(object)new Square(_random.Next(1, 10), false))
                     .ToArray();
             }
+            else if (typeof(T) == typeof(SquareChimp))
+            {
+                var allCoordinates = new List<(int X, int Y)>();
+                for (int x = 0; x < 8; x++)
+                {
+                    for (int y = 0; y < 5; y++)
+                    {
+                        allCoordinates.Add((x, y));
+                    }
+                }
+
+                var shuffled = allCoordinates.OrderBy(_ => _random.Next()).ToList();
+                var chosenCoords = shuffled.Take(level).ToList();
+
+                var squares = chosenCoords.Select((coord, index) =>
+                    new SquareChimp(
+                        number: index + 1,
+                        revealed: false,
+                        x: coord.X,
+                        y: coord.Y
+                    )
+                ).ToArray();
+
+                return (T[])(object)squares;
+            }
             else
             {
                 return [];
@@ -54,12 +79,15 @@ namespace API.Services
                 level--;
                 return level <= 2 ? level : level * (level - 1) / 2;
             }
+            else if (typeof(T) == typeof(SquareChimp))
+            {
+                level--;
+                return (level * level  +  5 * level) / 2;
+            }
             else
             {
                 return level;
             }
-
-
         }
     }
 }

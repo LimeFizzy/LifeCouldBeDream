@@ -43,24 +43,24 @@ public class AppDbContext : DbContext
                     AltText = "Long number memory icon",
                     Route = "/longNumber",
                 },
-            new GameDTO
-            {
-                GameID = 2,
-                Title = "Chimp Test",
-                Description = "Test your memory by remembering the order of numbers displayed on the screen.",
-                Icon = "src/assets/chimpIcon.svg",
-                AltText = "Chimp test icon",
-                Route = "/chimpTest",
-            },
-            new GameDTO
-            {
-                GameID = 3,
-                Title = "Sequence Memorization",
-                Description = "Remember and recall increasingly larger sequence of action showed.",
-                Icon = "src/assets/sequenceIcon.svg",
-                AltText = "Sequence memory icon",
-                Route = "/sequence",
-            }
+                new GameDTO
+                {
+                    GameID = 2,
+                    Title = "Chimp Test",
+                    Description = "Test your memory by remembering the order of numbers displayed on the screen.",
+                    Icon = "src/assets/chimpIcon.svg",
+                    AltText = "Chimp test icon",
+                    Route = "/chimpTest",
+                },
+                new GameDTO
+                {
+                    GameID = 3,
+                    Title = "Sequence Memorization",
+                    Description = "Remember and recall increasingly larger sequence of action showed.",
+                    Icon = "src/assets/sequenceIcon.svg",
+                    AltText = "Sequence memory icon",
+                    Route = "/sequence",
+                }
         );
     }
 }
