@@ -166,5 +166,54 @@ namespace API.Controllers
 
             return user;
         }
+
+        [HttpPost("change-password")]
+        public async Task<ActionResult> ChangePassword([FromBody] ChangePasswordDto changePasswordDto)
+        {
+            if (changePasswordDto == null)
+            {
+                _logger.LogWarning("Attempt to change password with null data.");
+                return BadRequest(new { Message = "Password change data is required." });
+            }
+
+            try
+            {
+                // Retrieve the user from the database using the username
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == changePasswordDto.Username);
+                if (user == null)
+                {
+                    _logger.LogWarning("User '{Username}' not found for password change.", changePasswordDto.Username);
+                    return NotFound(new { Message = "User not found." });
+                }
+
+                // Verify if the old password is correct
+                bool isOldPasswordValid = _authService.VerifyPassword(changePasswordDto.OldPassword, user.PasswordHash);
+                if (!isOldPasswordValid)
+                {
+                    _logger.LogWarning("Invalid old password for user '{Username}'.", changePasswordDto.Username);
+                    return Unauthorized(new { Message = "Invalid old password." });
+                }
+
+                // Validate the new password's strength
+                _authService.ValidatePasswordStrength(changePasswordDto.NewPassword);
+
+
+                // Hash the new password
+                var newHashedPassword = _authService.HashPassword(changePasswordDto.NewPassword);
+
+                // Update the user's password
+                user.PasswordHash = newHashedPassword;
+                _context.Users.Update(user);
+                await _context.SaveChangesAsync();
+
+                return Ok(new { Message = "Password changed successfully." });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An unexpected error occurred during password change.");
+                return StatusCode(500, new { Message = "An unexpected error occurred.", Error = ex.Message });
+            }
+        }
+
     }
 }
