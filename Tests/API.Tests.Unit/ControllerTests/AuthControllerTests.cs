@@ -284,6 +284,112 @@ namespace API.Tests.Unit.ControllerTests
             }
         }
 
+
+        [Fact]
+        public async Task ChangePassword_ReturnsOk_WhenPasswordIsChangedSuccessfully()
+        {
+            // Arrange
+            var user = new User { Username = "testUser", PasswordHash = "hashedOldPassword" };
+            await _dbContext.Users.AddAsync(user);
+            await _dbContext.SaveChangesAsync();
+
+            var changePasswordDto = new ChangePasswordDto
+            {
+                Username = user.Username,
+                OldPassword = "oldPassword123!",
+                NewPassword = "newStrongPassword123!"
+            };
+
+            _mockAuthService.Setup(auth => auth.VerifyPassword(changePasswordDto.OldPassword, user.PasswordHash)).Returns(true);
+            _mockAuthService.Setup(auth => auth.HashPassword(changePasswordDto.NewPassword)).Returns("hashedNewPassword");
+
+            // Act
+            var result = await _controller.ChangePassword(changePasswordDto);
+
+            // Assert
+            if (result is OkObjectResult okResult)
+            {
+                var jsonResult = JsonConvert.SerializeObject(okResult.Value);
+                dynamic actualValue = JsonConvert.DeserializeObject<dynamic>(jsonResult);
+                string actualMessage = actualValue.Message;
+
+                Assert.Equal("Password changed successfully.", actualMessage);
+
+                var userInDb = await _dbContext.Users.FirstOrDefaultAsync(u => u.Username == user.Username);
+                Assert.NotNull(userInDb);
+                Assert.Equal("hashedNewPassword", userInDb.PasswordHash);
+            }
+            else
+            {
+                Assert.True(false, $"Expected OkObjectResult, but got {result.GetType().Name}.");
+            }
+        }
+
+        [Fact]
+        public async Task ChangePassword_ReturnsUnauthorized_WhenOldPasswordIsIncorrect()
+        {
+            // Arrange
+            var user = new User { Username = "testUser", PasswordHash = "hashedOldPassword" };
+            await _dbContext.Users.AddAsync(user);
+            await _dbContext.SaveChangesAsync();
+
+            var changePasswordDto = new ChangePasswordDto
+            {
+                Username = user.Username,
+                OldPassword = "wrongOldPassword123!",
+                NewPassword = "newStrongPassword123!"
+            };
+
+            _mockAuthService.Setup(auth => auth.VerifyPassword(changePasswordDto.OldPassword, user.PasswordHash)).Returns(false);
+
+            // Act
+            var result = await _controller.ChangePassword(changePasswordDto);
+
+            // Assert
+            if (result is UnauthorizedObjectResult unauthorizedResult)
+            {
+                var jsonResult = JsonConvert.SerializeObject(unauthorizedResult.Value);
+                dynamic actualValue = JsonConvert.DeserializeObject<dynamic>(jsonResult);
+                string actualMessage = actualValue.Message;
+
+                Assert.Equal("Invalid old password.", actualMessage);
+            }
+            else
+            {
+                Assert.True(false, $"Expected UnauthorizedObjectResult, but got {result.GetType().Name}.");
+            }
+        }
+
+
+        [Fact]
+        public async Task ChangePassword_ReturnsNotFound_WhenUserDoesNotExist()
+        {
+            // Arrange
+            var changePasswordDto = new ChangePasswordDto
+            {
+                Username = "nonExistentUser",
+                OldPassword = "oldPassword123!",
+                NewPassword = "newStrongPassword123!"
+            };
+
+            // Act
+            var result = await _controller.ChangePassword(changePasswordDto);
+
+            // Assert
+            if (result is NotFoundObjectResult notFoundResult)
+            {
+                var jsonResult = JsonConvert.SerializeObject(notFoundResult.Value);
+                dynamic actualValue = JsonConvert.DeserializeObject<dynamic>(jsonResult);
+                string actualMessage = actualValue.Message;
+
+                Assert.Equal("User not found.", actualMessage);
+            }
+            else
+            {
+                Assert.True(false, $"Expected NotFoundObjectResult, but got {result.GetType().Name}.");
+            }
+        }
+
         public void Dispose()
         {
             // Clean up in-memory database after each test

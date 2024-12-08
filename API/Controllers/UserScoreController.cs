@@ -123,7 +123,7 @@ namespace API.Controllers
                 {
                     GameTypes.LONG_NUMBER => _uniServInt.CalculateScore(submission.Level),
                     GameTypes.SEQUENCE => _uniServSquare.CalculateScore(submission.Level),
-                    GameTypes.CHIMP => throw new NotImplementedException("Chimp test game not implemented yet"),
+                    GameTypes.CHIMP => throw new ArgumentException($"Unhandled game type: {gameType}"),
                     _ => throw new ArgumentException($"Unhandled game type: {gameType}")
                 };
 
@@ -143,16 +143,6 @@ namespace API.Controllers
                 await _userScoreService.SaveScoreAsync(userScore);
 
                 return Ok(new { Message = "Score saved successfully", Score = userScore });
-            }
-            catch (NotImplementedException ex)
-            {
-                _logger.LogWarning(ex, "Feature not implemented for game type: {GameType}", gameType);
-                return StatusCode(501, new { Message = ex.Message });
-            }
-            catch (ArgumentException ex)
-            {
-                _logger.LogWarning(ex, "Invalid argument provided for game type: {GameType}", gameType);
-                return BadRequest(new { Message = ex.Message });
             }
             catch (Exception ex)
             {
