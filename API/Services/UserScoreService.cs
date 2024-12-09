@@ -16,7 +16,6 @@ namespace API.Services
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-
         public IEnumerable<UserScore> GetLeaderboard()
         {
             try

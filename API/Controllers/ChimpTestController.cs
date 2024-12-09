@@ -8,11 +8,9 @@ namespace API.Controllers
     [Route("api/[controller]")]
     public class ChimpTestController(ILogger<ChimpTestController> logger, IUnifiedGamesService<SquareChimp> uniServ) : ControllerBase
     {
-
         private readonly ILogger<ChimpTestController> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         private readonly IUnifiedGamesService<SquareChimp> _uniServ = uniServ ?? throw new ArgumentNullException(nameof(uniServ));
         
-
         [HttpGet("generate-sequence/{level}")]
         public IActionResult GenerateSequence(int level)
         {

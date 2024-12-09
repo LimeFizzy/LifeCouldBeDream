@@ -14,8 +14,6 @@ namespace API.Controllers
         private readonly IUnifiedGamesService<Square> _uniServSquare;
         private readonly IUnifiedGamesService<SquareChimp> _uniServSquareChimp;
         private readonly ILogger<UserScoreController> _logger;
-
-        // Thread-safe in-memory storage for user scores
         private static readonly ConcurrentDictionary<string, ConcurrentBag<UserScore>> _scores = new();
         private static bool _isInitialized = false;
         private static readonly object _initializationLock = new();
@@ -44,10 +42,8 @@ namespace API.Controllers
 
                 try
                 {
-                    // Fetch all leaderboard scores
                     var allScores = _userScoreService.GetLeaderboard();
 
-                    // Group scores by game type and populate the _scores collection
                     foreach (var scoreGroup in allScores.GroupBy(score => score.GameType))
                     {
                         var scoreBag = new ConcurrentBag<UserScore>(scoreGroup);
@@ -69,7 +65,6 @@ namespace API.Controllers
         {
             try
             {
-                // Retrieve scores from memory or fallback to persistent storage
                 var leaderboard = _scores.TryGetValue(gameType, out var value)
                     ? value.ToList()
                     : _userScoreService.GetLeaderboard()
@@ -82,7 +77,6 @@ namespace API.Controllers
                     return NotFound(new { Message = $"No scores found for game type: {gameType}" });
                 }
 
-                // Sort by score (descending) and format dates
                 var sortedLeaderboard = leaderboard
                     .OrderByDescending(us => us.Score)
                     .ToList();
@@ -138,11 +132,9 @@ namespace API.Controllers
                     GameDate = DateTime.Now.ToString()
                 };
 
-                // Add score to in-memory collection
                 var scoreBag = _scores.GetOrAdd(gameType, new ConcurrentBag<UserScore>());
                 scoreBag.Add(userScore);
 
-                // Persist the score asynchronously
                 await _userScoreService.SaveScoreAsync(userScore);
 
                 return Ok(new { Message = "Score saved successfully", Score = userScore });
@@ -165,7 +157,6 @@ namespace API.Controllers
 
             try
             {
-                // Find and remove the score from in-memory storage
                 bool inMemoryDeleted = false;
                 foreach (var gameType in _scores.Keys)
                 {
@@ -188,7 +179,6 @@ namespace API.Controllers
                     _logger.LogWarning("Score not found in in-memory storage for ID: {ScoreId}", scoreId);
                 }
 
-                // Remove from persistent storage
                 var scoreFromDb = await _userScoreService.GetScoreByIdAsync(scoreId);
                 if (scoreFromDb == null)
                 {
@@ -206,7 +196,5 @@ namespace API.Controllers
                 return StatusCode(500, new { Message = "An error occurred while deleting the score." });
             }
         }
-
-
     }
 }

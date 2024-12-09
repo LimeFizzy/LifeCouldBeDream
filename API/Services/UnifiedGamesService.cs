@@ -16,7 +16,6 @@ namespace API.Services
                 throw new ArgumentOutOfRangeException(nameof(level), "Level must be greater than zero.");
             }
 
-
             if (typeof(T) == typeof(int))
             {
                 return Enumerable.Range(0, level)
@@ -68,7 +67,6 @@ namespace API.Services
                 _logger.LogWarning("CalculateScore called with invalid level {Level}. Level must be greater than or equal to 1.", level);
                 throw new ArgumentOutOfRangeException(nameof(level), "Level must be greater than or equal to 1.");
             }
-
 
             if (typeof(T) == typeof(int))
             {
