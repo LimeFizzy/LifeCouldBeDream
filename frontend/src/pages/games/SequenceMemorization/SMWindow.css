@@ -38,7 +38,6 @@ h1 {
   transition: background-color 0.3s ease;
 }
 
-/* needed bc due to the default browser styling the is some weird border */
 .square:focus {
   outline: none;
 }

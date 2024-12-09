@@ -17,7 +17,7 @@
 
 ## Overview
 
-This project is a web application aimed at improving cognitive skills - specifically memory. The application provides a series of memory improvement games such as the Long Number Memory game, the Shimp Test, and Sequence Memorization. The goal is to offer users fun and interactive ways to challenge and enhance their memory through engaging activities.
+This project is a web application aimed at improving cognitive skills - specifically memory. The application provides a series of memory improvement games: Long Number Memory game, Shimp Test, and Sequence Memorization. The goal is to offer users fun and interactive ways to challenge and enhance their memory through engaging activities.
 
 -------------------------------------
 
@@ -29,7 +29,7 @@ This project is a web application aimed at improving cognitive skills - specific
    - **Sequence Memorization:** Users are shown a sequence of items and must recall the exact order.
 
 2. **User Progress Tracking**
-   - Track the performance of users across multiple sessions and provide statistics on their cognitive improvements.
+   - Registered users can track and compare their progress in leaderboards.
 
 -------------------------------------
 
@@ -42,7 +42,7 @@ This project is a web application aimed at improving cognitive skills - specific
   - **React with TypeScript:** The frontend is built with React, a modern JavaScript library, using TypeScript.
   
 - **Database:** 
-  - This will depend on the final architecture and will be specified later in project creating process.
+  - Our project uses MySQL as the primary database management system
 
 -------------------------------------
 
@@ -69,17 +69,22 @@ For setting up the project you will need the following:
 1. **Navigate to the Frontend Directory** - run `cd frontend`
 2. **Install Dependencies** - run `npm install`
 3. **Start the Development Server** - run `npm start`
-4. **Access the Application** - open a web browser and follow this link - (will be specified later in project creating process).  
+
+After this, you should see a link in your console. Click it and it should take you to our home page.
 
 -------------------------------------
 
 ## Usage Guide
- - will be specified later in project creating process
+ - In order to track your progress and compare yourself with other users use `Sign Up` to create your account. 
+ - Log in to save your scores. Your scores you can find in `Leaderboard` section. Select game type which scores you want to see.
+ - Enjoye the games!
 
 -------------------------------------
 
 ## Configuration
- - will be specified later in project creating process
+ - The database connection is configured in the `appsettings.json` file in the backend.
+ - **Backend:** Runs on `http://localhost:5217` by default.
+ - **Frontend:** Runs on `http://localhost:5173` by default
 
 -------------------------------------
 

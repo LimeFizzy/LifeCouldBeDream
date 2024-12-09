@@ -1,10 +1,11 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import "./App.css";
 import { Home } from "./pages/Home/Home";
 import { SignIn } from "./pages/Sign In/SignIn";
 import { LogIn } from "./pages/Log In/LogIn";
 import { AccSettings } from "./pages/Account Settings/AccSettings";
 import Navbar from "./components/navbar/Navbar";
+import HomeButton from "./components/homeButton/HomeButton";
 import { LNWindow } from "./pages/games/LongNumber/LNWindow";
 import { ChimpTest } from "./pages/games/ChimpTest/ChimpTest";
 import { SMWindow } from "./pages/games/SequenceMemorization/SMWindow";
@@ -16,6 +17,7 @@ export const App = () => {
     <BrowserRouter>
       <BackgroundWrapper>
         <Navbar />
+        <ConditionalHomeButton />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/signup" element={<SignIn />} />
@@ -30,3 +32,16 @@ export const App = () => {
     </BrowserRouter>
   );
 };
+
+// Define ConditionalHomeButton inside App.tsx
+const ConditionalHomeButton: React.FC = () => {
+  const location = useLocation();
+
+  if (location.pathname === "/") {
+    return null;
+  }
+
+  return <HomeButton />;
+};
+
+export default App;
