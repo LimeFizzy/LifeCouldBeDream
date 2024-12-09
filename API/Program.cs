@@ -7,15 +7,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http.Features;
 using System.Diagnostics.CodeAnalysis;
 
-Log.Logger = new LoggerConfiguration() // 2.3. Logging Configuration with Serilog
-    .MinimumLevel.Warning() // Logs warnings, error and fatal
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Warning()
     .WriteTo.Async(a => a.File("logs/app_log.txt", rollingInterval: RollingInterval.Day))
     .CreateLogger();
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Host.UseSerilog();
-
 
 builder.Services.AddCors(options =>
 {
@@ -34,7 +33,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.Configure<FormOptions>(options =>
 {
-    options.MultipartBodyLengthLimit = 10 * 1024 * 1024; // Set to 10 MB
+    options.MultipartBodyLengthLimit = 10 * 1024 * 1024;
 });
 
 builder.Services.AddScoped<IUserScoreService, UserScoreService>();

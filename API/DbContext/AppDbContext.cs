@@ -61,6 +61,6 @@ public class AppDbContext : DbContext
                     AltText = "Sequence memory icon",
                     Route = "/sequence",
                 }
-        );
+            );
     }
 }

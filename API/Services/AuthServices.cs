@@ -96,8 +96,6 @@ namespace API.Services
             {
                 throw new WeakPasswordException("Password must contain at least one special character.");
             }
-
-
         }
     }
 }

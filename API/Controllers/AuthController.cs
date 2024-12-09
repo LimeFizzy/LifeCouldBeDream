@@ -178,7 +178,6 @@ namespace API.Controllers
 
             try
             {
-                // Retrieve the user from the database using the username
                 var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == changePasswordDto.Username);
                 if (user == null)
                 {
@@ -186,7 +185,6 @@ namespace API.Controllers
                     return NotFound(new { Message = "User not found." });
                 }
 
-                // Verify if the old password is correct
                 bool isOldPasswordValid = _authService.VerifyPassword(changePasswordDto.OldPassword, user.PasswordHash);
                 if (!isOldPasswordValid)
                 {
@@ -194,14 +192,10 @@ namespace API.Controllers
                     return Unauthorized(new { Message = "Invalid old password." });
                 }
 
-                // Validate the new password's strength
                 _authService.ValidatePasswordStrength(changePasswordDto.NewPassword);
 
-
-                // Hash the new password
                 var newHashedPassword = _authService.HashPassword(changePasswordDto.NewPassword);
 
-                // Update the user's password
                 user.PasswordHash = newHashedPassword;
                 _context.Users.Update(user);
                 await _context.SaveChangesAsync();
@@ -214,6 +208,5 @@ namespace API.Controllers
                 return StatusCode(500, new { Message = "An unexpected error occurred.", Error = ex.Message });
             }
         }
-
     }
 }
